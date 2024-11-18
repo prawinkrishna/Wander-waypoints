@@ -1,0 +1,71 @@
+<div class="profile-page">
+  <div class="profile-container">
+    <!-- Cover and Profile Section -->
+    <div class="cover-section">
+      <img [src]="userProfile.coverImage" alt="Cover" class="cover-image">
+
+      <div class="profile-overlay">
+        <div class="profile-details">
+          <img [src]="userProfile.profileImage" alt="Profile" class="profile-image">
+
+          <div class="profile-actions">
+            <button class="edit-button" >
+              <i class="edit-icon"></i>
+              Edit Profile
+            </button>
+            <button class="settings-button" >
+              <i class="settings-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Info Section -->
+    <div class="user-info">
+      <h1>{{ userProfile.name }}</h1>
+      <p class="username">{{ userProfile.username }}</p>
+      <p class="bio">{{ userProfile.bio }}</p>
+
+      <div class="user-details">
+        <div class="detail">
+          <i class="location-icon"></i>
+          {{ userProfile.location }}
+        </div>
+        <div class="detail">
+          <i class="calendar-icon"></i>
+          Joined {{ userProfile.joinDate }}
+        </div>
+      </div>
+
+      <!-- Profile Stats -->
+      <div class="stats">
+        <div 
+          class="stat" 
+          *ngFor="let stat of profileStats">
+          <span class="stat-value">{{ stat.value }}</span>
+          <span class="stat-label">{{ stat.label }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs">
+      <button 
+        *ngFor="let tab of tabs"
+        (click)="setActiveTab(tab)"
+        [class.active]="activeTab === tab"
+        class="tab-button">
+        {{ tab }}
+      </button>
+    </div>
+
+    <!-- Trips Section -->
+    <div class="trips-grid" *ngIf="activeTab === 'Trips'">
+      <lib-trip-card ></lib-trip-card>
+        <!-- *ngFor="let trip of userProfile.recentTrips"
+        [trip]="trip">
+      </lib-trip-card> -->
+    </div>
+  </div>
+</div>

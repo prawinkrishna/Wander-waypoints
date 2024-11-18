@@ -1,0 +1,22 @@
+<div cdkDropList class="card-container">
+  <mat-card *ngFor="let card of cards; let i = index" class="example-card" appearance="outlined" cdkDrag>
+    <img mat-card-image class="card-image-top" [src]="card.image" alt="Photo of {{ card.title }}">
+    <div class="card-overlay">
+      <img class="like-icon" src="path/to/your/like-icon.png"  >
+    </div>
+    <mat-card-header class="card-header">
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title>{{ card.title }}</mat-card-title>
+      <mat-card-subtitle>{{ card.subtitle }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="card-content">
+      <p>{{ card.description }}</p>
+    </mat-card-content>
+    <mat-card-actions class="card-actions">
+      <button mat-button>LIKE</button>
+      <ion-text>ionic</ion-text>
+      <button mat-button>SHARE</button>
+      <!-- <ion-row>ree</ion-row> -->
+    </mat-card-actions>
+  </mat-card>
+</div>
