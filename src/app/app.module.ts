@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomePageComponent } from './pages/home-page/home-page.component';
 import { CardComponent } from './components/card/card.component';
 import  { MatCardModule } from '@angular/material/card';
 import { IonicModule } from '@ionic/angular';
@@ -13,7 +12,6 @@ import { WanderLibraryModule } from 'wander-library';
 @NgModule({
   declarations: [
     AppComponent,
-    HomePageComponent,
     CardComponent,
     GpsComponent
   ],

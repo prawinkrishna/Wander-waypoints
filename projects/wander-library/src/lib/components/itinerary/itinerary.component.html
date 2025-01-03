@@ -1,90 +1,21 @@
-<!-- trip-details.component.html -->
-<div class="trip-details-page">
-    <!-- Header Section -->
-    <header class="header-section">
-      <div class="cover-image"></div>
-      <div class="trip-title">Chennai to Bangkok Adventure</div>
-      <div class="trip-dates">Feb 10, 2024 – Feb 15, 2024</div>
-      <div class="trip-summary">
-        <span><i class="icon-duration"></i>5 Days</span>
-        <span><i class="icon-distance"></i>1500 km</span>
-        <span><i class="icon-locations"></i>Bangkok, Pattaya</span>
-        <span><i class="icon-activities"></i>7 Activities</span>
-      </div>
-    </header>
-  
-    <!-- Trip Overview Panel -->
-    <section class="overview-panel">
-      <div class="organizer-info">
-        <img src="assets/agency-logo.png" alt="Travel Agency" />
-        <span>Organized by Travel Agency</span>
-      </div>
-      <div class="participants">
-        <img src="assets/user1.png" alt="Participant" />
-        <img src="assets/user2.png" alt="Participant" />
-        <!-- Add more participants as needed -->
-      </div>
-      <div class="map-thumbnail">
-        <img src="assets/map-thumbnail.png" alt="Trip Route Map" />
-      </div>
-      <div class="action-buttons">
-        <button class="share">Share Trip</button>
-        <button class="save">Save Trip</button>
-        <button class="follow">Follow</button>
-      </div>
-    </section>
-  
-    <!-- Timeline of Events -->
-    <section class="timeline">
-      <div class="timeline-entry" *ngFor="let event of events">
-        <div class="event-time">{{ event.time }}</div>
-        <div class="event-description">
-          <h3>{{ event.title }}</h3>
-          <p>{{ event.description }}</p>
-          <div class="location">{{ event.location }}</div>
-          <div class="photos">
-            <img *ngFor="let photo of event.photos" [src]="photo" alt="Event photo" />
-          </div>
-          <button class="book-service">Book This Service</button>
+<div class="day-section" cdkDropList (cdkDropListDropped)="drop($event)">
+  <h3>Day 1</h3>
+  <div class="location-card" *ngFor="let location of locations" cdkDrag>
+    <div class="card-content">
+      <img [src]="location.image" [alt]="location.title" class="location-img" />
+      <div class="details">
+        <div class="rating">
+          <span>{{ location.rating }} ★</span>
         </div>
+        <h4 class="location-title">{{ location.title }}</h4>
+        <p class="address">{{ location.address }}</p>
+        <p class="description">{{ location.description }}</p>
       </div>
-    </section>
-  
-    <!-- Interactive Map -->
-    <section class="interactive-map">
-      <h3>Route Map</h3>
-      <div class="map-container">
-        <!-- Insert interactive map component here -->
-        <img src="assets/full-map.png" alt="Full Trip Map" />
-      </div>
-    </section>
-  
-    <!-- Additional Details Section -->
-    <section class="additional-details">
-      <h3>Reviews & Recommendations</h3>
-      <div class="reviews" *ngFor="let review of reviews">
-        <p>{{ review.text }}</p>
-        <div class="rating">{{ review.rating }} / 5</div>
-      </div>
-      <h3>Related Trips</h3>
-      <div class="related-trips">
-        <div class="related-trip" *ngFor="let trip of relatedTrips">
-          <img [src]="trip.thumbnail" alt="Related trip" />
-          <p>{{ trip.title }}</p>
-        </div>
-      </div>
-    </section>
-  
-    <!-- Footer Section -->
-    <footer class="footer-section">
-      <div class="social-share">
-        <button>Share</button>
-      </div>
-      <div class="comments">
-        <h4>Comments</h4>
-        <textarea placeholder="Leave a comment..."></textarea>
-        <button>Post Comment</button>
-      </div>
-    </footer>
+      <button class="book-btn">Book</button>
+    </div>
+    <div class="route-info">
+      <span>{{ location.transport }} {{ location.duration }} · {{ location.distance }}</span>
+      <button class="direction-btn">Direction</button>
+    </div>
   </div>
-  
+</div>

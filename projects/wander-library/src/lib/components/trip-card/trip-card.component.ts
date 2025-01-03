@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { HttpService } from '../../provider/http.service';
 
 interface Trip {
   id: number;
@@ -37,15 +38,16 @@ export class TripCardComponent implements OnInit {
     },
   ];
   
+  constructor(
+    private httpService: HttpService
+  ) {}
+
   public async ngOnInit() {
-  //   this.trip = {
-  //     id: 111,
-  //     location: 'chennai',
-  // country: 'india',
-  // date: '10-21-2024',
-  // imageUrl: '',
-  // likes: 3,
-  // category: 'attactions'
-  //   }
+    this.httpService.get('api/place').subscribe(data => {
+      console.log("🚀 ~ TripCardComponent ~ this.httpService.get ~ data:", data)
+      
+    })
   }
+
+  
 }
