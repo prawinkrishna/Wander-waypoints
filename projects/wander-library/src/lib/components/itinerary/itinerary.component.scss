@@ -1,178 +1,115 @@
-.trip-details-page {
-    font-family: Arial, sans-serif;
-    color: #333;
-  
-    .header-section {
-      .cover-image {
-        // background-image: u rl('assets/cover-image.jpg');
-        height: 250px;
-        background-size: cover;
-        background-position: center;
+.day-section {
+  h3 {
+    font-size: 1.5rem;
+    color: #4d236d;
+    margin-bottom: 1rem;
+  }
+
+  .cdk-drag-preview {
+    transform: scale(1.05); /* Make the card appear slightly larger */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add a shadow */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    opacity: 0.9; /* Make it slightly transparent */
+  }
+
+  .cdk-drag-placeholder {
+    opacity: 0.5; /* Placeholder style while dragging */
+    background-color: #f8f9fa; /* Slightly different background for better visibility */
+    border: 2px dashed #ccc; /* Dashed border to indicate placeholder */
+  }
+
+  .cdk-drag {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .location-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.02); /* Scale slightly on hover */
+    }
+
+    .card-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .location-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 10px;
+        object-fit: cover;
       }
-      .trip-title {
-        font-size: 2em;
-        font-weight: bold;
-        margin: 10px 0;
-        text-align: center;
-      }
-      .trip-dates {
-        font-size: 1em;
-        color: #555;
-        text-align: center;
-      }
-      .trip-summary {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 10px;
-        span {
-          display: flex;
-          align-items: center;
-          font-size: 0.9em;
+
+      .details {
+        flex: 1;
+
+        .rating {
+          background-color: #ffcc00;
+          color: white;
+          font-weight: bold;
+          font-size: 0.9rem;
+          padding: 0.3rem 0.5rem;
+          border-radius: 5px;
+          display: inline-block;
+          margin-bottom: 0.5rem;
+        }
+
+        .location-title {
+          font-size: 1.2rem;
+          color: #333;
+          margin-bottom: 0.3rem;
+        }
+
+        .address,
+        .description {
+          font-size: 0.9rem;
           color: #666;
         }
       }
-    }
-  
-    .overview-panel {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-      .organizer-info, .participants, .map-thumbnail, .action-buttons {
-        text-align: center;
-      }
-      .map-thumbnail img {
-        width: 200px;
-        border-radius: 10px;
-      }
-      .action-buttons button {
-        margin: 5px;
-        padding: 5px 10px;
-        background-color: #4CAF50;
+
+      .book-btn {
+        background-color: #4d236d;
         color: white;
         border: none;
         border-radius: 5px;
+        padding: 0.5rem 1rem;
         cursor: pointer;
       }
     }
-  
-    .timeline {
+
+    .route-info {
+      margin-top: 1rem;
       display: flex;
-      flex-direction: column;
-      align-items: start;
-      padding: 20px;
-      .timeline-entry {
-        margin: 15px 0;
-        border-left: 2px solid #ccc;
-        padding-left: 15px;
-        position: relative;
-        .event-time {
-          font-size: 0.9em;
-          color: #888;
-        }
-        .event-description {
-          h3 {
-            margin: 0;
-            font-size: 1.1em;
-          }
-          p {
-            margin: 5px 0;
-          }
-          .location {
-            font-size: 0.9em;
-            color: #555;
-          }
-          .photos img {
-            width: 80px;
-            height: 80px;
-            margin: 5px;
-            border-radius: 5px;
-          }
-          .book-service {
-            margin-top: 10px;
-            padding: 5px 10px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-          }
-        }
+      align-items: center;
+      justify-content: space-between;
+
+      span {
+        font-size: 0.9rem;
+        color: #333;
       }
-    }
-  
-    .interactive-map {
-      text-align: center;
-      margin: 30px 0;
-      h3 {
-        margin-bottom: 15px;
-        font-size: 1.2em;
-      }
-      .map-container {
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        overflow: hidden;
-        img {
-          width: 100%;
-        }
-      }
-    }
-  
-    .additional-details {
-      padding: 20px;
-      .reviews {
-        margin: 10px 0;
-        p {
-          margin: 0;
-        }
-        .rating {
-          color: #FFD700;
-        }
-      }
-      .related-trips {
-        display: flex;
-        gap: 10px;
-        .related-trip {
-          width: 120px;
-          img {
-            width: 100%;
-            border-radius: 5px;
-          }
-          p {
-            font-size: 0.9em;
-            text-align: center;
-            margin: 5px 0 0;
-          }
-        }
-      }
-    }
-  
-    .footer-section {
-      background-color: #f5f5f5;
-      padding: 20px;
-      .social-share button, .comments button {
-        padding: 8px 15px;
-        background-color: #333;
-        color: white;
-        border: none;
+
+      .direction-btn {
+        background-color: #ffffff;
+        color: #4d236d;
+        border: 1px solid #4d236d;
         border-radius: 5px;
+        padding: 0.4rem 1rem;
         cursor: pointer;
-      }
-      .comments {
-        margin-top: 20px;
-        h4 {
-          margin: 0;
-          font-size: 1em;
-        }
-        textarea {
-          width: 100%;
-          padding: 10px;
-          margin-top: 10px;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          resize: vertical;
-        }
       }
     }
   }
-  
+}

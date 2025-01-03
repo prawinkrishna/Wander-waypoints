@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 interface Event {
   time: string;
@@ -25,6 +26,42 @@ interface RelatedTrip {
 })
 export class ItineraryComponent implements OnInit {
 
+  locations = [
+    {
+      image: 'assets/shangrila.jpg',
+      title: 'Shangri-La Singapore',
+      rating: '4.6',
+      address: '22 Orange Grove Rd, Singapore 258350',
+      description: 'Upscale, palatial hotel offering fine dining options & bars, plus a posh spa & an outdoor pool.',
+      transport: '🚗',
+      duration: '0h 11m',
+      distance: '4.4 mi'
+    },
+    {
+      image: 'assets/merlion.jpg',
+      title: 'Merlion',
+      rating: '4.7',
+      address: 'Singapore',
+      description: 'Iconic, 8.5m-tall statue with the body of a fish & head of a lion, shooting water from its mouth.',
+      transport: '🚴',
+      duration: '0h 4m',
+      distance: '1.4 mi'
+    },
+    {
+      image: 'assets/maxwell.jpg',
+      title: 'Maxwell Food Centre',
+      rating: '4.3',
+      address: '1 Kadayanallur St, Singapore 069184',
+      description: 'Chinatown hawker center with stands selling local street food favorites.',
+      transport: '🚗',
+      duration: '0h 4m',
+      distance: '1.4 mi'
+    }
+  ];
+
+  drop(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.locations, event.previousIndex, event.currentIndex);
+  }
   // Sample data for timeline events
   events: Event[] = [
     {
