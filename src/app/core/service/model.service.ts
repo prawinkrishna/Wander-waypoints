@@ -1,14 +1,9 @@
-import { Injectable } from '@angular/core';
-
-@Injectable({
-  providedIn: 'root'
-})
-export class ModelService {
-
-  constructor() { }
-
-  public displaystring() {
-    console.log('qqqqqq');
-    
-  }
+export interface Place {
+  id: number;
+  name: string;
+  location: string;
+  description: string;
+  image: string;
+  lat: number;
+  lng: number;
 }

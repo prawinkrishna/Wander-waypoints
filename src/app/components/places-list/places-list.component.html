@@ -6,11 +6,5 @@
   </div>
 </div>
 <div class="places-list">
-  <div class="place-item" *ngFor="let place of places">
-    <img [src]="place.image" alt="{{ place.title }}" />
-    <div class="info">
-      <div class="title">{{ place.title }}</div>
-      <div class="location">{{ place.location }}</div>
-    </div>
-  </div>
+  <app-card *ngFor="let place of places" [place]="place" (cardClick)="onCardClick(place)"></app-card>
 </div>

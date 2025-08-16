@@ -1,0 +1,10 @@
+<mat-card class="card" (click)="onCardClick()">
+  <img mat-card-image [src]="place.image" [alt]="place.name">
+  <mat-card-header>
+    <mat-card-title>{{ place.name }}</mat-card-title>
+    <mat-card-subtitle>{{ place.location }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p>{{ place.description }}</p>
+  </mat-card-content>
+</mat-card>
