@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
 import { WanderLibraryModule } from 'wander-library';
+import { SharedModule } from '../../components/shared/shared.module';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { WanderLibraryModule } from 'wander-library';
   imports: [
     CommonModule,
     HomeRoutingModule,
-    WanderLibraryModule
+    WanderLibraryModule,
+    SharedModule
   ]
 })
 export class HomeModule { }

@@ -1,0 +1,56 @@
+.home-layout {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 80vh;
+  margin-top: 1.5rem;
+}
+
+.home-layout .map-section {
+  flex: 0 0 70%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-layout .map-section .city-map {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  min-height: 320px;
+  object-fit: cover;
+}
+
+.home-layout .map-section .fab {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 2;
+  background: #1976d2;
+  color: #fff;
+}
+
+.home-layout .places-section {
+  flex: 0 0 30%;
+  padding: 1.5rem 1rem 1.5rem 2rem;
+  min-width: 280px;
+  max-width: 400px;
+}
+
+@media (max-width: 900px) {
+  .home-layout {
+    flex-direction: column;
+  }
+
+  .home-layout .map-section,
+  .home-layout .places-section {
+    flex: 1 1 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .home-layout .places-section {
+    margin-top: 2rem;
+  }
+}

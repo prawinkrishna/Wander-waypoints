@@ -3,5 +3,6 @@
   "dest": "../../dist/wander-library",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "allowedNonPeerDependencies": ["@angular/cdk"]
 }
