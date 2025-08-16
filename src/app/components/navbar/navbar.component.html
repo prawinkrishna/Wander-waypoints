@@ -1,0 +1,23 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <img src="/assets/logo.png" alt="Wanderlust Logo" class="logo" />
+    <span class="site-name">Wanderlust</span>
+  </div>
+  <div class="navbar-center">
+    <a mat-button routerLink="/explore">Explore</a>
+    <a mat-button routerLink="/create">Create</a>
+    <a mat-button routerLink="/inbox">Inbox</a>
+  </div>
+  <div class="navbar-right">
+    <mat-form-field appearance="outline" class="search-bar">
+      <mat-label>Search</mat-label>
+      <input matInput type="text" />
+    </mat-form-field>
+    <button mat-icon-button aria-label="Notifications">
+      <span class="material-symbols-outlined">notifications</span>
+    </button>
+    <button mat-icon-button class="avatar-btn">
+      <img src="/assets/avatar.png" alt="Profile" class="avatar" />
+    </button>
+  </div>
+</nav>

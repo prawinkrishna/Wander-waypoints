@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { ApiService } from '../../provider/api.service';
 
 interface Event {
   time: string;
@@ -107,10 +108,19 @@ export class ItineraryComponent implements OnInit {
     { title: 'Cultural Tour of Bangkok', thumbnail: 'assets/related-trip3.jpg' }
   ];
 
-  constructor() { }
+  constructor(
+    private ApiService:
+    ApiService
+  ) { }
 
   ngOnInit(): void {
+    console.log('11111');
+    
     // Load additional data if necessary on component initialization
+    this.ApiService.getUsers().subscribe(users => {
+      console.log('Users loaded:', users);
+    }
+    );
   }
 
   bookService(service: string): void {

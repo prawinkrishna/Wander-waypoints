@@ -1,0 +1,43 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  .navbar-left {
+    display: flex;
+    align-items: center;
+    .logo {
+      height: 40px;
+      margin-right: 1rem;
+    }
+    .site-name {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1976d2;
+    }
+  }
+  .navbar-center a {
+    margin: 0 0.5rem;
+    font-weight: 500;
+    color: #333;
+  }
+  .navbar-right {
+    display: flex;
+    align-items: center;
+    .search-bar {
+      width: 180px;
+      margin-right: 1rem;
+    }
+    .avatar-btn {
+      padding: 0;
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+      }
+    }
+  }
+}

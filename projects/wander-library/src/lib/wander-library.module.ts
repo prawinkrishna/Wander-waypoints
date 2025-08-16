@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { IonicModule } from '@ionic/angular';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
+import { ApiService } from './provider/api.service';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { HttpClientModule } from '@angular/common/http';
     HttpClientModule
 
   ],
-  exports: [ProfileComponent,WanderLibraryComponent,TripCardComponent,ItineraryComponent]
+  exports: [ProfileComponent,WanderLibraryComponent,TripCardComponent,ItineraryComponent],
+  providers: [ApiService]
 })
 export class WanderLibraryModule { }

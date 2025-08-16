@@ -9,3 +9,4 @@ export * from './lib/components/profile/profile.component';
 
 export * from './lib/components/trip-card/trip-card.component';
 export * from './lib/components/itinerary/itinerary.component';
+export * from './lib/provider/api.service';

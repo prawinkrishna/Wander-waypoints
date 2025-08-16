@@ -51,4 +51,11 @@ export class HttpService {
   delete<T>(endpoint: string, params?: HttpParams): Observable<T> {
     return this.http.delete<T>(`${this.baseUrl}/${endpoint}`, { params });
   }
+
+  /**
+   * GET request with custom headers (for Authorization, etc.)
+   */
+  getWithOptions<T>(endpoint: string, options: { headers?: HttpHeaders, params?: HttpParams } = {}): Observable<T> {
+    return this.http.get<T>(`${this.baseUrl}/${endpoint}`, options);
+  }
 }

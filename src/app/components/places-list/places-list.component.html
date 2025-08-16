@@ -1,0 +1,16 @@
+<div class="filters">
+  <div class="chip-list">
+    <button mat-stroked-button *ngFor="let filter of filters" [color]="selectedFilter === filter ? 'primary' : ''" (click)="selectFilter(filter)" style="margin-right: 8px; margin-bottom: 8px;">
+      {{ filter }}
+    </button>
+  </div>
+</div>
+<div class="places-list">
+  <div class="place-item" *ngFor="let place of places">
+    <img [src]="place.image" alt="{{ place.title }}" />
+    <div class="info">
+      <div class="title">{{ place.title }}</div>
+      <div class="location">{{ place.location }}</div>
+    </div>
+  </div>
+</div>

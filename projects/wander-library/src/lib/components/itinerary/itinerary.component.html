@@ -1,5 +1,5 @@
 <div class="day-section" cdkDropList (cdkDropListDropped)="drop($event)">
-  <h3>Day 1</h3>
+  <h3 (click)="shareTrip()">Day 1</h3>
   <div class="location-card" *ngFor="let location of locations" cdkDrag>
     <div class="card-content">
       <img [src]="location.image" [alt]="location.title" class="location-img" />
@@ -11,7 +11,7 @@
         <p class="address">{{ location.address }}</p>
         <p class="description">{{ location.description }}</p>
       </div>
-      <button class="book-btn">Book</button>
+      <button class="book-btn" (click)="shareTrip()">Book</button>
     </div>
     <div class="route-info">
       <span>{{ location.transport }} {{ location.duration }} · {{ location.distance }}</span>

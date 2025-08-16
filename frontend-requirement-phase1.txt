@@ -1,0 +1,47 @@
+Phase 1 Prompt: Travel & Food Influencer Map + List View UI with API Integration
+
+Objective:
+Build a modern, responsive web UI using Angular that mimics the aesthetic and functionality of platforms like Mindtrip, with a map view, a synchronized list view, and integrated backend API calls.
+check the exicting code and modify and add code 
+🔧 Requirements
+
+1. UI Design (Mindtrip-Inspired)
+
+Clean, modern layout with soft shadows, rounded corners.
+
+Two-panel layout:
+
+Left panel (List View): Scrollable list of locations or entries.
+
+Right panel (Map View): Interactive map showing pins for each entry.
+
+Responsive design (desktop, tablet, mobile).
+
+Filters/search at the top of the list view.
+
+Detail popups on map marker click.
+
+2. Map View
+
+Use exicting map 
+
+Plot markers for each location from the API.
+
+Clicking a marker highlights corresponding list item (and vice versa).
+
+Optional: Cluster markers when zoomed out.
+
+3. List View
+
+Shows image, title, location, short description.
+
+On hover or click, highlight marker on the map.
+
+Infinite scroll or pagination.
+
+4. API Integration
+
+Fetch locations from backend API (mock or real).
+
+
+Integrate loading state, error handling.
