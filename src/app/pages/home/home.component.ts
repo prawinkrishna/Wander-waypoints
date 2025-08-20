@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Place } from 'projects/wander-library/src/lib/models/place.model';
 import { MockDataService } from '../../core/service/mock-data.service';
+import { Place } from '../../../../projects/wander-library/src/lib/models/place.model';
 
 @Component({
   selector: 'app-home',

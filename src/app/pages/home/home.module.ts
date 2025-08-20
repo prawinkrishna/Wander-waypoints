@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
-import { WanderLibraryModule } from 'projects/wander-library/src/public-api';
 import { SharedModule } from '../../components/shared/shared.module';
+import { WanderLibraryModule } from 'wander-library';
 
 
 @NgModule({
