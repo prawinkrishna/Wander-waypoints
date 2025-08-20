@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { CardComponent } from './components/card/card.component';
 import  { MatCardModule } from '@angular/material/card';
 import { IonicModule } from '@ionic/angular';
-import { GpsComponent } from './components/gps/gps.component';
 import { WanderLibraryModule } from 'wander-library';
 import { SharedModule } from './components/shared/shared.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,8 +16,6 @@ import { MatButtonModule } from '@angular/material/button';
 @NgModule({
   declarations: [
     AppComponent,
-    CardComponent,
-    GpsComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +27,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatButtonModule,
     IonicModule.forRoot(),
     WanderLibraryModule,
-    SharedModule
+    SharedModule,
+    RouterModule.forRoot([]),
   ],
   providers: [],
   bootstrap: [AppComponent]
