@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
 <div class="home-layout">
   <div class="map-section">
-    <app-gps [places]="places" [selectedPlace]="selectedPlace"></app-gps>
+    <lib-gps [places]="places" [selectedPlace]="selectedPlace"></lib-gps>
   </div>
   <div class="places-section">
     <app-places-list [places]="places" (placeSelected)="onPlaceSelected($event)"></app-places-list>

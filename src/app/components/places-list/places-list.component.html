@@ -6,5 +6,5 @@
   </div>
 </div>
 <div class="places-list">
-  <app-card *ngFor="let place of places" [place]="place" (cardClick)="onCardClick(place)"></app-card>
+  <lib-trip-card *ngFor="let place of places" [place]="place" (cardClick)="onCardClick(place)"></lib-trip-card>
 </div>

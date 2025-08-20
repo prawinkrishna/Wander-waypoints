@@ -1,9 +1,9 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, Input, OnChanges, OnInit, PLATFORM_ID, SimpleChanges } from '@angular/core';
-import { Place } from '../../core/service/model.service';
+import { Place } from '../../../../../../src/app/core/service/model.service';
 
 @Component({
-  selector: 'app-gps',
+  selector: 'lib-gps',
   templateUrl: './gps.component.html',
   styleUrls: ['./gps.component.scss']
 })

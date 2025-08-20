@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { GpsComponent } from './components/gps/gps.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { WanderLibraryComponent } from './wander-library.component';
 import { TripCardComponent } from './components/trip-card/trip-card.component';
@@ -12,7 +13,7 @@ import { ApiService } from './provider/api.service';
 
 
 @NgModule({
-  declarations: [ProfileComponent,WanderLibraryComponent,TripCardComponent,ItineraryComponent],
+  declarations: [ProfileComponent,WanderLibraryComponent,TripCardComponent,ItineraryComponent,GpsComponent],
   imports: [
     CommonModule,
     MatCardModule,
@@ -21,7 +22,7 @@ import { ApiService } from './provider/api.service';
     HttpClientModule
 
   ],
-  exports: [ProfileComponent,WanderLibraryComponent,TripCardComponent,ItineraryComponent],
+  exports: [ProfileComponent,WanderLibraryComponent,TripCardComponent,ItineraryComponent,GpsComponent],
   providers: [ApiService]
 })
 export class WanderLibraryModule { }

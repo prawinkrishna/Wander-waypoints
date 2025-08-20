@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
-import { WanderLibraryModule } from 'wander-library';
+import { WanderLibraryModule } from 'projects/wander-library/src/public-api';
 import { SharedModule } from '../../components/shared/shared.module';
 
 
