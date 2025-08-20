@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { WanderLibraryModule } from 'wander-library';
+import { WanderLibraryModule } from 'projects/wander-library/src/public-api';
 
 @NgModule({
   declarations: [NavbarComponent, PlacesListComponent],

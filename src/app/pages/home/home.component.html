@@ -1,9 +1,17 @@
-<!-- <app-navbar></app-navbar> -->
-<div class="home-layout">
-  <div class="map-section">
-    <lib-gps [places]="places" [selectedPlace]="selectedPlace"></lib-gps>
+<app-navbar></app-navbar>
+<div class="home-container">
+  <!-- Left Panel -->
+  <div class="list-panel">
+    <div class="filter-bar">
+      <input type="text" placeholder="Search places..." [(ngModel)]="searchTerm" (ngModelChange)="filterPlaces()" />
+    </div>
+    <div class="places-list">
+      <lib-trip-card *ngFor="let place of filteredPlaces" [place]="place" (cardClick)="onPlaceSelected(place)"></lib-trip-card>
+    </div>
   </div>
-  <div class="places-section">
-    <app-places-list [places]="places" (placeSelected)="onPlaceSelected($event)"></app-places-list>
+
+  <!-- Right Panel -->
+  <div class="map-panel">
+    <lib-gps [places]="filteredPlaces" [selectedPlace]="selectedPlace"></lib-gps>
   </div>
 </div>

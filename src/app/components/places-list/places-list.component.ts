@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Place } from '../../../../projects/wander-library/src/lib/models/place.model';
+import { Place } from '../../core/service/model.service';
 
 @Component({
   selector: 'app-places-list',

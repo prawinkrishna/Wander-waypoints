@@ -1,56 +1,55 @@
-.home-layout {
+.home-container {
   display: flex;
-  flex-wrap: wrap;
-  min-height: 80vh;
-  margin-top: 1.5rem;
+  height: 100vh;
 }
 
-.home-layout .map-section {
-  flex: 0 0 70%;
-  position: relative;
+/* Left Panel - List */
+.list-panel {
+  flex: 1;
+  max-width: 420px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  background: #fff;
+  border-right: 1px solid #e5e7eb;
 }
 
-.home-layout .map-section .city-map {
+.filter-bar {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.filter-bar input {
   width: 100%;
-  max-width: 600px;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  min-height: 320px;
-  object-fit: cover;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
 }
 
-.home-layout .map-section .fab {
-  position: absolute;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 2;
-  background: #1976d2;
-  color: #fff;
+.places-list {
+  overflow-y: auto;
+  padding: 1rem;
+  flex: 1;
 }
 
-.home-layout .places-section {
-  flex: 0 0 30%;
-  padding: 1.5rem 1rem 1.5rem 2rem;
-  min-width: 280px;
-  max-width: 400px;
+/* Right Panel - Map */
+.map-panel {
+  flex: 2;
+  position: relative;
 }
 
-@media (max-width: 900px) {
-  .home-layout {
+@media (max-width: 768px) {
+  .home-container {
     flex-direction: column;
   }
 
-  .home-layout .map-section,
-  .home-layout .places-section {
-    flex: 1 1 100%;
+  .list-panel {
     max-width: 100%;
-    padding: 0;
+    height: 40vh;
   }
 
-  .home-layout .places-section {
-    margin-top: 2rem;
+  .map-panel {
+    height: 60vh;
   }
 }
