@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
-import { Place } from './model.service';
+import { Place } from 'projects/wander-library/src/lib/models/place.model';
 
 @Injectable({
   providedIn: 'root'

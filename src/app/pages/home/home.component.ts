@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Place } from '../../core/service/model.service';
+import { Place } from 'projects/wander-library/src/lib/models/place.model';
 import { MockDataService } from '../../core/service/mock-data.service';
 
 @Component({

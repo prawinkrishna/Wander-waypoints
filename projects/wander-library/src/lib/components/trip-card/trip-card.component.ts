@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Place } from '../../../../../../src/app/core/service/model.service';
+import { Place } from '../../models/place.model';
 
 @Component({
   selector: 'lib-trip-card',
