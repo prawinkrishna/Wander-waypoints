@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { WanderLibraryModule } from 'wander-library';
 
 @NgModule({
   declarations: [NavbarComponent, PlacesListComponent],
@@ -14,8 +15,9 @@ import { MatCardModule } from '@angular/material/card';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    WanderLibraryModule
   ],
-  exports: [NavbarComponent, PlacesListComponent]
+  exports: [NavbarComponent, PlacesListComponent, WanderLibraryModule]
 })
 export class SharedModule {}

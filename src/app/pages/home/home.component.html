@@ -1,12 +1,17 @@
 <app-navbar></app-navbar>
-<div class="home-layout">
-  <div class="map-section">
-    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="San Francisco Map" class="city-map" />
-    <button mat-fab class="fab">
-      <span class="material-symbols-outlined">add</span>
-    </button>
+<div class="home-container">
+  <!-- Left Panel -->
+  <div class="list-panel">
+    <div class="filter-bar">
+      <input type="text" placeholder="Search places..." [(ngModel)]="searchTerm" (ngModelChange)="filterPlaces()" />
+    </div>
+    <div class="places-list">
+      <lib-trip-card *ngFor="let place of filteredPlaces" [place]="place" (cardClick)="onPlaceSelected(place)"></lib-trip-card>
+    </div>
   </div>
-  <div class="places-section">
-    <app-places-list></app-places-list>
+
+  <!-- Right Panel -->
+  <div class="map-panel">
+    <lib-gps [places]="filteredPlaces" [selectedPlace]="selectedPlace"></lib-gps>
   </div>
 </div>
