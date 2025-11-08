@@ -1,10 +1,18 @@
-<mat-card class="card" (click)="onCardClick()">
-  <img mat-card-image [src]="place.image" [alt]="place.name">
-  <mat-card-header>
-    <mat-card-title>{{ place.name }}</mat-card-title>
-    <mat-card-subtitle>{{ place.location }}</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <p>{{ place.description }}</p>
-  </mat-card-content>
-</mat-card>
+<mat-card class="trip-card" (click)="onCardClick()">
+    <div class="trip-image-container">
+      <img class="trip-image" [src]="place.image || 'https://via.placeholder.com/300x200'" [alt]="place.name">
+      <div class="trip-overlay">
+        <button mat-icon-button class="like-button">
+          <mat-icon>favorite_border</mat-icon>
+        </button>
+      </div>
+    </div>
+    <mat-card-content class="trip-content">
+      <div class="trip-header">
+        <h3>{{ place.name }}</h3>
+        <div class="country">{{ place.location }}</div>
+      </div>
+      <div class="category">{{ place.category }}</div>
+      <p class="description">{{ place.description }}</p>
+    </mat-card-content>
+  </mat-card>

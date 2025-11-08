@@ -1,3 +1,6 @@
+<div class="filter-bar">
+  <input type="text" placeholder="Search places..." [(ngModel)]="searchQuery" (ngModelChange)="filterPlaces()">
+</div>
 <div class="filters">
   <div class="chip-list">
     <button mat-stroked-button *ngFor="let filter of filters" [color]="selectedFilter === filter ? 'primary' : ''" (click)="selectFilter(filter)" style="margin-right: 8px; margin-bottom: 8px;">
@@ -6,5 +9,5 @@
   </div>
 </div>
 <div class="places-list">
-  <lib-trip-card *ngFor="let place of places" [place]="place" (cardClick)="onCardClick(place)"></lib-trip-card>
+  <lib-trip-card *ngFor="let place of filteredPlaces" [place]="place" (cardClick)="onCardClick(place)" [class.selected]="place.placeId === selectedPlaceId"></lib-trip-card>
 </div>

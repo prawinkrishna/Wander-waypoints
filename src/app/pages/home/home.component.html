@@ -2,16 +2,11 @@
 <div class="home-container">
   <!-- Left Panel -->
   <div class="list-panel">
-    <div class="filter-bar">
-      <input type="text" placeholder="Search places..." [(ngModel)]="searchTerm" (ngModelChange)="filterPlaces()" />
-    </div>
-    <div class="places-list">
-      <lib-trip-card *ngFor="let place of filteredPlaces" [place]="place" (cardClick)="onPlaceSelected(place)"></lib-trip-card>
-    </div>
+    <app-places-list (placeSelected)="onPlaceSelected($event)" (placesFetched)="onPlacesFetched($event)" [selectedPlaceId]="selectedPlace?.placeId"></app-places-list>
   </div>
 
   <!-- Right Panel -->
   <div class="map-panel">
-    <lib-gps [places]="filteredPlaces" [selectedPlace]="selectedPlace"></lib-gps>
+    <lib-gps [places]="filteredPlaces" [selectedPlace]="selectedPlace" (markerClicked)="onMarkerClicked($event)"></lib-gps>
   </div>
 </div>

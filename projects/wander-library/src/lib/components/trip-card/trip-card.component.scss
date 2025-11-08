@@ -1,120 +1,75 @@
 .trip-card {
-    background-color: white;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: box-shadow 0.3s;
-  
-    &:hover {
-      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+  }
+
+  &.selected {
+    box-shadow: 0 0 0 2px #8b5cf6;
+  }
+
+  .trip-image-container {
+    position: relative;
+  }
+
+  .trip-image {
+    width: 100%;
+    height: 12rem;
+    object-fit: cover;
+  }
+
+  .trip-overlay {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .like-button {
+    color: white;
+  }
+
+  .trip-content {
+    padding: 1rem;
+  }
+
+  .trip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1f2937;
     }
-  
-    .trip-image {
-      width: 100%;
-      height: 12rem;
-      object-fit: cover;
-    }
-  
-    .trip-content {
-      padding: 1rem;
-    }
-  
-    .trip-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-  
-      h3 {
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: #1f2937;
-      }
-  
-      .country {
-        color: #8b5cf6;
-        font-size: 0.875rem;
-      }
-  
-      .likes {
-        display: flex;
-        align-items: center;
-        color: #4b5563;
-  
-        .heart-icon {
-          margin-right: 0.5rem;
-          color: #f87171;
-        }
-      }
-    }
-  
-    .category {
-      display: inline-block;
-      background-color: #f5f3ff;
+
+    .country {
       color: #8b5cf6;
-      padding: 0.25rem 0.5rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      margin-top: 0.5rem;
+      font-size: 0.875rem;
     }
   }
 
-  .card-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 10px;
+  .category {
+    display: inline-block;
+    background-color: #f5f3ff;
+    color: #8b5cf6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
   }
-  
-  .example-card {
-    max-width: 350px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add a shadow here */
-    border: 2px solid #ccc; /* Change the border color here */
-    overflow: hidden;
-    position: relative; /* Add position: relative to the card */
+
+  .description {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #4b5563;
   }
+}
   
-  .card-header {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-  }
-  
-  .card-image {
-    height: 250px;
-    object-fit: cover;
-  }
-  
-  .card-content {
-    padding: 15px;
-  }
-  
-  .card-actions {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px;
-  }
-  
-  /* New styles */
-  
-  .card-image-top {
-    height: 250px;
-    object-fit: cover;
-  }
-  
-  .card-content-below-image {
-    padding-top: 0;
-  }
-  
-  .card-overlay {
-    position: absolute;
-    top: 10px; /* Adjust the top position as needed */
-    right: 10px; /* Adjust the right position as needed */
-    z-index: 1; /* Ensure it's above the image */
-  }
-  
-  .like-icon {
-    width: 24px; /* Adjust the size as needed */
-    height: 24px;
-    cursor: pointer;
-  }

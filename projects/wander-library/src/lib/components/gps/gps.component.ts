@@ -1,6 +1,8 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, Inject, Input, OnChanges, OnInit, PLATFORM_ID, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output, PLATFORM_ID, SimpleChanges } from '@angular/core';
 import { Place } from '../../models/place.model';
+import * as L from 'leaflet';
+import 'leaflet.markercluster';
 
 @Component({
   selector: 'lib-gps',
@@ -10,8 +12,10 @@ import { Place } from '../../models/place.model';
 export class GpsComponent implements OnInit, OnChanges {
   @Input() places: Place[] = [];
   @Input() selectedPlace: Place | null = null;
+  @Output() markerClicked = new EventEmitter<string>();
   private map: any;
-  private markers: Map<number, any> = new Map();
+  private markers: Map<any, any> = new Map();
+  private markerClusterGroup!: L.MarkerClusterGroup;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -32,9 +36,7 @@ export class GpsComponent implements OnInit, OnChanges {
     }
   }
 
-  private async initMap(): Promise<void> {
-    const L = await import('leaflet');
-
+  private initMap(): void {
     this.map = L.map('map', {
       center: [13.0827, 80.2707],
       zoom: 10
@@ -44,35 +46,41 @@ export class GpsComponent implements OnInit, OnChanges {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);
 
+    this.markerClusterGroup = L.markerClusterGroup();
+    this.map.addLayer(this.markerClusterGroup);
+
     this.updateMarkers();
   }
 
-  private async updateMarkers(): Promise<void> {
-    const L = await import('leaflet');
-
+  private updateMarkers(): void {
     // Clear existing markers
-    this.markers.forEach(marker => marker.remove());
+    this.markerClusterGroup.clearLayers();
     this.markers.clear();
 
     // Add new markers
     this.places.forEach(place => {
-      const marker = L.marker([place.lat, place.lng]).addTo(this.map);
+      const marker = L.marker([+place.latitude, +place.longitude]);
       marker.bindPopup(`<b>${place.name}</b>`);
-      this.markers.set(place.id, marker);
+      marker.on('click', () => {
+        this.markerClicked.emit(place.placeId);
+      });
+      this.markers.set(place.placeId, marker);
+      this.markerClusterGroup.addLayer(marker);
     });
 
     if (this.places.length > 0) {
-      const group = L.featureGroup(Array.from(this.markers.values()));
-      this.map.fitBounds(group.getBounds());
+      this.map.fitBounds(this.markerClusterGroup.getBounds());
     }
   }
 
   private highlightMarker(): void {
-    if (this.selectedPlace) {
-      const marker = this.markers.get(this.selectedPlace.id);
+    if (this.selectedPlace && this.markerClusterGroup) {
+      const marker = this.markers.get(this.selectedPlace.placeId);
       if (marker) {
-        this.map.setView(marker.getLatLng(), 15);
-        marker.openPopup();
+        this.markerClusterGroup.zoomToShowLayer(marker, () => {
+          this.map.setView(marker.getLatLng(), 15);
+          marker.openPopup();
+        });
       }
     }
   }

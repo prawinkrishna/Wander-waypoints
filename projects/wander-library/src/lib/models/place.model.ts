@@ -1,9 +1,10 @@
 export interface Place {
-  id: number;
+  placeId: string;
   name: string;
   location: string;
   description: string;
   image: string;
-  lat: number;
-  lng: number;
+  latitude: string;
+  longitude: string;
+  category: any;
 }
