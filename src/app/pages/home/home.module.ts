@@ -6,6 +6,7 @@ import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
 import { SharedModule } from '../../components/shared/shared.module';
 import { WanderLibraryModule } from 'wander-library';
+import { PlacesListComponentModule } from '../../components/places-list/places-list.module';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { WanderLibraryModule } from 'wander-library';
     FormsModule,
     HomeRoutingModule,
     WanderLibraryModule,
-    SharedModule
+    SharedModule,
+    PlacesListComponentModule
   ]
 })
 export class HomeModule { }
