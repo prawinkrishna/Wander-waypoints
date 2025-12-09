@@ -1,2 +1,191 @@
-<h1>Trip Details</h1>
-<!-- Trip details content goes here -->
+<app-navbar></app-navbar>
+
+<div class="trip-details-container">
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading trip details...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !isLoading">
+        <mat-icon>error_outline</mat-icon>
+        <h2>Trip Not Found</h2>
+        <p>{{ error }}</p>
+        <button mat-raised-button color="primary" routerLink="/trip-feed">Browse Other Trips</button>
+    </div>
+
+    <!-- Trip Content -->
+    <div class="trip-content" *ngIf="trip && !isLoading && !error">
+        <!-- Header Section -->
+        <div class="trip-header">
+            <div class="header-content">
+                <div class="breadcrumb">
+                    <a routerLink="/trip-feed">Trips</a>
+                    <mat-icon>chevron_right</mat-icon>
+                    <span>{{ trip.title }}</span>
+                </div>
+
+                <h1>{{ trip.title }}</h1>
+
+                <div class="trip-meta">
+                    <div class="meta-item">
+                        <mat-icon>calendar_today</mat-icon>
+                        <span>{{ formatDate(trip.startDate) }} - {{ formatDate(trip.endDate) }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <mat-icon>schedule</mat-icon>
+                        <span>{{ getTripDuration() }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <mat-icon>{{ trip.visibility === 'public' ? 'public' : 'lock' }}</mat-icon>
+                        <span>{{ trip.visibility | titlecase }}</span>
+                    </div>
+                </div>
+
+                <div class="trip-creator">
+                    <mat-icon>person</mat-icon>
+                    <span>Created by {{ trip.user?.username || 'Unknown' }}</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="header-actions">
+                <button mat-icon-button (click)="onShare()" matTooltip="Share trip">
+                    <mat-icon>share</mat-icon>
+                </button>
+
+                <button mat-icon-button [color]="trip.isLiked ? 'warn' : ''" (click)="onLike()" matTooltip="Like trip">
+                    <mat-icon>{{ trip.isLiked ? 'favorite' : 'favorite_border' }}</mat-icon>
+                </button>
+
+                <div class="owner-actions" *ngIf="isOwner">
+                    <button mat-raised-button color="primary" (click)="onEdit()">
+                        <mat-icon>edit</mat-icon>
+                        Edit
+                    </button>
+                    <button mat-raised-button color="warn" (click)="onDelete()">
+                        <mat-icon>delete</mat-icon>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="view-toggle-container">
+            <div class="view-toggle">
+                <button mat-button [class.active]="viewMode === 'map'" (click)="setViewMode('map')">
+                    <mat-icon>map</mat-icon> Map View
+                </button>
+                <button mat-button [class.active]="viewMode === 'itinerary'" (click)="setViewMode('itinerary')">
+                    <mat-icon>timeline</mat-icon> Itinerary View
+                </button>
+            </div>
+        </div>
+
+        <!-- Itinerary View -->
+        <div class="itinerary-view" *ngIf="viewMode === 'itinerary'">
+            <app-itinerary-timeline [tripPlaces]="trip.places"></app-itinerary-timeline>
+        </div>
+
+        <!-- Main Content Grid (Map View) -->
+        <div class="content-grid" *ngIf="viewMode === 'map'">
+            <!-- Left Column: Trip Info -->
+            <div class="left-column">
+                <!-- Description -->
+                <mat-card class="info-card">
+                    <mat-card-header>
+                        <mat-card-title>About This Trip</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p class="description">{{ trip.description || 'No description provided.' }}</p>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Places List -->
+                <mat-card class="places-card">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>place</mat-icon>
+                            Places ({{ trip.places?.length || 0 }})
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="places-list" *ngIf="trip.places && trip.places.length > 0">
+                            <div class="place-item" *ngFor="let place of trip.places; let i = index">
+                                <div class="place-number">{{ i + 1 }}</div>
+                                <div class="place-info">
+                                    <h3>{{ place.name }}</h3>
+                                    <p class="place-category">{{ place.category }}</p>
+                                    <p class="place-location">{{ place.location }}</p>
+                                </div>
+                                <button mat-icon-button (click)="$event.stopPropagation()"
+                                    [routerLink]="['/place-details', place.placeId]">
+                                    <mat-icon>chevron_right</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="empty-places" *ngIf="!trip.places || trip.places.length === 0">
+                            <mat-icon>location_off</mat-icon>
+                            <p>No places added to this trip yet.</p>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Comments Section -->
+                <mat-card class="comments-card">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>comment</mat-icon>
+                            Comments ({{ trip.comments?.length || 0 }})
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <!-- Add Comment -->
+                        <div class="add-comment">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Add a comment</mat-label>
+                                <textarea matInput [(ngModel)]="newComment" rows="2"
+                                    placeholder="Share your thoughts..."></textarea>
+                            </mat-form-field>
+                            <button mat-raised-button color="primary" (click)="onAddComment()"
+                                [disabled]="!newComment.trim() || isAddingComment">
+                                <mat-spinner diameter="20" *ngIf="isAddingComment"></mat-spinner>
+                                <span *ngIf="!isAddingComment">Post Comment</span>
+                            </button>
+                        </div>
+
+                        <!-- Comments List -->
+                        <div class="comments-list" *ngIf="trip.comments && trip.comments.length > 0">
+                            <div class="comment-item" *ngFor="let comment of trip.comments">
+                                <div class="comment-avatar">
+                                    <mat-icon>account_circle</mat-icon>
+                                </div>
+                                <div class="comment-content">
+                                    <div class="comment-header">
+                                        <span class="comment-author">{{ comment.user?.username || 'Anonymous' }}</span>
+                                        <span class="comment-date">{{ comment.createdAt | date:'short' }}</span>
+                                    </div>
+                                    <p class="comment-text">{{ comment.content }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="empty-comments" *ngIf="!trip.comments || trip.comments.length === 0">
+                            <mat-icon>chat_bubble_outline</mat-icon>
+                            <p>No comments yet. Be the first to comment!</p>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+            <!-- Right Column: Map -->
+            <div class="right-column">
+                <div class="map-container sticky">
+                    <lib-gps [places]="trip.places || []" [selectedPlace]="null"></lib-gps>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

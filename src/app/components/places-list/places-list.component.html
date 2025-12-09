@@ -3,11 +3,30 @@
 </div>
 <div class="filters">
   <div class="chip-list">
-    <button mat-stroked-button *ngFor="let filter of filters" [color]="selectedFilter === filter ? 'primary' : ''" (click)="selectFilter(filter)" style="margin-right: 8px; margin-bottom: 8px;">
+    <button mat-stroked-button *ngFor="let filter of filters" [color]="selectedFilter === filter ? 'primary' : ''"
+      (click)="selectFilter(filter)" style="margin-right: 8px; margin-bottom: 8px;">
       {{ filter }}
     </button>
   </div>
 </div>
-<div class="places-list">
-  <lib-trip-card *ngFor="let place of filteredPlaces" [place]="place" (cardClick)="onCardClick(place)" [class.selected]="place.placeId === selectedPlaceId"></lib-trip-card>
+<div class="places-list-container">
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Discovering places...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !isLoading">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-stroked-button color="primary" (click)="loadPlaces()">Retry</button>
+  </div>
+
+  <!-- Content -->
+  <div class="content-container" *ngIf="!isLoading && !error">
+    <lib-trip-card *ngFor="let place of filteredPlaces" [place]="place" (cardClick)="onCardClick(place)"
+      [class.selected]="place.placeId === selectedPlaceId"></lib-trip-card>
+  </div>
 </div>

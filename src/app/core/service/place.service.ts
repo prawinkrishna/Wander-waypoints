@@ -1,19 +1,34 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { HttpService } from '../../../../projects/wander-library/src/lib/provider/http.service';
-
+import { Place } from '../../../../projects/wander-library/src/lib/models/place.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlaceService {
-  
+  private apiUrl = `${environment.apiUrl}/place`;
 
-  private apiUrl = 'api/place'; // Assuming the backend runs on port 3000
+  constructor(private http: HttpClient) { }
 
-  constructor(private http: HttpService) {}
+  getPlaces(): Observable<Place[]> {
+    return this.http.get<Place[]>(this.apiUrl);
+  }
 
-  getPlaces(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  getPlace(id: string): Observable<Place> {
+    return this.http.get<Place>(`${this.apiUrl}/${id}`);
+  }
+
+  createPlace(place: Place): Observable<Place> {
+    return this.http.post<Place>(this.apiUrl, place);
+  }
+
+  updatePlace(id: string, place: Partial<Place>): Observable<Place> {
+    return this.http.patch<Place>(`${this.apiUrl}/${id}`, place);
+  }
+
+  deletePlace(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

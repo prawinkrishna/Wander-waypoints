@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { Place } from '../../../../projects/wander-library/src/lib/models/place.model';
 import { PlaceService } from '../../core/service/place.service';
 
@@ -18,13 +19,34 @@ export class PlacesListComponent implements OnInit {
   selectedFilter = '';
   searchQuery = '';
 
-  constructor(private placeService: PlaceService) { }
+  isLoading = false;
+  error: string | null = null;
+
+  constructor(
+    private placeService: PlaceService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
-    this.placeService.getPlaces().subscribe(places => {
-      this.places = places;
-      this.filteredPlaces = places;
-      this.placesFetched.emit(places);
+    this.loadPlaces();
+  }
+
+  loadPlaces() {
+    this.isLoading = true;
+    this.error = null;
+
+    this.placeService.getPlaces().subscribe({
+      next: (places) => {
+        this.places = places;
+        this.filteredPlaces = places;
+        this.placesFetched.emit(places);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching places:', err);
+        this.error = 'Failed to load places. Please try again later.';
+        this.isLoading = false;
+      }
     });
   }
 
@@ -50,6 +72,9 @@ export class PlacesListComponent implements OnInit {
   }
 
   onCardClick(place: Place) {
+    // Navigate to place details page
+    this.router.navigate(['/place-details', place.placeId]);
+    // Also emit for backward compatibility
     this.placeSelected.emit(place);
   }
 }

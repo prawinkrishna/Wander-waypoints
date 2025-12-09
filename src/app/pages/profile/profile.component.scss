@@ -1,0 +1,135 @@
+.profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: calc(100vh - 64px); // Adjust based on navbar height
+}
+
+.loading-container,
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    gap: 1rem;
+    color: #718096;
+
+    mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+    }
+}
+
+.error-container {
+    color: #e53e3e;
+}
+
+.profile-header {
+    display: flex;
+    gap: 2rem;
+    padding-bottom: 2rem;
+    align-items: center;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .avatar-section {
+        .avatar-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    }
+
+    .info-section {
+        flex: 1;
+
+        h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+            color: #2d3748;
+        }
+
+        .email {
+            color: #718096;
+            margin: 0 0 1rem 0;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #e2e8f0;
+            color: #4a5568;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .bio {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+    }
+}
+
+.trips-section {
+    padding-top: 2rem;
+
+    h2 {
+        color: #2d3748;
+        margin-bottom: 1.5rem;
+    }
+
+    .trips-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .trip-card {
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        mat-card-header {
+            margin-bottom: 1rem;
+        }
+    }
+
+    .empty-trips {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        background: #f7fafc;
+        border-radius: 8px;
+        border: 2px dashed #cbd5e0;
+        color: #718096;
+        gap: 1rem;
+
+        mat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            opacity: 0.5;
+        }
+    }
+}

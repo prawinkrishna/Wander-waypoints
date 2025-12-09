@@ -1,4 +1,238 @@
 .map-container {
   height: 100%;
   width: 100%;
+  position: relative;
+}
+
+// Custom Marker Styles
+::ng-deep {
+  .custom-marker-icon {
+    background: transparent;
+    border: none;
+  }
+
+  .custom-marker {
+    width: 36px;
+    height: 36px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border: 3px solid white;
+
+    .material-icons {
+      transform: rotate(45deg);
+      color: white;
+      font-size: 20px;
+    }
+  }
+
+  // User Location Marker
+  .user-location-icon {
+    background: transparent;
+    border: none;
+  }
+
+  .user-location-marker {
+    width: 30px;
+    height: 30px;
+    background: #1976d2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.3);
+    animation: pulse 2s infinite;
+
+    .material-icons {
+      color: white;
+      font-size: 24px;
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.7);
+    }
+
+    70% {
+      box-shadow: 0 0 0 10px rgba(25, 118, 210, 0);
+    }
+
+    100% {
+      box-shadow: 0 0 0 0 rgba(25, 118, 210, 0);
+    }
+  }
+
+  // Marker Cluster Styles
+  .marker-cluster {
+    background: rgba(102, 126, 234, 0.6);
+    border-radius: 50%;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    div {
+      background: rgba(102, 126, 234, 0.9);
+      border-radius: 50%;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      span {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .marker-cluster-small {
+    width: 40px;
+    height: 40px;
+  }
+
+  .marker-cluster-medium {
+    width: 50px;
+    height: 50px;
+
+    div span {
+      font-size: 16px;
+    }
+  }
+
+  .marker-cluster-large {
+    width: 60px;
+    height: 60px;
+
+    div span {
+      font-size: 18px;
+    }
+  }
+
+  // Custom Popup Styles
+  .custom-popup {
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px;
+      padding: 0;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .leaflet-popup-content {
+      margin: 0;
+      width: 250px !important;
+    }
+
+    .leaflet-popup-tip {
+      background: white;
+    }
+  }
+
+  .map-popup {
+    padding: 16px;
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .popup-category {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .popup-location {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      &:before {
+        content: '📍';
+      }
+    }
+
+    .popup-description {
+      font-size: 13px;
+      color: #4b5563;
+      margin: 8px 0;
+      line-height: 1.5;
+      max-height: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .popup-view-btn {
+      width: 100%;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 12px;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  // Geolocation Button
+  .geolocation-btn {
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #f3f4f6;
+    }
+
+    .material-icons {
+      font-size: 20px;
+      color: #1976d2;
+    }
+  }
+
+  // Custom Control Positioning
+  .leaflet-control-zoom {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .leaflet-control-scale {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
 }

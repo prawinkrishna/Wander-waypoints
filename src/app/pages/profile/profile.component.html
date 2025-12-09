@@ -1,3 +1,80 @@
-<div>
-    <lib-wander-library></lib-wander-library>
+<app-navbar></app-navbar>
+
+<div class="profile-container">
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading && !user">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading profile...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ error }}</p>
+        <button mat-stroked-button color="primary" (click)="loadProfile()">Retry</button>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="content" *ngIf="user">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="avatar-section">
+                <div class="avatar-placeholder">
+                    {{ user.username?.charAt(0)?.toUpperCase() || 'U' }}
+                </div>
+            </div>
+            <div class="info-section">
+                <h1>{{ user.username }}</h1>
+                <p class="email">{{ user.email }}</p>
+                <div class="role-badge">{{ user.role | titlecase }}</div>
+                <p class="bio" *ngIf="user.bio">{{ user.bio }}</p>
+            </div>
+            <div class="actions-section">
+                <button mat-flat-button color="primary" (click)="openCreateTripDialog()">
+                    <mat-icon>add</mat-icon> New Trip
+                </button>
+                <button mat-stroked-button color="warn" (click)="onLogout()">
+                    <mat-icon>logout</mat-icon> Logout
+                </button>
+            </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Trips Section -->
+        <div class="trips-section">
+            <div class="section-header">
+                <h2>My Trips</h2>
+                <button mat-raised-button color="primary" (click)="openCreateTripDialog()">
+                    <mat-icon>add</mat-icon>
+                    New Trip
+                </button>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" *ngIf="trips.length === 0">
+                <mat-icon>luggage</mat-icon>
+                <h3>No trips yet</h3>
+                <p>Start planning your next adventure!</p>
+                <button mat-raised-button color="primary" (click)="openCreateTripDialog()">Create Trip</button>
+            </div>
+
+            <!-- Trip Cards -->
+            <div class="trips-grid" *ngIf="trips.length > 0">
+                <mat-card *ngFor="let trip of trips" class="trip-card" [routerLink]="['/trip-details', trip.tripId]">
+                    <mat-card-header>
+                        <mat-card-title>{{ trip.title }}</mat-card-title>
+                        <mat-card-subtitle>{{ trip.startDate | date }} - {{ trip.endDate | date }}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p>{{ trip.description }}</p>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <mat-icon>{{ trip.visibility === 'public' ? 'public' : 'lock' }}</mat-icon>
+                        <span>{{ trip.visibility }}</span>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+    </div>
 </div>

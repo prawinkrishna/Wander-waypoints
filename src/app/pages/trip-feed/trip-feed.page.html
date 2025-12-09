@@ -1,2 +1,102 @@
-<h1>Trip Feed</h1>
-<!-- Trip feed content goes here -->
+<app-navbar></app-navbar>
+
+<div class="trip-feed-container">
+    <!-- Header -->
+    <div class="feed-header">
+        <div class="header-content">
+            <h1>Discover Trips</h1>
+            <p class="subtitle">Explore amazing trips from travelers around the world</p>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="filters-section">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search trips</mat-label>
+            <input matInput [(ngModel)]="searchQuery" (ngModelChange)="onSearch()"
+                placeholder="Search by title, description, or creator...">
+            <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="sort-field">
+            <mat-label>Sort by</mat-label>
+            <mat-select [(ngModel)]="selectedSort" (selectionChange)="onSortChange()">
+                <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+                    {{ option.label }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading trips...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !isLoading">
+        <mat-icon>error_outline</mat-icon>
+        <h2>Failed to Load Trips</h2>
+        <p>{{ error }}</p>
+        <button mat-raised-button color="primary" (click)="loadTrips()">Retry</button>
+    </div>
+
+    <!-- Trip Grid -->
+    <div class="trips-grid" *ngIf="!isLoading && !error">
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="filteredTrips.length === 0">
+            <mat-icon>explore_off</mat-icon>
+            <h2>No Trips Found</h2>
+            <p *ngIf="searchQuery">Try adjusting your search or filters</p>
+            <p *ngIf="!searchQuery">No public trips available yet. Be the first to share your adventure!</p>
+        </div>
+
+        <!-- Trip Cards -->
+        <mat-card *ngFor="let trip of filteredTrips" class="trip-card" (click)="onTripClick(trip.tripId)">
+            <div class="card-header">
+                <div class="trip-dates">
+                    <mat-icon>calendar_today</mat-icon>
+                    <span>{{ formatDate(trip.startDate) }} - {{ formatDate(trip.endDate) }}</span>
+                </div>
+                <div class="trip-duration">
+                    {{ getTripDuration(trip) }}
+                </div>
+            </div>
+
+            <mat-card-header>
+                <mat-card-title>{{ trip.title }}</mat-card-title>
+                <mat-card-subtitle>
+                    <mat-icon>person</mat-icon>
+                    {{ trip.user?.username || 'Anonymous' }}
+                </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+                <p class="trip-description">{{ trip.description }}</p>
+
+                <div class="trip-stats">
+                    <div class="stat-item">
+                        <mat-icon>place</mat-icon>
+                        <span>{{ trip.places?.length || 0 }} places</span>
+                    </div>
+                    <div class="stat-item">
+                        <mat-icon>favorite</mat-icon>
+                        <span>{{ trip.likes || 0 }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <mat-icon>comment</mat-icon>
+                        <span>{{ trip.comments || 0 }}</span>
+                    </div>
+                </div>
+            </mat-card-content>
+
+            <mat-card-actions>
+                <button mat-button color="primary">
+                    View Trip
+                    <mat-icon>arrow_forward</mat-icon>
+                </button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>
