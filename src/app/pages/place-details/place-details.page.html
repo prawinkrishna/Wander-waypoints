@@ -1,2 +1,124 @@
-<h1>Place Details</h1>
-<!-- Place details content goes here -->
+<app-navbar></app-navbar>
+
+<div class="place-details-container">
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading place details...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !isLoading">
+        <mat-icon>error_outline</mat-icon>
+        <h2>Place Not Found</h2>
+        <p>{{ error }}</p>
+        <button mat-raised-button color="primary" routerLink="/home">Browse Places</button>
+    </div>
+
+    <!-- Place Content -->
+    <div class="place-content" *ngIf="place && !isLoading && !error">
+        <!-- Header Section -->
+        <div class="place-header">
+            <div class="header-left">
+                <div class="breadcrumb">
+                    <a routerLink="/home">Places</a>
+                    <mat-icon>chevron_right</mat-icon>
+                    <span>{{ place.name }}</span>
+                </div>
+
+                <div class="category-icon" [style.background-color]="getCategoryColor()">
+                    <mat-icon>{{ getCategoryIcon() }}</mat-icon>
+                </div>
+
+                <h1>{{ place.name }}</h1>
+
+                <div class="place-meta">
+                    <span class="category-badge" [style.background-color]="getCategoryColor()">
+                        {{ place.category }}
+                    </span>
+                    <div class="location">
+                        <mat-icon>location_on</mat-icon>
+                        <span>{{ place.address || place.location || 'Location not specified' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="header-actions">
+                <button mat-raised-button color="primary" (click)="onAddToTrip()">
+                    <mat-icon>add</mat-icon>
+                    Add to Trip
+                </button>
+                <button mat-raised-button (click)="onViewOnMap()">
+                    <mat-icon>map</mat-icon>
+                    View on Map
+                </button>
+                <button mat-icon-button (click)="onShare()" matTooltip="Share">
+                    <mat-icon>share</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Description Card -->
+                <mat-card class="info-card">
+                    <mat-card-header>
+                        <mat-card-title>About</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p class="description">{{ place.description || 'No description available for this place.' }}</p>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Location Card -->
+                <mat-card class="location-card">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>pin_drop</mat-icon>
+                            Location
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="location-info">
+                            <div class="info-row">
+                                <span class="label">Address:</span>
+                                <span class="value">{{ place.address || place.location || 'Not specified' }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Coordinates:</span>
+                                <span class="value">{{ place.latitude }}, {{ place.longitude }}</span>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Reviews Section (Read-only for V1) -->
+                <mat-card class="reviews-card">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>star</mat-icon>
+                            Reviews
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="reviews-placeholder">
+                            <mat-icon>rate_review</mat-icon>
+                            <p>Reviews feature coming soon!</p>
+                            <span class="note">Share your experience in V2.0</span>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+            <!-- Right Column: Map -->
+            <div class="right-column">
+                <div class="map-container sticky">
+                    <lib-gps [places]="[place]" [selectedPlace]="place"></lib-gps>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

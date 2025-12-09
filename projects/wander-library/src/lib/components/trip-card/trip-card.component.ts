@@ -13,4 +13,20 @@ export class TripCardComponent {
   onCardClick(): void {
     this.cardClick.emit(this.place);
   }
+
+  getCategoryIcon(): string {
+    const category = this.place.category?.toLowerCase() || '';
+
+    if (category.includes('food') || category.includes('restaurant')) {
+      return 'restaurant';
+    } else if (category.includes('sight') || category.includes('view')) {
+      return 'landscape';
+    } else if (category.includes('stay') || category.includes('hotel')) {
+      return 'hotel';
+    } else if (category.includes('activity') || category.includes('adventure')) {
+      return 'hiking';
+    } else {
+      return 'place';
+    }
+  }
 }

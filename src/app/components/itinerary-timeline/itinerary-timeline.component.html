@@ -1,0 +1,66 @@
+<div class="itinerary-container">
+    <div *ngFor="let group of groupedPlaces" class="day-group">
+        <div class="day-header">
+            <h3>Day {{ group.dayNumber }}</h3>
+            <span class="day-summary">{{ group.places.length }} Places</span>
+        </div>
+
+        <div class="timeline">
+            <div *ngFor="let item of group.places; let last = last" class="timeline-item">
+
+                <!-- Time Column -->
+                <div class="time-col">
+                    <span class="time">{{ item.startTime || '09:00 AM' }}</span> <!-- Placeholder default -->
+                </div>
+
+                <!-- Timeline Line/Dot -->
+                <div class="line-col">
+                    <div class="dot" [ngClass]="getCategoryIcon(item.place?.category)">
+                        <mat-icon>{{ getCategoryIcon(item.place?.category) }}</mat-icon>
+                    </div>
+                    <div class="line" *ngIf="!last"></div>
+                </div>
+
+                <!-- Content Card -->
+                <div class="content-col">
+                    <mat-card class="place-card">
+                        <div class="card-image" *ngIf="item.place?.image">
+                            <img [src]="item.place.image" [alt]="item.place.name">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <h4>{{ item.place?.name }}</h4>
+                                <span class="category-badge">{{ item.place?.category }}</span>
+                            </div>
+
+                            <p class="notes" *ngIf="item.notes">{{ item.notes }}</p>
+                            <p class="description" *ngIf="!item.notes">{{ item.place?.description | slice:0:100 }}...
+                            </p>
+
+                            <!-- Influencer Badge (Mock) -->
+                            <div class="influencer-badge" *ngIf="item.place?.visitedBy">
+                                <mat-icon>verified</mat-icon>
+                                <span>Visited by {{ item.place.visitedBy }}</span>
+                            </div>
+                        </div>
+                    </mat-card>
+
+                    <!-- Travel Stats to Next Place -->
+                    <div class="travel-stats" *ngIf="!last && (item.distanceFromPrev || item.travelTimeFromPrev)">
+                        <mat-icon>directions_car</mat-icon>
+                        <span>{{ item.travelTimeFromPrev || 15 }} min drive</span>
+                        <span class="dot-separator">•</span>
+                        <span>{{ item.distanceFromPrev || 5.2 }} km</span>
+                    </div>
+                    <!-- Fallback Travel Stats (Mock for demo) -->
+                    <div class="travel-stats" *ngIf="!last && !item.distanceFromPrev">
+                        <mat-icon>directions_car</mat-icon>
+                        <span>15 min drive</span>
+                        <span class="dot-separator">•</span>
+                        <span>5.2 km</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

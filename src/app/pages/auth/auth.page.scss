@@ -1,1 +1,369 @@
-/* Auth page styles */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1rem;
+}
+
+.auth-card {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+  max-width: 480px;
+  width: 100%;
+  overflow: hidden;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 3rem 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+
+  h1 {
+    margin: 0;
+    font-size: 2.75rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
+  }
+
+  p {
+    margin: 1rem 0 0;
+    opacity: 0.95;
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    line-height: 1.5;
+  }
+}
+
+.alert {
+  margin: 1.5rem 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  animation: fadeInSlide 0.4s ease-out;
+  line-height: 1.5;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  &.error {
+    background: #fff5f5;
+    color: #e53e3e;
+    border: 1px solid #fed7d7;
+  }
+
+  &.success {
+    background: #f0fff4;
+    color: #38a169;
+    border: 1px solid #c6f6d5;
+  }
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Material tab customization
+::ng-deep .mat-mdc-tab-group {
+  flex: 1;
+
+  .mat-mdc-tab-header {
+    background: #fff;
+    border-bottom: 1px solid #edf2f7;
+  }
+
+  .mat-mdc-tab-labels {
+    justify-content: center;
+  }
+
+  .mat-mdc-tab {
+    min-width: 120px;
+    font-weight: 600;
+    font-size: 1rem;
+    height: 60px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+
+    &.mdc-tab--active {
+      opacity: 1;
+
+      .mdc-tab__text-label {
+        color: #667eea;
+      }
+    }
+  }
+
+  .mdc-tab-indicator__content--underline {
+    border-color: #667eea !important;
+    border-top-width: 3px !important;
+  }
+
+  .mat-mdc-tab-body-wrapper {
+    background: #fff;
+  }
+}
+
+.tab-content {
+  padding: 2rem;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; // Increased gap to prevent overlap
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+// Form field improvements - FIXED
+::ng-deep .mat-mdc-form-field {
+
+  // Ensure the text field wrapper has the right background and radius
+  .mdc-text-field {
+    border-radius: 12px !important;
+    background-color: #f7fafc !important;
+    padding-left: 12px !important; // Add padding for icon
+
+    &--filled:not(.mdc-text-field--disabled) {
+      background-color: #f7fafc !important;
+    }
+  }
+
+  // Fix icon visibility and positioning
+  .mat-mdc-form-field-icon-prefix {
+    padding: 0 12px 0 0;
+    color: #a0aec0;
+    display: flex;
+    align-items: center;
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  // Fix label positioning - remove custom transforms that broke it
+  .mdc-floating-label {
+    font-weight: 500;
+    color: #718096;
+    letter-spacing: 0.3px;
+  }
+
+  // Remove underline ripple for cleaner look
+  .mdc-line-ripple {
+    display: none;
+  }
+
+  // Error message styling
+  .mat-mdc-form-field-error {
+    font-size: 0.85rem;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  // Focus state
+  &.mat-focused {
+    .mdc-text-field {
+      background-color: #fff !important;
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.5);
+    }
+
+    .mat-mdc-form-field-icon-prefix {
+      color: #667eea;
+    }
+
+    .mdc-floating-label {
+      color: #667eea;
+    }
+  }
+}
+
+.submit-btn {
+  height: 56px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-top: 1rem;
+  position: relative;
+  text-transform: uppercase;
+  border-radius: 12px !important;
+  width: 100%;
+
+  mat-spinner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.divider {
+  text-align: center;
+  margin: 2rem 0;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e2e8f0;
+    z-index: 0;
+  }
+
+  span {
+    background: white;
+    padding: 0 1rem;
+    color: #718096;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.guest-btn {
+  width: 100%;
+  height: 52px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px dashed #cbd5e0 !important;
+  color: #718096;
+  transition: all 0.2s ease;
+  border-radius: 12px !important;
+  letter-spacing: 0.3px;
+
+  &:hover:not(:disabled) {
+    border-color: #667eea !important;
+    border-style: solid !important;
+    background: #ebf4ff;
+    color: #5a67d8;
+    transform: translateY(-2px);
+  }
+
+  mat-icon {
+    margin-right: 0.75rem;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Button styling
+::ng-deep .mat-mdc-raised-button.mat-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(102, 126, 234, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    background: #cbd5e0 !important;
+    box-shadow: none;
+  }
+}
+
+// Responsive design
+@media (max-width: 600px) {
+  .auth-container {
+    padding: 0;
+    background: white;
+  }
+
+  .auth-card {
+    box-shadow: none;
+    border-radius: 0;
+    max-width: 100%;
+    min-height: 100vh;
+  }
+
+  .auth-header {
+    padding: 4rem 1.5rem 2rem;
+    border-radius: 0 0 30px 30px;
+
+    h1 {
+      font-size: 2.25rem;
+    }
+  }
+
+  .tab-content {
+    padding: 1.5rem;
+  }
+}
+
+// Accessibility improvements
+::ng-deep {
+  .mat-mdc-form-field-error {
+    &::before {
+      content: '⚠ ';
+    }
+  }
+
+  button:focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+  }
+
+  .mat-mdc-text-field-wrapper:has(input:focus-visible) {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+    border-radius: 10px;
+  }
+}

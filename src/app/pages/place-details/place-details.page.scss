@@ -1,1 +1,344 @@
-/* Place details page styles */
+.place-details-container {
+    min-height: calc(100vh - 64px);
+    background: #f3f4f6;
+}
+
+// Loading & Error States
+.loading-container,
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 1rem;
+    padding: 2rem;
+
+    mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        color: #9ca3af;
+    }
+
+    p {
+        color: #6b7280;
+        font-size: 1rem;
+    }
+}
+
+.error-container {
+    mat-icon {
+        color: #ef4444;
+    }
+
+    h2 {
+        color: #1f2937;
+        margin: 0;
+    }
+}
+
+// Place Content
+.place-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+// Header Section
+.place-header {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+
+    .header-left {
+        flex: 1;
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+
+            a {
+                color: #667eea;
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+
+            mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        .category-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+
+            mat-icon {
+                font-size: 48px;
+                width: 48px;
+                height: 48px;
+                color: white;
+            }
+        }
+
+        h1 {
+            margin: 0 0 1rem 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .place-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+
+            .category-badge {
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                color: white;
+                font-weight: 600;
+                font-size: 0.875rem;
+            }
+
+            .location {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: #4b5563;
+
+                mat-icon {
+                    font-size: 20px;
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+        }
+    }
+
+    .header-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: flex-start;
+
+        button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+            }
+        }
+    }
+}
+
+// Content Grid
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 500px;
+    gap: 2rem;
+    align-items: start;
+}
+
+// Left Column
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    mat-card {
+        border-radius: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        mat-card-header {
+            padding: 1.5rem 1.5rem 0;
+
+            mat-card-title {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #1f2937;
+                margin: 0;
+
+                mat-icon {
+                    font-size: 24px;
+                    width: 24px;
+                    height: 24px;
+                    color: #667eea;
+                }
+            }
+        }
+
+        mat-card-content {
+            padding: 1.5rem;
+        }
+    }
+}
+
+// Description
+.description {
+    margin: 0;
+    line-height: 1.6;
+    color: #4b5563;
+}
+
+// Location Card
+.location-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 8px;
+
+    .label {
+        font-weight: 600;
+        color: #4b5563;
+        flex-shrink: 0;
+    }
+
+    .value {
+        color: #6b7280;
+        text-align: right;
+        word-break: break-word;
+    }
+}
+
+// Reviews Placeholder
+.reviews-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: #9ca3af;
+
+    mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 1rem;
+    }
+
+    p {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+        color: #6b7280;
+    }
+
+    .note {
+        font-size: 0.875rem;
+        color: #9ca3af;
+    }
+}
+
+// Right Column - Map
+.right-column {
+    position: relative;
+}
+
+.map-container {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: 600px;
+
+    &.sticky {
+        position: sticky;
+        top: 80px;
+    }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .map-container {
+        height: 400px;
+
+        &.sticky {
+            position: relative;
+            top: 0;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .place-content {
+        padding: 1rem;
+    }
+
+    .place-header {
+        flex-direction: column;
+        padding: 1.5rem;
+
+        .header-left {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .category-icon {
+                width: 64px;
+                height: 64px;
+
+                mat-icon {
+                    font-size: 36px;
+                    width: 36px;
+                    height: 36px;
+                }
+            }
+        }
+
+        .header-actions {
+            width: 100%;
+            flex-direction: column;
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    }
+
+    .map-container {
+        height: 300px;
+    }
+}

@@ -1,23 +1,55 @@
 <nav class="navbar">
   <div class="navbar-left">
-    <img src="/assets/logo.png" alt="Wanderlust Logo" class="logo" />
-    <span class="site-name">Wanderlust</span>
+    <a routerLink="/home" class="logo-link">
+      <mat-icon class="logo-icon">explore</mat-icon>
+      <span class="site-name">Wander</span>
+    </a>
   </div>
+
   <div class="navbar-center">
-    <a mat-button routerLink="/explore">Explore</a>
-    <a mat-button routerLink="/create">Create</a>
-    <a mat-button routerLink="/inbox">Inbox</a>
+    <a mat-button routerLink="/home" routerLinkActive="active-link">
+      <mat-icon>home</mat-icon>
+      <span>Home</span>
+    </a>
+    <a mat-button routerLink="/trip-feed" routerLinkActive="active-link">
+      <mat-icon>map</mat-icon>
+      <span>Trips</span>
+    </a>
+    <a mat-button routerLink="/dashboard" routerLinkActive="active-link">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </a>
   </div>
+
   <div class="navbar-right">
     <mat-form-field appearance="outline" class="search-bar">
-      <mat-label>Search</mat-label>
+      <mat-label>Search places...</mat-label>
       <input matInput type="text" />
+      <mat-icon matPrefix>search</mat-icon>
     </mat-form-field>
+
     <button mat-icon-button aria-label="Notifications">
-      <span class="material-symbols-outlined">notifications</span>
+      <mat-icon [matBadge]="3" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
     </button>
-    <button mat-icon-button class="avatar-btn">
-      <img src="/assets/avatar.png" alt="Profile" class="avatar" />
+
+    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="avatar-btn">
+      <mat-icon>account_circle</mat-icon>
     </button>
+
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item routerLink="/profile">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+      <button mat-menu-item routerLink="/booking">
+        <mat-icon>book_online</mat-icon>
+        <span>Bookings</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="onLogout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
   </div>
 </nav>
