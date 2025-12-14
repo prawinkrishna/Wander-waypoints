@@ -46,4 +46,12 @@ export class TripService {
     commentOnTrip(id: string, comment: string): Observable<any> {
         return this.http.post(`${this.apiUrl}/${id}/comment`, { text: comment });
     }
+
+    deleteTripPlace(tripPlaceId: string): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/place/${tripPlaceId}`);
+    }
+
+    reorderTripPlaces(tripId: string, orderedIds: string[]): Observable<any> {
+        return this.http.patch(`${this.apiUrl}/${tripId}/reorder`, { orderedIds });
+    }
 }

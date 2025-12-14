@@ -39,7 +39,7 @@ export class TripDetailsPage implements OnInit {
   newComment = '';
   isAddingComment = false;
 
-  viewMode: 'map' | 'itinerary' = 'map'; // Default to map view
+
 
   constructor(
     private route: ActivatedRoute,
@@ -173,7 +173,36 @@ export class TripDetailsPage implements OnInit {
     return `${days} day${days > 1 ? 's' : ''}`;
   }
 
-  setViewMode(mode: 'map' | 'itinerary') {
-    this.viewMode = mode;
+
+
+  onPlaceDeleted(tripPlaceId: string) {
+    if (!this.trip) return;
+    
+    // Optimistic update: Remove the place from the local array immediately
+    this.trip.places = this.trip.places?.filter(p => p.tripPlaceId !== tripPlaceId) || [];
+    
+    this.tripService.deleteTripPlace(tripPlaceId).subscribe({
+      next: () => console.log('Place deleted successfully from backend'),
+      error: (err) => {
+        console.error('Error deleting place:', err);
+        // revert logic could happen here
+        this.loadTripDetails(); // Reload to sync state if failed
+      }
+    });
+  }
+
+  onPlacesReordered(reorderedPlaces: any[]) {
+    if (!this.trip) return;
+    
+    // Update the local trip places
+    this.trip.places = reorderedPlaces;
+    
+    // Extract IDs in the new order
+    const orderedIds = reorderedPlaces.map(p => p.tripPlaceId);
+
+    this.tripService.reorderTripPlaces(this.trip.tripId, orderedIds).subscribe({
+      next: () => console.log('Places reordered successfully on backend'),
+      error: (err) => console.error('Error reordering places:', err)
+    });
   }
 }

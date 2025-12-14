@@ -118,40 +118,174 @@
   // Custom Popup Styles
   .custom-popup {
     .leaflet-popup-content-wrapper {
-      border-radius: 12px;
+      border-radius: 16px; // More rounded
       padding: 0;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); // Deeper shadow
+      background: rgba(255, 255, 255, 0.95); // Slightly translucent
+      backdrop-filter: blur(10px); // Glassmorphism effect
     }
 
     .leaflet-popup-content {
       margin: 0;
-      width: 250px !important;
+      width: 260px !important;
     }
 
     .leaflet-popup-tip {
-      background: white;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
     }
   }
 
+  // Sequence Marker Styles
+  .custom-seq-marker {
+    background: transparent;
+    border: none;
+    
+    // Removed animation to prevent visibility issues on zoom re-render
+    // animation: dropIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+
+    .seq-marker {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 3px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background-color: #667eea;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2); // Shadow for depth
+      transition: transform 0.2s ease; // Simple transition only
+      overflow: visible; // Allow day tag to show
+      
+      &:hover {
+        transform: scale(1.15); // Scale effect on hover
+        z-index: 1000;
+        cursor: pointer;
+      }
+      
+      span {
+        color: white !important; // Force white
+        font-weight: 800;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        line-height: 30px; // Match height to vertical center
+        display: block;
+        text-align: center;
+        width: 100%;
+        z-index: 10;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        pointer-events: none;
+      }
+      
+      .day-tag {
+        position: absolute;
+        top: -24px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(31, 41, 55, 0.9); // Darker background
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 500;
+        white-space: nowrap;
+        opacity: 0;
+        transition: all 0.2s;
+        pointer-events: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        backdrop-filter: blur(4px);
+      }
+      
+      &:hover .day-tag {
+        opacity: 1;
+        top: -30px; // Slide up slightly
+      }
+    }
+  }
+
+  @keyframes dropIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.5);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .popup-day-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    background-color: rgba(0,0,0,0.2); // Fallback tint
+  }
+
   .map-popup {
-    padding: 16px;
+    padding: 0;
+    width: 260px;
+    font-family: 'Inter', system-ui, sans-serif; // Modern font stack
+    
+    .popup-image-container {
+      height: 150px; // Slightly taller
+      width: 100%;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      border-radius: 16px 16px 0 0;
+      
+      .popup-rating {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        background: rgba(255, 255, 255, 0.9); // Light theme badge
+        color: #1f2937;
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        
+        .material-icons {
+          font-size: 14px;
+          color: #f59e0b;
+        }
+      }
+    }
+
+    .popup-content {
+      padding: 16px;
+    }
 
     h3 {
-      margin: 0 0 8px 0;
+      margin: 0 0 6px 0;
       font-size: 18px;
-      font-weight: 600;
-      color: #1f2937;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.2;
     }
 
     .popup-category {
       display: inline-block;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 500;
-      margin-bottom: 8px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .popup-location {
@@ -160,79 +294,150 @@
       margin: 4px 0;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      line-height: 1.4;
 
       &:before {
         content: '📍';
+        font-size: 14px;
       }
     }
 
     .popup-description {
       font-size: 13px;
       color: #4b5563;
-      margin: 8px 0;
+      margin: 10px 0;
       line-height: 1.5;
       max-height: 60px;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
     }
 
-    .popup-view-btn {
+    button {
       width: 100%;
-      padding: 8px 16px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      padding: 10px 16px;
       border: none;
-      border-radius: 8px;
-      font-weight: 500;
+      border-radius: 10px;
+      font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      margin-top: 12px;
-
+      transition: all 0.2s;
+      margin-top: 14px;
+      font-size: 14px;
+      
       &:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
-
+      
       &:active {
         transform: translateY(0);
       }
     }
+
+    .popup-view-btn {
+      background: #f3f4f6;
+      color: #374151;
+      
+      &:hover {
+        background: #e5e7eb;
+      }
+    }
+
+    .popup-book-btn {
+      background: #111827; // Dark premium button
+      color: white;
+      
+      &:hover {
+        background: #000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+    }
   }
 
-  // Geolocation Button
+  // Floating Controls Styles (Modern Google Maps-like)
   .geolocation-btn {
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
     border: none;
+    border-radius: 50%; // Perfect circle
     background: white;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); // Soft shadow
+    margin-right: 10px; // Spacing from edge
+    margin-bottom: 10px;
 
     &:hover {
-      background: #f3f4f6;
+      background: #f9fafb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
     .material-icons {
-      font-size: 20px;
-      color: #1976d2;
+      font-size: 22px;
+      color: #4b5563; // Dark grey icon
     }
   }
 
-  // Custom Control Positioning
-  .leaflet-control-zoom {
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
+  // Style Leaflet built-in zoom controls to look floating
+  ::ng-deep .leaflet-control-zoom {
+    border: none !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+    margin-right: 10px !important;
+    margin-bottom: 10px !important;
+    
+    a {
+      width: 40px !important;
+      height: 40px !important;
+      line-height: 40px !important;
+      border-radius: 50% !important; // Circular buttons
+      background: white !important;
+      color: #4b5563 !important;
+      margin-top: 10px !important; // Separate the buttons
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 18px !important;
+      font-weight: 300 !important;
+      transition: all 0.2s !important;
+      border-bottom: none !important; // Remove separator line
+
+      &:first-child {
+        border-top-left-radius: 50% !important;
+        border-top-right-radius: 50% !important;
+      }
+      
+      &:last-child {
+        border-bottom-left-radius: 50% !important;
+        border-bottom-right-radius: 50% !important;
+      }
+
+      &:hover {
+        background: #f9fafb !important;
+        color: #111827 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+    }
   }
 
   .leaflet-control-scale {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 11px;
+    background: rgba(255, 255, 255, 0.8) !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    border: none !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    color: #6b7280 !important;
+    margin-left: 10px !important;
+    margin-bottom: 2px !important;
   }
 }

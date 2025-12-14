@@ -3,10 +3,12 @@ export interface Place {
   name: string;
   address?: string; // Backend uses 'address', not 'location'
   location?: string; // Keep for backward compatibility
-  description?: string; // Optional - backend may not have this
-  image?: string; // Optional - backend may not have this
+  description?: string;
+  image?: string;
   latitude: string;
   longitude: string;
   category: any;
   visitedBy?: any; // Backend includes this
+  rating?: number;
+  bookingUrl?: string;
 }
