@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TripDetailsRoutingModule } from './trip-details-routing.module';
 import { TripDetailsPage } from './trip-details.page';
 import { SharedModule } from '../../components/shared/shared.module';
@@ -26,6 +27,7 @@ import { ItineraryTimelineComponent } from '../../components/itinerary-timeline/
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,
+    DragDropModule,
     TripDetailsRoutingModule,
     SharedModule,
     WanderLibraryModule
