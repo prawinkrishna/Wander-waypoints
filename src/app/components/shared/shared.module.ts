@@ -11,6 +11,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [NavbarComponent],
@@ -25,7 +27,9 @@ import { RouterModule } from '@angular/router';
     MatMenuModule,
     MatBadgeModule,
     MatDividerModule,
-    RouterModule
+    RouterModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule
   ],
   exports: [
     NavbarComponent,

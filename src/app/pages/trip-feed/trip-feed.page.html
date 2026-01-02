@@ -11,16 +11,14 @@
 
     <!-- Search and Filters -->
     <div class="filters-section">
-        <mat-form-field appearance="outline" class="search-field">
-            <mat-label>Search trips</mat-label>
+        <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
             <input matInput [(ngModel)]="searchQuery" (ngModelChange)="onSearch()"
                 placeholder="Search by title, description, or creator...">
             <mat-icon matPrefix>search</mat-icon>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="sort-field">
-            <mat-label>Sort by</mat-label>
-            <mat-select [(ngModel)]="selectedSort" (selectionChange)="onSortChange()">
+        <mat-form-field appearance="outline" class="sort-field" subscriptSizing="dynamic">
+            <mat-select [(ngModel)]="selectedSort" (selectionChange)="onSortChange()" placeholder="Sort by">
                 <mat-option *ngFor="let option of sortOptions" [value]="option.value">
                     {{ option.label }}
                 </mat-option>
