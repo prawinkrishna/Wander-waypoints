@@ -2,11 +2,13 @@
 <div class="home-container">
   <!-- Left Panel -->
   <div class="list-panel">
-    <app-places-list (placeSelected)="onPlaceSelected($event)" (placesFetched)="onPlacesFetched($event)" [selectedPlaceId]="selectedPlace?.placeId"></app-places-list>
+    <app-places-list (placeSelected)="onPlaceSelected($event)" (placesFetched)="onPlacesFetched($event)"
+      [selectedPlaceId]="selectedPlace?.placeId"></app-places-list>
   </div>
 
   <!-- Right Panel -->
   <div class="map-panel">
-    <lib-gps [places]="filteredPlaces" [selectedPlace]="selectedPlace" (markerClicked)="onMarkerClicked($event)"></lib-gps>
+    <lib-gps [places]="filteredPlaces" [selectedPlace]="selectedPlace" (markerClicked)="onMarkerClicked($event)"
+      (mapMoved)="onMapMoved($event)" [searchFn]="mapSearchFn"></lib-gps>
   </div>
 </div>

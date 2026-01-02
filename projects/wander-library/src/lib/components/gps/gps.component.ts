@@ -3,6 +3,7 @@ import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, OnDestroy, O
 import { Place } from '../../models/place.model';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 
 @Component({
   selector: 'lib-gps',
@@ -11,14 +12,25 @@ import 'leaflet.markercluster';
 })
 export class GpsComponent implements OnInit, OnChanges, OnDestroy {
   @Input() places: any[] = []; // Can be Place[] or TripPlace[]
+  @Input() searchFn: ((query: string) => Promise<any[]>) | null = null;
   @Input() selectedPlace: Place | null = null;
   @Output() markerClicked = new EventEmitter<string>();
+  @Output() mapMoved = new EventEmitter<[[number, number], [number, number]]>();
   private map: any;
+  // ... existing code ...
+
+  // Inside initMap, after map creation:
+  // this.map.on('moveend', () => {
+  //   const bounds = this.map.getBounds();
+  //   const corner1 = bounds.getSouthWest();
+  //   const corner2 = bounds.getNorthEast();
+  //   this.mapMoved.emit([[corner1.lat, corner1.lng], [corner2.lat, corner2.lng]]);
+  // });
   private markers: Map<any, any> = new Map();
   private markerClusterGroup!: L.MarkerClusterGroup;
   private routeLayers: L.LayerGroup = L.layerGroup();
   private userLocationMarker: L.Marker | null = null;
-  
+
   // Day colors for route lines and markers
   private dayColors = [
     '#3b82f6', // Day 1: Blue
@@ -71,13 +83,24 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
       this.map = L.map('map', {
         center: [13.0827, 80.2707],
         zoom: 10,
-        zoomControl: false
+        zoomControl: false,
+        minZoom: 3,
+        maxBounds: [[-90, -180], [90, 180]],
+        maxBoundsViscosity: 1.0
+      });
+
+      this.map.on('moveend', () => {
+        const bounds = this.map.getBounds();
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+        this.mapMoved.emit([[sw.lat, sw.lng], [ne.lat, ne.lng]]);
       });
 
       // Use CartoDB Voyager tiles for a cleaner, modern look
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        maxZoom: 20
+        maxZoom: 20,
+        noWrap: true
       }).addTo(this.map);
 
       L.control.zoom({ position: 'bottomright' }).addTo(this.map);
@@ -89,6 +112,40 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
       });
       this.map.addLayer(this.markerClusterGroup);
       this.map.addLayer(this.routeLayers);
+
+      // Custom Provider Implementation
+      class CustomSearchProvider {
+        constructor(private searchFn: (query: string) => Promise<any[]>) { }
+        async search(params: { query: string }) {
+          return await this.searchFn(params.query);
+        }
+      }
+
+      // Add Search Control
+      // @ts-ignore
+      const searchControl = new GeoSearchControl({
+        provider: this.searchFn ? new CustomSearchProvider(this.searchFn) : new OpenStreetMapProvider(),
+        style: 'bar', // 'button' or 'bar'
+        showMarker: true,
+        showPopup: false,
+        marker: {
+          icon: new L.Icon.Default(),
+          draggable: false,
+        },
+        retainZoomLevel: false,
+        animateZoom: true,
+        keepResult: true,
+        searchLabel: 'Search for places...',
+      });
+      this.map.addControl(searchControl);
+
+      // Fix: Disable click propagation to allow typing in the search box
+      setTimeout(() => {
+        const searchInput = document.querySelector('.leaflet-control-geosearch form');
+        if (searchInput) {
+          L.DomEvent.disableClickPropagation(searchInput as HTMLElement);
+        }
+      }, 500);
 
       this.addGeolocationControl();
       this.updateMapContent();
@@ -113,7 +170,7 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
       const placeData = item.place || item;
       const day = item.dayNumber || 1;
       const order = item.order !== undefined ? item.order : index;
-      
+
       return {
         ...placeData,     // Properties of Place
         _dayNumber: day,  // Internal use
@@ -140,7 +197,7 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
 
       if (latLngs.length > 1) {
         const color = this.dayColors[(dayNum - 1) % this.dayColors.length];
-        
+
         // Draw dashed line for route
         L.polyline(latLngs, {
           color: color,
@@ -149,7 +206,7 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
           dashArray: '10, 10',
           lineCap: 'round'
         }).addTo(this.routeLayers);
-        
+
         // Add arrows or direction indicators could go here
       }
     });
@@ -157,36 +214,36 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
     // 4. Create Markers with Sequence Numbers
     let globalIndex = 0;
     dayGroups.forEach((places, dayNum) => {
-        const color = this.dayColors[(dayNum - 1) % this.dayColors.length];
-        
-        places.forEach((place, index) => {
-            if (!place.latitude || !place.longitude) return;
-            
-            globalIndex++;
-            const seqNum = index + 1; // 1-based index per day
-            
-            // Create Numbered Icon
-            const icon = L.divIcon({
-                html: `<div class="seq-marker" style="background-color: ${color}; box-shadow: 0 0 0 3px rgba(${this.hexToRgb(color)}, 0.3)">
+      const color = this.dayColors[(dayNum - 1) % this.dayColors.length];
+
+      places.forEach((place, index) => {
+        if (!place.latitude || !place.longitude) return;
+
+        globalIndex++;
+        const seqNum = index + 1; // 1-based index per day
+
+        // Create Numbered Icon
+        const icon = L.divIcon({
+          html: `<div class="seq-marker" style="background-color: ${color}; box-shadow: 0 0 0 3px rgba(${this.hexToRgb(color)}, 0.3)">
                          <span>${seqNum}</span>
                          <div class="day-tag">Day ${dayNum}</div>
                        </div>`,
-                className: 'custom-seq-marker',
-                iconSize: [30, 30],
-                iconAnchor: [15, 34], // Bottom point
-                popupAnchor: [0, -34]
-            });
+          className: 'custom-seq-marker',
+          iconSize: [30, 30],
+          iconAnchor: [15, 34], // Bottom point
+          popupAnchor: [0, -34]
+        });
 
-            const marker = L.marker([+place.latitude, +place.longitude], { icon });
-            
-             // Determine button text and action
-            const isBookable = place.category?.toLowerCase()?.includes('hotel') || 
-                               place.category?.toLowerCase()?.includes('stay');
-            const actionBtnText = isBookable ? 'Book Now' : 'View Details';
-            const actionBtnClass = isBookable ? 'popup-book-btn' : 'popup-view-btn';
-      
-            // Create rich popup content
-            const popupContent = `
+        const marker = L.marker([+place.latitude, +place.longitude], { icon });
+
+        // Determine button text and action
+        const isBookable = place.category?.toLowerCase()?.includes('hotel') ||
+          place.category?.toLowerCase()?.includes('stay');
+        const actionBtnText = isBookable ? 'Book Now' : 'View Details';
+        const actionBtnClass = isBookable ? 'popup-book-btn' : 'popup-view-btn';
+
+        // Create rich popup content
+        const popupContent = `
               <div class="map-popup">
                 <div class="popup-image-container" style="background-image: url('${place.image || 'https://via.placeholder.com/250x150?text=No+Image'}')">
                   <div class="popup-day-badge" style="background-color: ${color}">Day ${dayNum} - Stop ${seqNum}</div>
@@ -205,35 +262,35 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
                 </div>
               </div>
             `;
-      
-            marker.bindPopup(popupContent, {
-              maxWidth: 260,
-              className: 'custom-popup'
-            });
 
-             // Handle popup listener
-            marker.on('popupopen', (e: any) => {
-                const popup = e.popup;
-                const button = popup.getElement()?.querySelector('button');
-                
-                if (button) {
-                button.addEventListener('click', (event: Event) => {
-                    event.stopPropagation();
-                    const placeId = (event.target as HTMLElement).getAttribute('data-place-id');
-                    const bookUrl = (event.target as HTMLElement).getAttribute('data-book-url');
-                    
-                    if (bookUrl && isBookable) {
-                    window.open(bookUrl, '_blank');
-                    } else if (placeId) {
-                    this.markerClicked.emit(placeId);
-                    }
-                });
-                }
-            });
-
-            this.markers.set(place.placeId, marker);
-            this.markerClusterGroup.addLayer(marker);
+        marker.bindPopup(popupContent, {
+          maxWidth: 260,
+          className: 'custom-popup'
         });
+
+        // Handle popup listener
+        marker.on('popupopen', (e: any) => {
+          const popup = e.popup;
+          const button = popup.getElement()?.querySelector('button');
+
+          if (button) {
+            button.addEventListener('click', (event: Event) => {
+              event.stopPropagation();
+              const placeId = (event.target as HTMLElement).getAttribute('data-place-id');
+              const bookUrl = (event.target as HTMLElement).getAttribute('data-book-url');
+
+              if (bookUrl && isBookable) {
+                window.open(bookUrl, '_blank');
+              } else if (placeId) {
+                this.markerClicked.emit(placeId);
+              }
+            });
+          }
+        });
+
+        this.markers.set(place.placeId, marker);
+        this.markerClusterGroup.addLayer(marker);
+      });
     });
 
     // Fit bounds to show all markers
@@ -245,8 +302,8 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
   // Helper to convert Hex to RGB for rgba string
   private hexToRgb(hex: string): string {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? 
-      `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` 
+    return result ?
+      `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
       : '0,0,0';
   }
 
@@ -324,6 +381,20 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
           marker.openPopup();
         });
       }
+    }
+  }
+
+  public flyToLocation(lat: number, lng: number, zoom: number = 13): void {
+    if (this.map) {
+      this.map.flyTo([lat, lng], zoom, {
+        animate: true,
+        duration: 1.5
+      });
+      // Optionally add a marker or popup
+      L.popup()
+        .setLatLng([lat, lng])
+        .setContent('Selected Location')
+        .openOn(this.map);
     }
   }
 }

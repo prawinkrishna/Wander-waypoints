@@ -441,3 +441,67 @@
     margin-bottom: 2px !important;
   }
 }
+
+/* Leaflet Geosearch Styles */
+@import 'leaflet-geosearch/dist/geosearch.css';
+
+/* Custom styling for the search bar to match the app theme */
+::ng-deep .leaflet-control-geosearch {
+  margin-top: 10px !important;
+  margin-left: 10px !important;
+  
+  form {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    padding: 0;
+    border: none;
+    
+    input {
+      height: 40px;
+      border-radius: 8px;
+      padding-left: 10px;
+      font-size: 14px;
+      width: 250px;
+      border: none;
+      outline: none;
+      min-width: 200px;
+    }
+    
+    .results {
+       border-radius: 8px;
+       margin-top: 4px;
+       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+       border: none;
+       background: white; 
+       
+       &.active {
+         padding: 8px 0;
+         border-top: 1px solid #f3f4f6;
+       }
+       
+       > * {
+         padding: 8px 12px;
+         cursor: pointer;
+         font-size: 13px;
+         color: #333;
+         
+         &:hover {
+           background-color: #f3f4f6;
+         }
+       }
+    }
+  }
+  
+  a.reset {
+    background: transparent;
+    color: #6b7280;
+    line-height: 40px;
+    padding: 0 8px;
+    
+    &:hover {
+      background: #f3f4f6;
+      border-radius: 0 8px 8px 0;
+    }
+  }
+}

@@ -22,10 +22,24 @@
   </div>
 
   <div class="navbar-right">
-    <mat-form-field appearance="outline" class="search-bar">
-      <mat-label>Search places...</mat-label>
-      <input matInput type="text" />
+    <mat-form-field appearance="outline" class="search-bar" subscriptSizing="dynamic">
+      <input matInput type="text" placeholder="Search places..." [formControl]="searchControl"
+        [matAutocomplete]="auto" />
       <mat-icon matPrefix>search</mat-icon>
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onOptionSelected($event)"
+        class="search-autocomplete">
+        <mat-option *ngFor="let option of filteredOptions" [value]="option" class="search-option-item">
+          <div class="option-content">
+            <div class="option-title">
+              {{ option.raw?.address?.amenity || option.raw?.address?.shop || option.raw?.address?.tourism ||
+              option.label.split(',')[0] }}
+            </div>
+            <div class="option-subtitle">
+              {{ option.label }}
+            </div>
+          </div>
+        </mat-option>
+      </mat-autocomplete>
     </mat-form-field>
 
     <button mat-icon-button aria-label="Notifications">
