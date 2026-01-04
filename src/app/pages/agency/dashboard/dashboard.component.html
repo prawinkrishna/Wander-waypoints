@@ -1,0 +1,40 @@
+<div class="dashboard-page">
+    <mat-toolbar>
+        <span>Dashboard</span>
+        <span class="spacer"></span>
+        <button mat-icon-button>
+            <mat-icon>notifications</mat-icon>
+        </button>
+    </mat-toolbar>
+
+    <div class="content-padding">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <mat-card class="stat-card" *ngFor="let stat of stats">
+                <mat-card-content>
+                    <div class="stat-flex">
+                        <div class="stat-icon-container" [style.background]="getTint(stat.color)">
+                            <mat-icon [style.color]="stat.color">{{ getIcon(stat.icon) }}</mat-icon>
+                        </div>
+                        <div class="stat-text">
+                            <h3>{{ stat.value }}</h3>
+                            <p>{{ stat.title }}</p>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <!-- Recent Activity -->
+        <h3 class="section-title">Recent Activity</h3>
+        <mat-card class="activity-card">
+            <mat-list>
+                <mat-list-item *ngFor="let item of recentActivity">
+                    <mat-icon matListItemIcon class="text-medium">{{ getIcon(item.icon) }}</mat-icon>
+                    <div matListItemTitle>{{ item.text }}</div>
+                    <div matListItemLine>{{ item.time }}</div>
+                </mat-list-item>
+            </mat-list>
+        </mat-card>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+<div class="canvas-container">
+    <div class="tabs-header">
+        <button [class.active]="activeTab === 'itinerary'" (click)="setActiveTab('itinerary')">
+            <mat-icon>list_alt</mat-icon> Itinerary
+        </button>
+        <button [class.active]="activeTab === 'map'" (click)="setActiveTab('map')">
+            <mat-icon>map</mat-icon> Map
+        </button>
+    </div>
+
+    <div class="canvas-content">
+        <!-- Itinerary Tab -->
+        <div class="tab-pane" *ngIf="activeTab === 'itinerary'">
+            <app-itinerary-timeline [tripPlaces]="(currentTripPlaces$ | async) || []">
+            </app-itinerary-timeline>
+        </div>
+
+        <!-- Map Tab -->
+        <div class="tab-pane map-pane" *ngIf="activeTab === 'map'">
+            <div class="placeholder-map">
+                <mat-icon>public</mat-icon>
+                <p>Interactive Map View</p>
+                <small>(Pins for {{ (currentTripPlaces$ | async)?.length || 0 }} places loaded)</small>
+            </div>
+            <!-- TODO: Integrate Leaflet Map here -->
+        </div>
+    </div>
+</div>

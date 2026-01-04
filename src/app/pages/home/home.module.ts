@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
@@ -16,6 +17,7 @@ import { PlacesListComponentModule } from '../../components/places-list/places-l
   imports: [
     CommonModule,
     FormsModule,
+    MatIconModule,
     HomeRoutingModule,
     WanderLibraryModule,
     SharedModule,

@@ -1,0 +1,22 @@
+// Workspace container
+.workspace-container {
+    display: flex;
+    height: calc(100vh - 64px); // Account for navbar
+    width: 100%;
+    overflow: hidden;
+
+    .left-panel {
+        width: 35%;
+        height: 100%;
+        border-right: 1px solid #e0e0e0;
+        background: white;
+        overflow: hidden;
+    }
+
+    .right-panel {
+        width: 65%;
+        height: 100%;
+        background: #f8f9fa;
+        overflow: hidden;
+    }
+}

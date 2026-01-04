@@ -30,6 +30,16 @@ const routes: Routes = [
     loadChildren: () => import('./pages/trip-feed/trip-feed.module').then(m => m.TripFeedModule),
     canActivate: [authGuard]
   },
+  {
+    path: 'ai-planner',
+    loadChildren: () => import('./features/ai-planner/ai-planner.module').then(m => m.AiPlannerModule),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'agency',
+    loadChildren: () => import('./pages/agency/agency.module').then(m => m.AgencyModule),
+    canActivate: [authGuard]
+  },
 ];
 
 @NgModule({

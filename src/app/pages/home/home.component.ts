@@ -1,24 +1,30 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { Place } from '../../../../projects/wander-library/src/lib/models/place.model';
-import { GpsComponent } from '../../../../projects/wander-library/src/lib/components/gps/gps.component';
 import { MapService, SearchLocation } from '../../core/service/map.service';
+import { GpsComponent } from '../../../../projects/wander-library/src/lib/components/gps/gps.component';
+import { SocialService } from '../../core/service/social.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
   @ViewChild(GpsComponent) gpsComponent!: GpsComponent;
+
   selectedPlace: Place | null = null;
-  public filteredPlaces: Place[] = [];
-  public mapSearchFn = (query: string) => this.mapService.searchPlaces(query).toPromise();
+  filteredPlaces: Place[] = [];
+  mapSearchFn = (query: string) => this.mapService.searchPlaces(query).toPromise();
 
-  constructor(private mapService: MapService) { }
+  friends: any[] = [];
+  trendingTrips: any[] = [];
 
-  onMapMoved(bounds: [[number, number], [number, number]]) {
-    this.mapService.updateBounds(bounds);
-  }
+  constructor(
+    private mapService: MapService,
+    private router: Router,
+    private socialService: SocialService
+  ) { }
 
   ngOnInit(): void {
     this.mapService.locationSelected$.subscribe((location: SearchLocation) => {
@@ -26,6 +32,35 @@ export class HomeComponent implements OnInit {
         this.gpsComponent.flyToLocation(location.y, location.x);
       }
     });
+
+    this.loadSocialData();
+  }
+
+  loadSocialData() {
+    this.socialService.getFriendFootprints().subscribe(users => {
+      this.friends = users.map(u => ({
+        name: u.username,
+        avatar: u.profileImage || `https://ui-avatars.com/api/?name=${u.username}`,
+        isLive: u.isLive,
+        location: [u.lastLatitude || 0, u.lastLongitude || 0],
+        status: u.currentStatus || 'Online'
+      }));
+    });
+
+    this.socialService.getTrendingTrips().subscribe(trips => {
+      this.trendingTrips = trips.map(t => ({
+        title: t.tripName,
+        author: t.user?.username || 'Wander User',
+        days: t.places?.length ? Math.ceil(t.places.length / 3) : 3, // Approx duration
+        clones: 0, // Not in API yet
+        rating: 5.0, // Mock
+        image: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070' // Default image
+      }));
+    });
+  }
+
+  openAiPlanner() {
+    this.router.navigate(['/ai-planner']);
   }
 
   onPlaceSelected(place: Place): void {
@@ -38,5 +73,9 @@ export class HomeComponent implements OnInit {
 
   onMarkerClicked(placeId: string): void {
     this.selectedPlace = this.filteredPlaces.find(p => p.placeId === placeId) || null;
+  }
+
+  onMapMoved(bounds: [[number, number], [number, number]]) {
+    this.mapService.updateBounds(bounds);
   }
 }

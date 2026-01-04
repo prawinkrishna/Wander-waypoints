@@ -14,19 +14,14 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
   @Input() places: any[] = []; // Can be Place[] or TripPlace[]
   @Input() searchFn: ((query: string) => Promise<any[]>) | null = null;
   @Input() selectedPlace: Place | null = null;
+  @Input() friends: any[] = []; // List of friends
+
   @Output() markerClicked = new EventEmitter<string>();
   @Output() mapMoved = new EventEmitter<[[number, number], [number, number]]>();
-  private map: any;
-  // ... existing code ...
 
-  // Inside initMap, after map creation:
-  // this.map.on('moveend', () => {
-  //   const bounds = this.map.getBounds();
-  //   const corner1 = bounds.getSouthWest();
-  //   const corner2 = bounds.getNorthEast();
-  //   this.mapMoved.emit([[corner1.lat, corner1.lng], [corner2.lat, corner2.lng]]);
-  // });
+  private map: any;
   private markers: Map<any, any> = new Map();
+  private friendMarkers: L.Marker[] = [];
   private markerClusterGroup!: L.MarkerClusterGroup;
   private routeLayers: L.LayerGroup = L.layerGroup();
   private userLocationMarker: L.Marker | null = null;
@@ -55,6 +50,9 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
     if (this.map) {
       if (changes['places']) {
         this.updateMapContent();
+      }
+      if (changes['friends']) {
+        this.renderFriendMarkers();
       }
       if (changes['selectedPlace']) {
         this.highlightMarker();
@@ -149,6 +147,7 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
 
       this.addGeolocationControl();
       this.updateMapContent();
+      this.renderFriendMarkers();
     }, 0);
   }
 
@@ -206,8 +205,6 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
           dashArray: '10, 10',
           lineCap: 'round'
         }).addTo(this.routeLayers);
-
-        // Add arrows or direction indicators could go here
       }
     });
 
@@ -297,6 +294,35 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
     if (this.markers.size > 0) {
       this.map.fitBounds(this.markerClusterGroup.getBounds(), { padding: [50, 50] });
     }
+  }
+
+  private renderFriendMarkers(): void {
+    if (!this.map) return;
+
+    // Clear existing friend markers
+    this.friendMarkers.forEach(marker => marker.remove());
+    this.friendMarkers = [];
+
+    if (!this.friends || this.friends.length === 0) return;
+
+    this.friends.forEach(friend => {
+      if (!friend.location) return;
+
+      const [lat, lng] = friend.location;
+
+      const friendIcon = L.divIcon({
+        html: `<div class="friend-marker" style="background-image: url('${friend.avatar}'); border-color: ${friend.isLive ? '#ff3b30' : '#fff'}"></div>`,
+        className: 'custom-friend-icon',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+      });
+
+      const marker = L.marker([lat, lng], { icon: friendIcon })
+        .addTo(this.map)
+        .bindPopup(`<b>${friend.name}</b><br>${friend.status || 'Exploring'}`);
+
+      this.friendMarkers.push(marker);
+    });
   }
 
   // Helper to convert Hex to RGB for rgba string
