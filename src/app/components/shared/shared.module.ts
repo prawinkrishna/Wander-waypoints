@@ -13,9 +13,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ItineraryTimelineComponent } from '../../components/itinerary-timeline/itinerary-timeline.component';
 
 @NgModule({
-  declarations: [NavbarComponent],
+  declarations: [NavbarComponent, ItineraryTimelineComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -29,13 +31,16 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatDividerModule,
     RouterModule,
     ReactiveFormsModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    DragDropModule
   ],
   exports: [
     NavbarComponent,
+    ItineraryTimelineComponent,
     MatProgressSpinnerModule,
     MatIconModule,
-    MatDividerModule
+    MatDividerModule,
+    DragDropModule
   ]
 })
 export class SharedModule { }

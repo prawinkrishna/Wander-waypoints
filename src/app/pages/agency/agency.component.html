@@ -1,0 +1,26 @@
+<mat-sidenav-container class="agency-container">
+    <mat-sidenav mode="side" opened class="agency-sidenav">
+        <mat-toolbar color="primary">
+            <span>Agency Portal</span>
+        </mat-toolbar>
+        <mat-nav-list>
+            <a mat-list-item *ngFor="let p of menuItems" [routerLink]="[p.route]" routerLinkActive="selected">
+                <mat-icon matListItemIcon>{{ p.icon }}</mat-icon>
+                <span matListItemTitle>{{ p.label }}</span>
+            </a>
+        </mat-nav-list>
+
+        <div class="sidenav-footer">
+            <mat-nav-list>
+                <a mat-list-item>
+                    <mat-icon matListItemIcon>logout</mat-icon>
+                    <span matListItemTitle>Logout</span>
+                </a>
+            </mat-nav-list>
+        </div>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>

@@ -13,10 +13,8 @@ import { TripDetailsRoutingModule } from './trip-details-routing.module';
 import { TripDetailsPage } from './trip-details.page';
 import { SharedModule } from '../../components/shared/shared.module';
 import { WanderLibraryModule } from 'wander-library';
-import { ItineraryTimelineComponent } from '../../components/itinerary-timeline/itinerary-timeline.component';
-
 @NgModule({
-  declarations: [TripDetailsPage, ItineraryTimelineComponent],
+  declarations: [TripDetailsPage],
   imports: [
     CommonModule,
     FormsModule,

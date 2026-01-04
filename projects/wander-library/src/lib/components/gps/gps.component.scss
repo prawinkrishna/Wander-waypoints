@@ -505,3 +505,25 @@
     }
   }
 }
+// Friend Marker Styles
+.custom-friend-icon {
+  background: transparent;
+  border: none;
+  
+  .friend-marker {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 3px solid white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+    
+    &:hover {
+      transform: scale(1.2);
+      z-index: 1000;
+      border-color: var(--ion-color-primary);
+    }
+  }
+}

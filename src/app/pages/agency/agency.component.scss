@@ -1,0 +1,23 @@
+.agency-container {
+    height: 100vh;
+}
+
+.agency-sidenav {
+    width: 250px;
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidenav-footer {
+    margin-top: auto; /* Push to bottom if flex column works for mat-sidenav, otherwise might need ::ng-deep or structure change */
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+mat-toolbar {
+    margin-bottom: 8px;
+}
+
+.selected {
+    background-color: rgba(0, 0, 0, 0.04);
+}

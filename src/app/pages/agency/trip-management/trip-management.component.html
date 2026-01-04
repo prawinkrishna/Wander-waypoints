@@ -1,0 +1,50 @@
+<div class="trip-management-page">
+    <mat-toolbar>
+        <span>My Trips</span>
+        <span class="spacer"></span>
+        <button mat-flat-button color="primary">
+            <mat-icon>add</mat-icon>
+            Create New
+        </button>
+    </mat-toolbar>
+
+    <div class="content-padding">
+
+        <div class="table-container mat-elevation-z2">
+            <table class="trip-table">
+                <thead>
+                    <tr>
+                        <th>Trip Name</th>
+                        <th>Status</th>
+                        <th>Views</th>
+                        <th>Sales</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let trip of trips">
+                        <td class="trip-title">{{ trip.title }}</td>
+                        <td>
+                            <span class="status-badge" [class]="getStatusColor(trip.status)">
+                                {{ trip.status }}
+                            </span>
+                        </td>
+                        <td>{{ trip.views }}</td>
+                        <td>{{ trip.sales }}</td>
+                        <td>{{ trip.date }}</td>
+                        <td>
+                            <button mat-icon-button color="primary">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button color="warn">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

@@ -30,4 +30,12 @@ export class SocialService {
     shareEntity(data: { entityId: string, entityType: 'trip' | 'place', sharedWith: string }): Observable<any> {
         return this.http.post(`${this.apiUrl}/shares`, data);
     }
+
+    getFriendFootprints(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/users/footprints`);
+    }
+
+    getTrendingTrips(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/trip/trending`);
+    }
 }
