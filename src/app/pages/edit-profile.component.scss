@@ -1,0 +1,262 @@
+.edit-profile-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.page-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.page-header {
+  margin-bottom: 32px;
+  
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 0 0 8px;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+    color: #888;
+    margin: 0;
+  }
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 64px;
+}
+
+.settings-card {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 0 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+}
+
+.input-group {
+  margin-bottom: 20px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  input, textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #333;
+    background: #fcfcfc;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    
+    &:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  .hint {
+    display: block;
+    text-align: right;
+    font-size: 11px;
+    color: #999;
+    margin-top: 6px;
+  }
+}
+
+.image-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  
+  .avatar-preview {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+  }
+  
+  input {
+    flex: 1;
+  }
+}
+
+.cover-preview {
+  width: 100%;
+  height: 120px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  margin-bottom: 12px;
+  border: 1px dashed #ddd;
+}
+
+.icon-input {
+  position: relative;
+  
+  mat-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+  
+  input {
+    padding-left: 44px;
+  }
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  
+  .toggle-label {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .toggle-desc {
+    font-size: 13px;
+    color: #888;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  
+  button {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+  
+  .cancel-btn {
+    background: #f0f0f0;
+    color: #666;
+    
+    &:hover:not(:disabled) {
+      background: #e0e0e0;
+    }
+  }
+  
+  .save-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    }
+  }
+}
+
+.success-message, .error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.success-message {
+  background: #e6fffa;
+  color: #047857;
+  mat-icon { color: #10b981; }
+}
+
+.error-message {
+  background: #fff5f5;
+  color: #c53030;
+  mat-icon { color: #f56565; }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 24px 16px;
+  }
+  
+  .image-preview-row {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    input {
+      width: 100%;
+    }
+  }
+}

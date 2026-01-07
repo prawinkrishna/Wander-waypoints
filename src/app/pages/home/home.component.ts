@@ -39,9 +39,10 @@ export class HomeComponent implements OnInit {
   loadSocialData() {
     this.socialService.getFriendFootprints().subscribe(users => {
       this.friends = users.map(u => ({
+        id: u.userId,
         name: u.username,
         avatar: u.profileImage || `https://ui-avatars.com/api/?name=${u.username}`,
-        isLive: u.isLive,
+        isLive: u.isPublicProfile,
         location: [u.lastLatitude || 0, u.lastLongitude || 0],
         status: u.currentStatus || 'Online'
       }));
@@ -49,14 +50,36 @@ export class HomeComponent implements OnInit {
 
     this.socialService.getTrendingTrips().subscribe(trips => {
       this.trendingTrips = trips.map(t => ({
-        title: t.tripName,
+        id: t.tripId,
+        title: t.title,
         author: t.user?.username || 'Wander User',
-        days: t.places?.length ? Math.ceil(t.places.length / 3) : 3, // Approx duration
-        clones: 0, // Not in API yet
-        rating: 5.0, // Mock
-        image: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070' // Default image
+        days: this.calculateDays(t),
+        clones: 0,
+        rating: 5.0,
+        image: t.tripPlaces?.[0]?.place?.imageUrl || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070'
       }));
     });
+  }
+
+  calculateDays(trip: any): number {
+    if (trip.startDate && trip.endDate) {
+      const start = new Date(trip.startDate);
+      const end = new Date(trip.endDate);
+      return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    }
+    return 3;
+  }
+
+  viewProfile(id: string) {
+    if (id) {
+      this.router.navigate(['/profile', id]);
+    }
+  }
+
+  viewTrip(id: string) {
+    if (id) {
+      this.router.navigate(['/trip-details', id]);
+    }
   }
 
   openAiPlanner() {

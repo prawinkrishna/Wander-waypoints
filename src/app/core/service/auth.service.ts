@@ -58,8 +58,13 @@ export class AuthService {
         if (response.access_token) {
             localStorage.setItem(this.tokenKey, response.access_token);
             if (response.user) {
-                localStorage.setItem(this.userKey, JSON.stringify(response.user));
-                this.currentUserSubject.next(response.user);
+                // Store complete user data
+                const userData = {
+                    ...response.user,
+                    isAnonymous: response.user.role === 'guest' || response.user.userId === 'guest'
+                };
+                localStorage.setItem(this.userKey, JSON.stringify(userData));
+                this.currentUserSubject.next(userData);
             }
         }
     }
@@ -67,5 +72,21 @@ export class AuthService {
     private getUserFromStorage(): any {
         const userStr = localStorage.getItem(this.userKey);
         return userStr ? JSON.parse(userStr) : null;
+    }
+
+    /**
+     * Check if current user is authenticated (not a guest)
+     */
+    isAuthenticatedUser(): boolean {
+        const user = this.getCurrentUser();
+        return !!user && !user.isAnonymous && user.userId !== 'guest';
+    }
+
+    /**
+     * Get user role
+     */
+    getUserRole(): string {
+        const user = this.getCurrentUser();
+        return user?.role || 'guest';
     }
 }

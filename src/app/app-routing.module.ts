@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { UserProfileComponent } from './pages/user-profile/user-profile.component';
+import { EditProfileComponent } from './pages/edit-profile.component';
+import { SettingsComponent } from './pages/settings.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -11,8 +14,23 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'settings',
+    component: SettingsComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'profile/edit',
+    component: EditProfileComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'profile/:id',
+    component: UserProfileComponent,
+    canActivate: [authGuard]
+  },
+  {
     path: 'profile',
-    loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfileModule),
+    component: UserProfileComponent,
     canActivate: [authGuard]
   },
   {

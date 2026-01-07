@@ -1,0 +1,7 @@
+<app-navbar></app-navbar>
+
+<lib-profile [user]="user" [isOwnProfile]="isOwnProfile" [followStatus]="followStatus" [loading]="loading"
+    (followClicked)="onFollowClicked()" (unfollowClicked)="onUnfollowClicked()"
+    (editProfileClicked)="onEditProfileClicked()" (tripClicked)="onTripClicked($event)"
+    (tabChanged)="onTabChanged($event)">
+</lib-profile>
