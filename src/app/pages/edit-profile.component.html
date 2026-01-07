@@ -1,0 +1,91 @@
+<app-navbar></app-navbar>
+<div class="edit-profile-page">
+    <div class="page-container">
+        <div class="page-header">
+            <h1>Edit Profile</h1>
+            <p class="subtitle">Update your profile information</p>
+        </div>
+
+        <div class="loading-state" *ngIf="loading">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
+
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+            <!-- Profile Images Card -->
+            <div class="settings-card">
+                <h3>Profile Images</h3>
+
+                <div class="input-group">
+                    <label>Profile Image URL</label>
+                    <div class="image-preview-row">
+                        <img [src]="profileForm.get('profileImage')?.value || 'https://ui-avatars.com/api/?name=User'"
+                            class="avatar-preview">
+                        <input type="text" formControlName="profileImage" placeholder="https://example.com/avatar.jpg">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Cover Image URL</label>
+                    <div class="cover-preview"
+                        [style.backgroundImage]="'url(' + (profileForm.get('coverImage')?.value || '') + ')'"></div>
+                    <input type="text" formControlName="coverImage" placeholder="https://example.com/cover.jpg">
+                </div>
+            </div>
+
+            <!-- Personal Info Card -->
+            <div class="settings-card">
+                <h3>Personal Info</h3>
+
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" formControlName="username" placeholder="Username">
+                </div>
+
+                <div class="input-group">
+                    <label>Bio</label>
+                    <textarea formControlName="bio" rows="3" placeholder="Tell us about your adventures..."></textarea>
+                    <span class="hint">{{ profileForm.get('bio')?.value?.length || 0 }}/150 characters</span>
+                </div>
+
+                <div class="input-group">
+                    <label>Location</label>
+                    <div class="icon-input">
+                        <mat-icon>place</mat-icon>
+                        <input type="text" formControlName="location" placeholder="City, Country">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Card -->
+            <div class="settings-card">
+                <h3>Privacy</h3>
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <span class="toggle-label">Public Profile</span>
+                        <span class="toggle-desc">Allow anyone to see your trips and follow you</span>
+                    </div>
+                    <mat-slide-toggle formControlName="isPublicProfile" color="primary"></mat-slide-toggle>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="error-message" *ngIf="errorMessage">
+                <mat-icon>error</mat-icon>
+                {{ errorMessage }}
+            </div>
+            <div class="success-message" *ngIf="successMessage">
+                <mat-icon>check_circle</mat-icon>
+                {{ successMessage }}
+            </div>
+
+            <!-- Actions -->
+            <div class="actions">
+                <button type="button" class="cancel-btn" (click)="onCancel()" [disabled]="submitting">Cancel</button>
+                <button type="submit" class="save-btn" [disabled]="profileForm.invalid || submitting">
+                    <mat-spinner diameter="20" *ngIf="submitting"></mat-spinner>
+                    <span *ngIf="!submitting">Save Changes</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

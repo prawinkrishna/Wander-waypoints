@@ -28,9 +28,8 @@
       <div class="story-circle add-story">
         <mat-icon>add</mat-icon>
       </div>
-      <div class="story-circle" *ngFor="let friend of friends">
+      <div class="story-circle" *ngFor="let friend of friends" (click)="viewProfile(friend.id)">
         <img [src]="friend.avatar" [alt]="friend.name">
-        <span class="live-badge" *ngIf="friend.isLive">LIVE</span>
         <span class="story-name">{{ friend.name }}</span>
       </div>
     </div>
@@ -41,7 +40,7 @@
     </div>
 
     <div class="trending-grid">
-      <div class="trip-card" *ngFor="let trip of trendingTrips">
+      <div class="trip-card" *ngFor="let trip of trendingTrips" (click)="viewTrip(trip.id)">
         <div class="card-image" [style.backgroundImage]="'url(' + trip.image + ')'">
           <span class="trip-badge">{{ trip.days }} Days</span>
         </div>

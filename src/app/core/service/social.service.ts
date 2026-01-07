@@ -38,4 +38,24 @@ export class SocialService {
     getTrendingTrips(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/trip/trending`);
     }
+
+    getPublicProfile(userId: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/users/${userId}/public-profile`);
+    }
+
+    followUser(userId: string): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/users/${userId}/follow`, {});
+    }
+
+    unfollowUser(userId: string): Observable<any> {
+        return this.http.delete<any>(`${this.apiUrl}/users/${userId}/follow`);
+    }
+
+    updateProfile(userId: string, data: any): Observable<any> {
+        return this.http.patch<any>(`${this.apiUrl}/users/${userId}`, data);
+    }
+
+    getFollowStatus(userId: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/users/${userId}/follow-status`);
+    }
 }
