@@ -155,11 +155,32 @@
       }
     }
 
-    .avatar-btn mat-icon {
-      font-size: 32px;
+    .avatar-btn {
+      mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: var(--color-text-secondary);
+      }
+    }
+
+    .user-avatar {
       width: 32px;
       height: 32px;
-      color: var(--color-text-secondary);
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    // Guest buttons
+    .login-btn {
+      font-weight: 500;
+      border-color: var(--color-border);
+    }
+
+    .signup-btn {
+      font-weight: 500;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
     }
   }
 }

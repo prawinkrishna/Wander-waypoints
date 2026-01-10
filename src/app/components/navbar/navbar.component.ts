@@ -39,6 +39,14 @@ export class NavbarComponent {
       });
   }
 
+  get isGuest(): boolean {
+    return !this.authService.isAuthenticatedUser();
+  }
+
+  get currentUser(): any {
+    return this.authService.getCurrentUser();
+  }
+
   displayFn(location: SearchLocation): string {
     return location && location.label ? location.label : '';
   }
@@ -55,6 +63,10 @@ export class NavbarComponent {
 
   onLogout() {
     this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  onLogin() {
     this.router.navigate(['/login']);
   }
 }

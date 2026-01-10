@@ -58,4 +58,16 @@ export class SocialService {
     getFollowStatus(userId: string): Observable<any> {
         return this.http.get<any>(`${this.apiUrl}/users/${userId}/follow-status`);
     }
+
+    getPendingRequests(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/users/me/pending-requests`);
+    }
+
+    acceptFollowRequest(requestId: string): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/users/requests/${requestId}/accept`, {});
+    }
+
+    rejectFollowRequest(requestId: string): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/users/requests/${requestId}/reject`, {});
+    }
 }

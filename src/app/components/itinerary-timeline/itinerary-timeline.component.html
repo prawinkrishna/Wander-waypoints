@@ -1,99 +1,129 @@
-<div class="itinerary-container">
-    <div *ngFor="let group of groupedPlaces" class="day-group">
-        <!-- Day Header with Collapse -->
+<div class="timeline-container">
+    <!-- Day Sections -->
+    <div *ngFor="let group of groupedPlaces" class="day-section">
+        <!-- Day Header -->
         <div class="day-header" (click)="toggleDay(group.dayNumber)">
-            <h3>Day {{ group.dayNumber }}</h3>
-            <mat-icon class="chevron-icon" [class.collapsed]="isDayCollapsed(group.dayNumber)">
+            <div class="day-info">
+                <span class="day-badge">Day {{ group.dayNumber }}</span>
+                <span class="day-date" *ngIf="tripStartDate">{{ getDayDate(group.dayNumber) }}</span>
+                <span class="place-count">{{ getPlaceCount(group.dayNumber) }} {{ getPlaceCount(group.dayNumber) === 1 ?
+                    'place' : 'places' }}</span>
+            </div>
+            <mat-icon class="collapse-icon" [class.collapsed]="isDayCollapsed(group.dayNumber)">
                 expand_more
             </mat-icon>
         </div>
 
-        <!-- Day Content (Collapsible) -->
-        <div class="day-content" *ngIf="!isDayCollapsed(group.dayNumber)">
-            <div cdkDropList (cdkDropListDropped)="onReorderPlace($any($event), group)" class="places-list">
-                <div *ngFor="let item of group.places; let last = last" 
-                     cdkDrag 
-                     class="place-item">
-                    
+        <!-- Timeline Content -->
+        <div class="timeline-content" *ngIf="!isDayCollapsed(group.dayNumber)">
+            <div cdkDropList [cdkDropListData]="group.places" (cdkDropListDropped)="onReorderPlace($any($event), group)"
+                class="places-timeline">
+
+                <div *ngFor="let item of group.places; let i = index; let last = last" cdkDrag
+                    [cdkDragDisabled]="!isOwner" class="timeline-item">
+
+                    <!-- Timeline Connector -->
+                    <div class="timeline-line">
+                        <div class="line-segment top" *ngIf="i > 0"></div>
+                        <div class="timeline-dot" [style.backgroundColor]="getCategoryColor(item.place?.category)">
+                            <mat-icon>{{ getCategoryIcon(item.place?.category) }}</mat-icon>
+                        </div>
+                        <div class="line-segment bottom" *ngIf="!last"></div>
+                    </div>
+
                     <!-- Place Card -->
-                    <div class="place-card">
-                        <!-- Drag Handle -->
-                        <div class="drag-handle" cdkDragHandle>
+                    <div class="place-card" (click)="viewPlaceDetails(item)">
+                        <!-- Drag Handle (Owner Only) -->
+                        <div class="drag-handle" *ngIf="isOwner" cdkDragHandle (click)="$event.stopPropagation()">
                             <mat-icon>drag_indicator</mat-icon>
                         </div>
 
-                        <!-- Place Image with Rating Badge -->
-                        <div class="place-image-container clickable" (click)="viewPlaceDetails(item)">
-                            <img [src]="item.place?.image || 'https://via.placeholder.com/200x150?text=No+Image'" 
-                                 [alt]="item.place?.name"
-                                 class="place-image">
+                        <!-- Place Image -->
+                        <div class="place-image-wrapper">
+                            <img *ngIf="!isDefaultImage(item)" [src]="getPlaceImage(item)" [alt]="item.place?.name"
+                                class="place-image" (error)="item.place!.image = ''">
+                            <div *ngIf="isDefaultImage(item)" class="placeholder-image">
+                                <mat-icon>{{ getCategoryIcon(item.place?.category) }}</mat-icon>
+                            </div>
+                            <!-- Rating Badge -->
                             <div class="rating-badge" *ngIf="item.place?.rating">
-                                <span>{{ item.place.rating }}</span>
                                 <mat-icon>star</mat-icon>
+                                <span>{{ item.place.rating }}</span>
                             </div>
                         </div>
 
-                        <!-- Place Content -->
-                        <div class="place-content clickable" (click)="viewPlaceDetails(item)">
-                            <!-- Place Type Icon -->
-                            <div class="place-type-icon" 
-                                 [style.background-color]="getPlaceTypeColor(item.place?.category)">
-                                <mat-icon>{{ getCategoryIcon(item.place?.category) }}</mat-icon>
+                        <!-- Place Details -->
+                        <div class="place-details">
+                            <!-- Category & Time Slot -->
+                            <div class="meta-row">
+                                <span class="category-tag"
+                                    [style.backgroundColor]="getCategoryColor(item.place?.category) + '20'"
+                                    [style.color]="getCategoryColor(item.place?.category)">
+                                    <mat-icon>{{ getCategoryIcon(item.place?.category) }}</mat-icon>
+                                    {{ item.place?.category || 'Place' }}
+                                </span>
+                                <span class="time-slot" *ngIf="item.timeSlot">
+                                    <mat-icon>{{ getTimeSlotIcon(item.timeSlot) }}</mat-icon>
+                                    {{ getTimeSlotLabel(item.timeSlot) }}
+                                </span>
                             </div>
 
                             <!-- Place Name -->
                             <h4 class="place-name">{{ item.place?.name }}</h4>
 
-                            <!-- Place Address -->
-                            <div class="place-address" *ngIf="item.place?.address">
+                            <!-- Address -->
+                            <p class="place-address" *ngIf="item.place?.address">
                                 <mat-icon>location_on</mat-icon>
-                                <span>{{ item.place.address }}</span>
-                            </div>
+                                {{ item.place.address }}
+                            </p>
 
-                            <!-- Place Description -->
+                            <!-- Description (truncated) -->
                             <p class="place-description" *ngIf="item.place?.description">
-                                {{ item.place.description }}
+                                {{ item.place.description | slice:0:100 }}{{ (item.place.description?.length || 0) > 100
+                                ? '...' : '' }}
                             </p>
 
                             <!-- Notes -->
-                            <p class="place-notes" *ngIf="item.notes">
-                                <mat-icon>note</mat-icon>
+                            <div class="notes" *ngIf="item.notes">
+                                <mat-icon>notes</mat-icon>
                                 <span>{{ item.notes }}</span>
-                            </p>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="action-buttons">
+                                <button class="action-btn directions"
+                                    (click)="openDirections(item); $event.stopPropagation()">
+                                    <mat-icon>directions</mat-icon>
+                                    Directions
+                                </button>
+                                <button class="action-btn book" *ngIf="isBookable(item)"
+                                    (click)="onBookPlace(item); $event.stopPropagation()">
+                                    <mat-icon>book_online</mat-icon>
+                                    Book
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Book Button (for hotels) -->
-                        <button mat-raised-button 
-                                class="book-button" 
-                                *ngIf="isBookable(item)"
-                                (click)="onBookPlace(item)">
-                            Book
-                        </button>
-
-                        <!-- Delete Button -->
-                        <button mat-icon-button 
-                                class="delete-button" 
-                                (click)="onDeletePlace(item.tripPlaceId)">
+                        <!-- Delete Button (Owner Only) -->
+                        <button class="delete-btn" *ngIf="isOwner"
+                            (click)="onDeletePlace(item.tripPlaceId); $event.stopPropagation()">
                             <mat-icon>close</mat-icon>
                         </button>
                     </div>
 
-                    <!-- Travel Info to Next Place -->
-                    <div class="travel-info" *ngIf="!last">
-                        <div class="travel-stats">
-                            <mat-icon>directions_car</mat-icon>
-                            <span>{{ item.travelTimeFromPrev || '0h 9m' }}</span>
-                            <span class="dot-separator">•</span>
-                            <span>{{ item.distanceFromPrev || '3.3' }} mi</span>
+                    <!-- Travel Connector -->
+                    <div class="travel-connector" *ngIf="!last && (item.travelTimeFromPrev || item.distanceFromPrev)">
+                        <div class="travel-line"></div>
+                        <div class="travel-info">
+                            <mat-icon>{{ getTransportIcon(item.transportMode) }}</mat-icon>
+                            <span *ngIf="item.travelTimeFromPrev">{{ formatTravelTime(item.travelTimeFromPrev) }}</span>
+                            <span class="separator" *ngIf="item.travelTimeFromPrev && item.distanceFromPrev">•</span>
+                            <span *ngIf="item.distanceFromPrev">{{ formatDistance(item.distanceFromPrev) }}</span>
                         </div>
-                        <a class="direction-link" (click)="openDirections(item)">
-                            <mat-icon>navigation</mat-icon>
-                            Direction
-                        </a>
                     </div>
 
                     <!-- CDK Drag Placeholder -->
-                    <div class="place-card-placeholder" *cdkDragPlaceholder></div>
+                    <div class="drag-placeholder" *cdkDragPlaceholder></div>
                 </div>
             </div>
         </div>
@@ -101,8 +131,10 @@
 
     <!-- Empty State -->
     <div class="empty-state" *ngIf="groupedPlaces.length === 0">
-        <mat-icon>event_note</mat-icon>
-        <h3>No Itinerary Yet</h3>
-        <p>Add places to your trip to create an itinerary</p>
+        <div class="empty-icon">
+            <mat-icon>map</mat-icon>
+        </div>
+        <h3>No Places Yet</h3>
+        <p>Start building your itinerary by adding places to visit</p>
     </div>
 </div>

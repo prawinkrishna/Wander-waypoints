@@ -1,0 +1,127 @@
+<app-navbar></app-navbar>
+<div class="create-trip-page">
+    <div class="page-container">
+        <div class="page-header">
+            <h1>{{ isEditMode ? 'Edit Trip' : 'Create New Trip' }}</h1>
+            <p class="subtitle">{{ isEditMode ? 'Update your trip details' : 'Plan your next adventure' }}</p>
+        </div>
+
+        <form [formGroup]="tripForm" (ngSubmit)="onSubmit()">
+            <!-- Cover Image Preview -->
+            <div class="cover-section">
+                <div class="cover-preview"
+                    [style.backgroundImage]="f['coverImage'].value ? 'url(' + f['coverImage'].value + ')' : 'none'">
+                    <div class="cover-placeholder" *ngIf="!f['coverImage'].value">
+                        <mat-icon>add_photo_alternate</mat-icon>
+                        <span>Add Cover Image</span>
+                    </div>
+                </div>
+                <div class="cover-input">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Cover Image URL</mat-label>
+                        <input matInput formControlName="coverImage" placeholder="https://example.com/image.jpg">
+                        <mat-icon matSuffix>image</mat-icon>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Basic Info Card -->
+            <div class="form-card">
+                <h3>Trip Details</h3>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Trip Title</mat-label>
+                    <input matInput formControlName="title" placeholder="e.g. Summer in Tokyo">
+                    <mat-error *ngIf="f['title'].hasError('required')">Title is required</mat-error>
+                    <mat-error *ngIf="f['title'].hasError('minlength')">Minimum 3 characters</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Description</mat-label>
+                    <textarea matInput formControlName="description" rows="3"
+                        placeholder="Tell us about your trip..."></textarea>
+                    <mat-hint>{{ f['description'].value?.length || 0 }}/500</mat-hint>
+                    <mat-error *ngIf="f['description'].hasError('required')">Description is required</mat-error>
+                    <mat-error *ngIf="f['description'].hasError('minlength')">Minimum 10 characters</mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- Location Card -->
+            <div class="form-card">
+                <h3>Locations</h3>
+
+                <div class="location-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Origin</mat-label>
+                        <input matInput formControlName="origin" placeholder="Starting city">
+                        <mat-icon matSuffix>flight_takeoff</mat-icon>
+                        <mat-error *ngIf="f['origin'].hasError('required')">Origin is required</mat-error>
+                    </mat-form-field>
+
+                    <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+
+                    <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Destination</mat-label>
+                        <input matInput formControlName="destination" placeholder="Where are you going?">
+                        <mat-icon matSuffix>flight_land</mat-icon>
+                        <mat-error *ngIf="f['destination'].hasError('required')">Destination is required</mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Dates Card -->
+            <div class="form-card">
+                <h3>Travel Dates</h3>
+
+                <div class="date-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Start Date</mat-label>
+                        <input matInput [matDatepicker]="startPicker" formControlName="startDate" [min]="minDate">
+                        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startPicker></mat-datepicker>
+                        <mat-error>Start date is required</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>End Date</mat-label>
+                        <input matInput [matDatepicker]="endPicker" formControlName="endDate"
+                            [min]="f['startDate'].value">
+                        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #endPicker></mat-datepicker>
+                        <mat-error>End date is required</mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Privacy Card -->
+            <div class="form-card">
+                <h3>Privacy</h3>
+
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <span class="toggle-label">Public Trip</span>
+                        <span class="toggle-desc">Others can discover and view your trip</span>
+                    </div>
+                    <mat-slide-toggle formControlName="isPublic" color="primary"></mat-slide-toggle>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" *ngIf="errorMessage">
+                <mat-icon>error</mat-icon>
+                {{ errorMessage }}
+            </div>
+
+            <!-- Actions -->
+            <div class="actions">
+                <button type="button" class="cancel-btn" (click)="onCancel()" [disabled]="submitting">
+                    Cancel
+                </button>
+                <button type="submit" class="submit-btn" [disabled]="tripForm.invalid || submitting">
+                    <mat-spinner diameter="20" *ngIf="submitting"></mat-spinner>
+                    <span *ngIf="!submitting">{{ isEditMode ? 'Update Trip' : 'Create Trip' }}</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

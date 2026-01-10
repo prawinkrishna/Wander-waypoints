@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TripService } from '../../core/service/trip.service';
 import { AuthService } from '../../core/service/auth.service';
 import { MatDialog } from '@angular/material/dialog';
+import { AddPlaceDialogComponent } from '../../components/add-place-dialog.component';
 
 interface Trip {
   tripId: string;
@@ -69,7 +70,10 @@ export class TripDetailsPage implements OnInit {
     this.tripService.getTrip(this.tripId).subscribe({
       next: (trip) => {
         this.trip = trip;
-        this.isOwner = this.currentUserId === trip.userId;
+        // Check both trip.userId and trip.user.userId for owner comparison
+        const tripOwnerId = trip.userId || trip.user?.userId;
+        this.isOwner = !!(this.currentUserId && tripOwnerId && this.currentUserId === tripOwnerId);
+        console.log('isOwner check:', { currentUserId: this.currentUserId, tripOwnerId, isOwner: this.isOwner });
         this.isLoading = false;
       },
       error: (err) => {
@@ -118,8 +122,7 @@ export class TripDetailsPage implements OnInit {
 
   onEdit() {
     if (!this.trip) return;
-    // Navigate to edit page or open edit dialog
-    this.router.navigate(['/trip-edit', this.trip.tripId]);
+    this.router.navigate(['/create-trip'], { queryParams: { mode: 'edit', id: this.trip.tripId } });
   }
 
   onDelete() {
@@ -177,10 +180,10 @@ export class TripDetailsPage implements OnInit {
 
   onPlaceDeleted(tripPlaceId: string) {
     if (!this.trip) return;
-    
+
     // Optimistic update: Remove the place from the local array immediately
     this.trip.places = this.trip.places?.filter(p => p.tripPlaceId !== tripPlaceId) || [];
-    
+
     this.tripService.deleteTripPlace(tripPlaceId).subscribe({
       next: () => console.log('Place deleted successfully from backend'),
       error: (err) => {
@@ -193,16 +196,56 @@ export class TripDetailsPage implements OnInit {
 
   onPlacesReordered(reorderedPlaces: any[]) {
     if (!this.trip) return;
-    
+
     // Update the local trip places
     this.trip.places = reorderedPlaces;
-    
+
     // Extract IDs in the new order
     const orderedIds = reorderedPlaces.map(p => p.tripPlaceId);
 
     this.tripService.reorderTripPlaces(this.trip.tripId, orderedIds).subscribe({
       next: () => console.log('Places reordered successfully on backend'),
       error: (err) => console.error('Error reordering places:', err)
+    });
+  }
+
+  getTotalDays(): number {
+    if (!this.trip) return 7;
+    const start = new Date(this.trip.startDate);
+    const end = new Date(this.trip.endDate);
+    return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  }
+
+  openAddPlaceDialog() {
+    if (!this.trip || !this.isOwner) return;
+
+    const dialogRef = this.dialog.open(AddPlaceDialogComponent, {
+      width: '500px',
+      data: {
+        tripId: this.trip.tripId,
+        totalDays: this.getTotalDays()
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Add place to trip
+        this.tripService.addPlace(this.trip!.tripId, {
+          placeId: null, // Will create new place
+          placeName: result.place.name,
+          latitude: result.place.latitude,
+          longitude: result.place.longitude,
+          address: result.place.address,
+          dayNumber: result.dayNumber,
+          timeSlot: result.timeSlot,
+          order: (this.trip!.places?.length || 0) + 1
+        }).subscribe({
+          next: () => {
+            this.loadTripDetails(); // Reload to show new place
+          },
+          error: (err) => console.error('Error adding place:', err)
+        });
+      }
     });
   }
 }

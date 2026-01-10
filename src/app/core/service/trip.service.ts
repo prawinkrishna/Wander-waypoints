@@ -54,4 +54,19 @@ export class TripService {
     reorderTripPlaces(tripId: string, orderedIds: string[]): Observable<any> {
         return this.http.patch(`${this.apiUrl}/${tripId}/reorder`, { orderedIds });
     }
+
+    saveItinerary(tripId: string, itinerary: any[]): Observable<any> {
+        return this.http.post(`${this.apiUrl}/${tripId}/itinerary`, { itinerary });
+    }
+
+    addPlace(tripId: string, placeData: any): Observable<any> {
+        return this.http.post(`${environment.apiUrl}/trip-place`, {
+            tripId,
+            ...placeData
+        });
+    }
+
+    getUserTrips(userId: string): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}?userId=${userId}`);
+    }
 }

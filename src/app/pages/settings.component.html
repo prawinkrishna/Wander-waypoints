@@ -86,6 +86,43 @@
                 </div>
             </div>
 
+            <!-- Follow Requests Section -->
+            <div class="section" *ngIf="activeSection === 'requests'">
+                <h2>Follow Requests</h2>
+
+                <div class="settings-card" *ngIf="loadingRequests">
+                    <div class="loading-requests">
+                        <mat-spinner diameter="30"></mat-spinner>
+                    </div>
+                </div>
+
+                <div class="settings-card" *ngIf="!loadingRequests && pendingRequests.length === 0">
+                    <div class="empty-requests">
+                        <mat-icon>person_add_disabled</mat-icon>
+                        <p>No pending follow requests</p>
+                    </div>
+                </div>
+
+                <div class="settings-card" *ngIf="!loadingRequests && pendingRequests.length > 0">
+                    <div class="request-item" *ngFor="let request of pendingRequests">
+                        <img [src]="request.profileImage || 'https://ui-avatars.com/api/?name=' + request.username"
+                            class="request-avatar">
+                        <div class="request-info">
+                            <span class="request-username">{{ request.username }}</span>
+                            <span class="request-date">Requested to follow you</span>
+                        </div>
+                        <div class="request-actions">
+                            <button class="accept-btn" (click)="acceptRequest(request.id)">
+                                <mat-icon>check</mat-icon>
+                            </button>
+                            <button class="reject-btn" (click)="rejectRequest(request.id)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Notifications Section -->
             <div class="section" *ngIf="activeSection === 'notifications'">
                 <h2>Notification Preferences</h2>

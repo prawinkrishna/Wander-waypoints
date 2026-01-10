@@ -42,32 +42,46 @@
       </mat-autocomplete>
     </mat-form-field>
 
-    <button mat-icon-button aria-label="Notifications">
-      <mat-icon [matBadge]="3" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
-    </button>
+    <!-- Guest User: Show Login/Sign Up -->
+    <ng-container *ngIf="isGuest">
+      <button mat-stroked-button class="login-btn" (click)="onLogin()">
+        Login
+      </button>
+      <button mat-flat-button color="primary" class="signup-btn" routerLink="/login" [queryParams]="{mode: 'register'}">
+        Sign Up
+      </button>
+    </ng-container>
 
-    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="avatar-btn">
-      <mat-icon>account_circle</mat-icon>
-    </button>
+    <!-- Authenticated User: Show notifications and profile -->
+    <ng-container *ngIf="!isGuest">
+      <button mat-icon-button aria-label="Notifications">
+        <mat-icon [matBadge]="3" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
+      </button>
 
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item routerLink="/profile">
-        <mat-icon>person</mat-icon>
-        <span>Profile</span>
+      <button mat-icon-button [matMenuTriggerFor]="userMenu" class="avatar-btn">
+        <img *ngIf="currentUser?.profileImage" [src]="currentUser.profileImage" class="user-avatar">
+        <mat-icon *ngIf="!currentUser?.profileImage">account_circle</mat-icon>
       </button>
-      <button mat-menu-item routerLink="/booking">
-        <mat-icon>book_online</mat-icon>
-        <span>Bookings</span>
-      </button>
-      <button mat-menu-item routerLink="/settings">
-        <mat-icon>settings</mat-icon>
-        <span>Settings</span>
-      </button>
-      <mat-divider></mat-divider>
-      <button mat-menu-item (click)="onLogout()">
-        <mat-icon>logout</mat-icon>
-        <span>Logout</span>
-      </button>
-    </mat-menu>
+
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item routerLink="/profile">
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </button>
+        <button mat-menu-item routerLink="/booking">
+          <mat-icon>book_online</mat-icon>
+          <span>Bookings</span>
+        </button>
+        <button mat-menu-item routerLink="/settings">
+          <mat-icon>settings</mat-icon>
+          <span>Settings</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="onLogout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </ng-container>
   </div>
 </nav>

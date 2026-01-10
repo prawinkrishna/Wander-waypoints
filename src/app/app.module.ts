@@ -16,18 +16,27 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { EditProfileComponent } from './pages/edit-profile.component';
 import { SettingsComponent } from './pages/settings.component';
+import { CreateTripComponent } from './pages/create-trip.component';
+import { AskAiDialogComponent } from './components/ask-ai-dialog.component';
+import { AddPlaceDialogComponent } from './components/add-place-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     UserProfileComponent,
     EditProfileComponent,
-    SettingsComponent
+    SettingsComponent,
+    CreateTripComponent,
+    AskAiDialogComponent,
+    AddPlaceDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -35,6 +44,7 @@ import { SettingsComponent } from './pages/settings.component';
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -42,6 +52,9 @@ import { SettingsComponent } from './pages/settings.component';
     MatButtonModule,
     MatSlideToggleModule,
     MatProgressSpinnerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatDialogModule,
     CommonModule,
     WanderLibraryModule,
     SharedModule,

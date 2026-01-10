@@ -90,10 +90,28 @@
 
                 <!-- Itinerary Timeline -->
                 <div class="itinerary-section">
-                    <h3>Itinerary</h3>
-                    <app-itinerary-timeline 
-                        [tripPlaces]="trip.places || []"
-                        (placeDeleted)="onPlaceDeleted($event)"
+                    <div class="itinerary-header">
+                        <h3>Itinerary</h3>
+                        <button mat-raised-button color="primary" *ngIf="isOwner" (click)="openAddPlaceDialog()">
+                            <mat-icon>add</mat-icon>
+                            Add Place
+                        </button>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="empty-itinerary" *ngIf="!trip.places || trip.places.length === 0">
+                        <mat-icon>map</mat-icon>
+                        <h4>No places added yet</h4>
+                        <p *ngIf="isOwner">Start building your itinerary by adding places to visit</p>
+                        <p *ngIf="!isOwner">This trip doesn't have any places yet</p>
+                        <button mat-raised-button color="primary" *ngIf="isOwner" (click)="openAddPlaceDialog()">
+                            <mat-icon>add</mat-icon>
+                            Add Your First Place
+                        </button>
+                    </div>
+
+                    <app-itinerary-timeline *ngIf="trip.places && trip.places.length > 0" [tripPlaces]="trip.places"
+                        [isOwner]="isOwner" [tripStartDate]="trip.startDate" (placeDeleted)="onPlaceDeleted($event)"
                         (placesReordered)="onPlacesReordered($event)">
                     </app-itinerary-timeline>
                 </div>
