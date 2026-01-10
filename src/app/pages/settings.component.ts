@@ -24,6 +24,10 @@ export class SettingsComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
 
+  // Pending Follow Requests
+  pendingRequests: any[] = [];
+  loadingRequests = false;
+
   // Password Change Form
   passwordForm!: FormGroup;
   showCurrentPassword = false;
@@ -41,6 +45,7 @@ export class SettingsComponent implements OnInit {
 
   sections = [
     { key: 'account', label: 'Account', icon: 'person' },
+    { key: 'requests', label: 'Follow Requests', icon: 'person_add' },
     { key: 'notifications', label: 'Notifications', icon: 'notifications' },
     { key: 'privacy', label: 'Privacy', icon: 'lock' },
     { key: 'about', label: 'About', icon: 'info' }
@@ -56,6 +61,7 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.initForms();
     this.loadUserData();
+    this.loadPendingRequests();
   }
 
   initForms() {
@@ -127,6 +133,43 @@ export class SettingsComponent implements OnInit {
       // TODO: Connect to backend delete account endpoint
       alert('Account deletion is not yet implemented.');
     }
+  }
+
+  loadPendingRequests() {
+    this.loadingRequests = true;
+    this.socialService.getPendingRequests().subscribe({
+      next: (data) => {
+        this.pendingRequests = data;
+        this.loadingRequests = false;
+      },
+      error: () => {
+        this.pendingRequests = [];
+        this.loadingRequests = false;
+      }
+    });
+  }
+
+  acceptRequest(requestId: string) {
+    this.socialService.acceptFollowRequest(requestId).subscribe({
+      next: () => {
+        this.pendingRequests = this.pendingRequests.filter(r => r.id !== requestId);
+        this.successMessage = 'Request accepted!';
+      },
+      error: () => {
+        this.errorMessage = 'Failed to accept request';
+      }
+    });
+  }
+
+  rejectRequest(requestId: string) {
+    this.socialService.rejectFollowRequest(requestId).subscribe({
+      next: () => {
+        this.pendingRequests = this.pendingRequests.filter(r => r.id !== requestId);
+      },
+      error: () => {
+        this.errorMessage = 'Failed to reject request';
+      }
+    });
   }
 
   clearMessages() {

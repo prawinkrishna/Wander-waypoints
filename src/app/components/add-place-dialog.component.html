@@ -1,0 +1,61 @@
+<div class="add-place-dialog">
+    <h2>Add Place to Trip</h2>
+
+    <!-- Search Section -->
+    <div class="search-section">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Search for a place</mat-label>
+            <input matInput [formControl]="searchControl" placeholder="Search restaurants, attractions, hotels...">
+            <mat-icon matPrefix>search</mat-icon>
+            <mat-spinner *ngIf="searching" diameter="20" matSuffix></mat-spinner>
+        </mat-form-field>
+
+        <!-- Search Results -->
+        <div class="search-results" *ngIf="searchResults.length > 0">
+            <button class="result-item" *ngFor="let result of searchResults" (click)="selectPlace(result)">
+                <mat-icon>place</mat-icon>
+                <div class="result-info">
+                    <span class="result-name">{{ result.label.split(',')[0] }}</span>
+                    <span class="result-address">{{ result.label }}</span>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Selected Place -->
+    <div class="selected-place" *ngIf="selectedPlace">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ selectedPlace.label.split(',')[0] }}</span>
+    </div>
+
+    <!-- Day & Time Selection -->
+    <div class="schedule-section" *ngIf="selectedPlace">
+        <div class="schedule-row">
+            <div class="schedule-field">
+                <label>Day</label>
+                <select [(ngModel)]="selectedDay">
+                    <option *ngFor="let day of days" [value]="day">Day {{ day }}</option>
+                </select>
+            </div>
+
+            <div class="schedule-field">
+                <label>Time</label>
+                <div class="time-slots">
+                    <button *ngFor="let slot of timeSlots" class="time-slot"
+                        [class.active]="selectedTimeSlot === slot.value" (click)="selectedTimeSlot = slot.value">
+                        <mat-icon>{{ slot.icon }}</mat-icon>
+                        <span>{{ slot.label }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+        <button class="cancel-btn" (click)="onCancel()">Cancel</button>
+        <button class="confirm-btn" [disabled]="!selectedPlace" (click)="onConfirm()">
+            Add Place
+        </button>
+    </div>
+</div>

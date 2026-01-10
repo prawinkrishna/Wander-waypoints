@@ -14,6 +14,7 @@ export interface TripPlace {
     dayNumber?: number;
     startTime?: string;
     notes?: string;
+    timeSlot?: string; // 'morning' | 'afternoon' | 'evening' | 'night'
     distanceFromPrev?: number;
     travelTimeFromPrev?: number;
 }

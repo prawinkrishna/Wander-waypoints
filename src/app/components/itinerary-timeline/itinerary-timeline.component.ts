@@ -1,13 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { TripPlace } from '../../../../projects/wander-library/src/lib/models/trip-place.model';
+import { Router } from '@angular/router';
 
 interface DayGroup {
     dayNumber: number;
     places: TripPlace[];
 }
-
-import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-itinerary-timeline',
@@ -16,19 +15,18 @@ import { Router } from '@angular/router';
 })
 export class ItineraryTimelineComponent implements OnInit, OnChanges {
     @Input() tripPlaces: TripPlace[] = [];
+    @Input() isOwner: boolean = false;
+    @Input() tripStartDate: Date | string | null = null;
     @Output() placeDeleted = new EventEmitter<string>();
     @Output() placesReordered = new EventEmitter<TripPlace[]>();
-    
+
     groupedPlaces: DayGroup[] = [];
     collapsedDays = new Set<number>();
 
-    constructor(private router: Router) { }
+    // Default placeholder image
+    readonly defaultImage = 'assets/images/place-placeholder.svg';
 
-    viewPlaceDetails(tripPlace: TripPlace) {
-        if (tripPlace?.place?.placeId) {
-            this.router.navigate(['/place-details', tripPlace.place.placeId]);
-        }
-    }
+    constructor(private router: Router) { }
 
     ngOnInit(): void {
         this.groupPlacesByDay();
@@ -46,20 +44,114 @@ export class ItineraryTimelineComponent implements OnInit, OnChanges {
         const groups = new Map<number, TripPlace[]>();
 
         this.tripPlaces.forEach(place => {
-            const day = place.dayNumber || 1; // Default to Day 1 if not set
+            const day = place.dayNumber || 1;
             if (!groups.has(day)) {
                 groups.set(day, []);
             }
             groups.get(day)?.push(place);
         });
 
-        // Sort days and places within days
         this.groupedPlaces = Array.from(groups.entries())
             .map(([dayNumber, places]) => ({
                 dayNumber,
                 places: places.sort((a, b) => (a.order || 0) - (b.order || 0))
             }))
             .sort((a, b) => a.dayNumber - b.dayNumber);
+    }
+
+    // Get formatted date for a day number
+    getDayDate(dayNumber: number): string {
+        if (!this.tripStartDate) return '';
+        const date = new Date(this.tripStartDate);
+        date.setDate(date.getDate() + dayNumber - 1);
+        return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    }
+
+    // Get place image or fallback to placeholder
+    getPlaceImage(tripPlace: TripPlace): string {
+        return tripPlace.place?.image || tripPlace.place?.imageUrl || this.defaultImage;
+    }
+
+    // Check if using default image
+    isDefaultImage(tripPlace: TripPlace): boolean {
+        return !tripPlace.place?.image && !tripPlace.place?.imageUrl;
+    }
+
+    // Get time slot icon
+    getTimeSlotIcon(timeSlot: string | undefined): string {
+        switch (timeSlot?.toLowerCase()) {
+            case 'morning': return 'wb_twilight';
+            case 'afternoon': return 'wb_sunny';
+            case 'evening': return 'nights_stay';
+            case 'night': return 'bedtime';
+            default: return 'schedule';
+        }
+    }
+
+    // Get time slot label
+    getTimeSlotLabel(timeSlot: string | undefined): string {
+        if (!timeSlot) return '';
+        return timeSlot.charAt(0).toUpperCase() + timeSlot.slice(1);
+    }
+
+    // Get category icon
+    getCategoryIcon(category: string | undefined): string {
+        const cat = category?.toLowerCase() || '';
+        if (cat.includes('restaurant') || cat.includes('food') || cat.includes('cafe') || cat.includes('dining')) return 'restaurant';
+        if (cat.includes('hotel') || cat.includes('stay') || cat.includes('accommodation') || cat.includes('hostel')) return 'hotel';
+        if (cat.includes('museum') || cat.includes('art')) return 'museum';
+        if (cat.includes('beach')) return 'beach_access';
+        if (cat.includes('shopping') || cat.includes('mall') || cat.includes('market')) return 'shopping_bag';
+        if (cat.includes('landmark') || cat.includes('monument') || cat.includes('temple') || cat.includes('church')) return 'account_balance';
+        if (cat.includes('park') || cat.includes('garden') || cat.includes('nature')) return 'park';
+        if (cat.includes('activity') || cat.includes('adventure') || cat.includes('sport')) return 'sports';
+        if (cat.includes('bar') || cat.includes('nightlife') || cat.includes('club')) return 'nightlife';
+        if (cat.includes('airport') || cat.includes('transport')) return 'flight';
+        return 'place';
+    }
+
+    // Get category color
+    getCategoryColor(category: string | undefined): string {
+        const cat = category?.toLowerCase() || '';
+        if (cat.includes('restaurant') || cat.includes('food') || cat.includes('cafe')) return '#FF6B6B';
+        if (cat.includes('hotel') || cat.includes('stay') || cat.includes('accommodation')) return '#4ECDC4';
+        if (cat.includes('museum') || cat.includes('art')) return '#9B59B6';
+        if (cat.includes('beach')) return '#3498DB';
+        if (cat.includes('shopping')) return '#E91E63';
+        if (cat.includes('landmark') || cat.includes('monument')) return '#F39C12';
+        if (cat.includes('park') || cat.includes('nature')) return '#2ECC71';
+        if (cat.includes('activity') || cat.includes('sport')) return '#1ABC9C';
+        if (cat.includes('bar') || cat.includes('nightlife')) return '#8E44AD';
+        return '#667EEA';
+    }
+
+    // Format travel time
+    formatTravelTime(minutes: number | undefined): string {
+        if (!minutes) return '';
+        if (minutes < 60) return `${minutes} min`;
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+    }
+
+    // Format distance
+    formatDistance(km: number | undefined): string {
+        if (!km) return '';
+        return km < 1 ? `${Math.round(km * 1000)}m` : `${km.toFixed(1)} km`;
+    }
+
+    // Get transport icon
+    getTransportIcon(mode: string | undefined): string {
+        switch (mode?.toLowerCase()) {
+            case 'car': case 'taxi': case 'uber': return 'directions_car';
+            case 'walk': case 'walking': return 'directions_walk';
+            case 'bike': case 'bicycle': return 'directions_bike';
+            case 'bus': return 'directions_bus';
+            case 'train': case 'metro': case 'subway': return 'directions_railway';
+            case 'flight': case 'plane': return 'flight';
+            case 'boat': case 'ferry': return 'directions_boat';
+            default: return 'directions_car';
+        }
     }
 
     toggleDay(dayNumber: number) {
@@ -74,20 +166,25 @@ export class ItineraryTimelineComponent implements OnInit, OnChanges {
         return this.collapsedDays.has(dayNumber);
     }
 
+    viewPlaceDetails(tripPlace: TripPlace) {
+        if (tripPlace?.place?.placeId) {
+            this.router.navigate(['/place-details', tripPlace.place.placeId]);
+        }
+    }
+
     isBookable(tripPlace: TripPlace): boolean {
         const category = tripPlace.place?.category?.toLowerCase() || '';
-        return category.includes('hotel') || 
-               category.includes('accommodation') || 
-               category.includes('stay') ||
-               category.includes('hostel') ||
-               category.includes('resort');
+        return category.includes('hotel') ||
+            category.includes('accommodation') ||
+            category.includes('stay') ||
+            category.includes('hostel') ||
+            category.includes('resort');
     }
 
     onBookPlace(tripPlace: TripPlace) {
         if (tripPlace.place?.bookingUrl) {
             window.open(tripPlace.place.bookingUrl, '_blank');
         } else {
-            // Fallback: search on Google
             const searchQuery = encodeURIComponent(`${tripPlace.place?.name} ${tripPlace.place?.address} booking`);
             window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
         }
@@ -104,40 +201,24 @@ export class ItineraryTimelineComponent implements OnInit, OnChanges {
     }
 
     onDeletePlace(tripPlaceId: string) {
-        if (confirm('Are you sure you want to remove this place from your itinerary?')) {
+        if (confirm('Remove this place from your itinerary?')) {
             this.placeDeleted.emit(tripPlaceId);
         }
     }
 
     onReorderPlace(event: CdkDragDrop<TripPlace[]>, dayGroup: DayGroup) {
         moveItemInArray(dayGroup.places, event.previousIndex, event.currentIndex);
-        
-        // Update order numbers
+
         dayGroup.places.forEach((place, index) => {
             place.order = index;
         });
 
-        // Emit the reordered places
         const allPlaces = this.groupedPlaces.flatMap(group => group.places);
         this.placesReordered.emit(allPlaces);
     }
 
-    getCategoryIcon(category: string): string {
-        const cat = category?.toLowerCase() || '';
-        if (cat.includes('food') || cat.includes('restaurant') || cat.includes('cafe')) return 'restaurant';
-        if (cat.includes('sight') || cat.includes('view') || cat.includes('museum')) return 'account_balance';
-        if (cat.includes('stay') || cat.includes('hotel') || cat.includes('accommodation')) return 'hotel';
-        if (cat.includes('activity') || cat.includes('hiking')) return 'hiking';
-        if (cat.includes('shopping')) return 'shopping_bag';
-        return 'place';
-    }
-
-    getPlaceTypeColor(category: string): string {
-        const cat = category?.toLowerCase() || '';
-        if (cat.includes('food') || cat.includes('restaurant')) return '#ff4081';
-        if (cat.includes('sight') || cat.includes('museum')) return '#e91e63';
-        if (cat.includes('stay') || cat.includes('hotel')) return '#e91e63';
-        if (cat.includes('activity')) return '#ff4081';
-        return '#e91e63';
+    getPlaceCount(dayNumber: number): number {
+        const group = this.groupedPlaces.find(g => g.dayNumber === dayNumber);
+        return group?.places.length || 0;
     }
 }

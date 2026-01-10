@@ -1,0 +1,27 @@
+<div class="ask-ai-dialog">
+    <div class="dialog-header">
+        <div class="ai-icon">✨</div>
+        <h2>Trip Created!</h2>
+        <p>Would you like AI to generate an itinerary for <strong>{{ data.destination }}</strong>?</p>
+    </div>
+
+    <div class="options">
+        <button class="option-card ai-option" (click)="onGenerateWithAI()">
+            <div class="option-icon">🤖</div>
+            <div class="option-content">
+                <h3>Generate with AI</h3>
+                <p>Let AI create a personalized itinerary based on your destination and dates</p>
+            </div>
+            <mat-icon class="arrow">arrow_forward</mat-icon>
+        </button>
+
+        <button class="option-card manual-option" (click)="onManual()">
+            <div class="option-icon">✏️</div>
+            <div class="option-content">
+                <h3>I'll add places manually</h3>
+                <p>Build your own itinerary by adding places one by one</p>
+            </div>
+            <mat-icon class="arrow">arrow_forward</mat-icon>
+        </button>
+    </div>
+</div>
