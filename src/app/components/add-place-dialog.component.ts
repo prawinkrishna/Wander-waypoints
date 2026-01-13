@@ -75,7 +75,9 @@ export class AddPlaceDialogComponent implements OnInit {
         raw: this.selectedPlace.raw
       },
       dayNumber: this.selectedDay,
-      timeSlot: this.selectedTimeSlot
+      timeSlot: this.selectedTimeSlot,
+      duration: 90, // Default 1.5 hours
+      travelDuration: 30 // Default 30 mins travel
     });
   }
 

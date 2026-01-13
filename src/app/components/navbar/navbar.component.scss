@@ -1,29 +1,33 @@
-// Custom styles for autocomplete dropdown (needs to be global or ::ng-deep if ViewEncapsulation is emulated)
+/* =============================================================================
+   NAVBAR COMPONENT - Electric Horizon Theme
+   ============================================================================= */
+
+// Autocomplete dropdown styles
 ::ng-deep .search-option-item {
   line-height: 1.2 !important;
   height: auto !important;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
-  border-bottom: 1px solid rgba(0,0,0,0.04);
+  padding-top: var(--space-2) !important;
+  padding-bottom: var(--space-2) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
 
   .option-content {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--space-1);
   }
 
   .option-title {
-    font-weight: 500;
-    font-size: 14px;
-    color: #333;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--text-body-sm);
+    color: var(--color-text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .option-subtitle {
-    font-size: 12px;
-    color: #777;
+    font-size: var(--text-caption);
+    color: var(--color-text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -34,7 +38,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0 var(--space-8);
   height: 64px;
   background-color: var(--color-surface);
   box-shadow: var(--shadow-sm);
@@ -62,13 +66,13 @@
         font-size: 32px;
         width: 32px;
         height: 32px;
-        margin-right: 0.5rem;
-        color: var(--color-primary);
+        margin-right: var(--space-2);
+        color: var(--primary);
       }
 
       .site-name {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--text-h2);
+        font-weight: var(--font-weight-bold);
         color: var(--color-text-primary);
         letter-spacing: -0.5px;
       }
@@ -77,19 +81,20 @@
 
   .navbar-center {
     display: flex;
-    gap: 1rem;
+    gap: var(--space-4);
+    align-items: center;
 
     a {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-weight: 500;
+      gap: var(--space-2);
+      font-weight: var(--font-weight-medium);
       color: var(--color-text-secondary);
       text-decoration: none;
-      padding: 0.5rem 1rem;
+      padding: var(--space-2) var(--space-4);
       border-radius: var(--radius-md);
       transition: all 0.2s ease-out;
-      height: 40px; /* Specific touch target optimization */
+      height: 40px;
 
       mat-icon {
         font-size: 20px;
@@ -100,22 +105,77 @@
       }
 
       &:hover {
-        background-color: rgba(37, 99, 235, 0.04); /* Primary with very low opacity */
-        color: var(--color-primary);
+        background-color: rgba(30, 144, 255, 0.08);
+        color: var(--primary);
 
         mat-icon {
-          color: var(--color-primary);
+          color: var(--primary);
         }
       }
 
       &.active-link {
-        background-color: rgba(37, 99, 235, 0.08);
-        color: var(--color-primary);
-        font-weight: 600;
+        background-color: var(--primary-tint) !important;
+        color: var(--primary) !important;
+        font-weight: var(--font-weight-semibold);
 
         mat-icon {
-          color: var(--color-primary);
+          color: var(--primary) !important;
         }
+
+        // Override Material button text color
+        .mdc-button__label {
+          color: var(--primary) !important;
+        }
+      }
+    }
+
+    // Deep override for Material button styles
+    ::ng-deep {
+      .mat-mdc-button {
+        &.active-link {
+          background-color: var(--primary-tint) !important;
+          
+          .mdc-button__label {
+            color: var(--primary) !important;
+          }
+          
+          .mat-icon {
+            color: var(--primary) !important;
+          }
+        }
+      }
+    }
+
+    .create-trip-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      height: 40px;
+      padding: 0 var(--space-5);
+      background: var(--primary) !important;
+      color: white !important;
+      border-radius: var(--radius-lg);
+      font-weight: var(--font-weight-medium);
+      font-size: var(--text-body-sm);
+      transition: all 0.2s ease-out;
+      box-shadow: 0 2px 8px rgba(30, 144, 255, 0.25);
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: white !important;
+      }
+
+      &:hover {
+        background: var(--primary-hover) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(30, 144, 255, 0.35);
+      }
+
+      &:active {
+        transform: translateY(0);
       }
     }
   }
@@ -123,7 +183,7 @@
   .navbar-right {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: var(--space-4);
 
     .search-bar {
       width: 260px;
@@ -136,11 +196,10 @@
         .mat-mdc-text-field-wrapper {
           padding-bottom: 0;
         }
-        
-        /* Ensure input matches design */
+
         .mdc-text-field--outlined {
-           --mdc-outlined-text-field-container-shape: var(--radius-md);
-           --mdc-outlined-text-field-outline-color: var(--color-border);
+          --mdc-outlined-text-field-container-shape: var(--radius-md);
+          --mdc-outlined-text-field-outline-color: var(--color-border);
         }
       }
     }
@@ -151,7 +210,7 @@
       }
 
       &:hover mat-icon {
-        color: var(--color-primary);
+        color: var(--primary);
       }
     }
 
@@ -167,20 +226,46 @@
     .user-avatar {
       width: 32px;
       height: 32px;
-      border-radius: 50%;
+      border-radius: var(--radius-full);
       object-fit: cover;
     }
 
     // Guest buttons
     .login-btn {
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       border-color: var(--color-border);
+      color: var(--color-text-secondary);
+
+      &:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
     }
 
     .signup-btn {
-      font-weight: 500;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-weight: var(--font-weight-medium);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
       border: none;
+      color: #FFFFFF;
+
+      &:hover {
+        background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-active) 100%);
+      }
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 var(--space-4);
+
+    .navbar-center {
+      display: none;
+    }
+
+    .search-bar {
+      display: none;
     }
   }
 }

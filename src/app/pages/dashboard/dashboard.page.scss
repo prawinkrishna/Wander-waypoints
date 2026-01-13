@@ -1,46 +1,54 @@
+/* =============================================================================
+   DASHBOARD PAGE - Electric Horizon Theme
+   ============================================================================= */
+
 .dashboard-container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: var(--space-8) var(--space-6);
 }
 
 .dashboard-header {
-  margin-bottom: 40px;
+  margin-bottom: var(--space-10);
 
   h1 {
-    font-size: 32px;
-    margin-bottom: 8px;
+    font-size: var(--text-display-l);
+    margin-bottom: var(--space-2);
     color: var(--color-text-primary);
   }
 
   p {
-    font-size: 16px;
+    font-size: var(--text-body);
     color: var(--color-text-secondary);
   }
 }
 
+/* =============================================================================
+   STATS GRID
+   ============================================================================= */
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: 24px;
-  margin-bottom: 48px;
+  gap: var(--space-6);
+  margin-bottom: var(--space-12);
 }
 
 .stat-card {
-  grid-column: span 4; /* 3 cards per row on desktop */
+  grid-column: span 4;
   background: var(--color-surface);
   border-radius: var(--radius-lg);
-  padding: 24px;
-  box-shadow: var(--shadow-sm);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--color-border);
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: var(--space-6);
   transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-card-hover);
   }
 
   .stat-icon {
@@ -58,75 +66,133 @@
     }
 
     &.primary {
-      background-color: rgba(37, 99, 235, 0.1);
-      color: var(--color-primary);
+      background-color: var(--primary-tint);
+      color: var(--primary);
     }
+
     &.secondary {
-      background-color: rgba(22, 163, 74, 0.1);
-      color: var(--color-secondary);
+      background-color: rgba(72, 187, 120, 0.1);
+      color: var(--color-success);
     }
+
     &.accent {
-      background-color: rgba(245, 158, 11, 0.1);
-      color: var(--color-accent);
+      background-color: rgba(237, 137, 54, 0.1);
+      color: var(--color-warning);
     }
   }
 
   .stat-info {
     h3 {
-      font-size: 32px;
-      font-weight: 700;
+      font-size: var(--text-display-l);
+      font-weight: var(--font-weight-bold);
       color: var(--color-text-primary);
       margin: 0;
       line-height: 1.2;
     }
+
     p {
       color: var(--color-text-secondary);
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       margin: 0;
     }
   }
 }
 
+/* =============================================================================
+   RECENT ACTIVITY
+   ============================================================================= */
+
 .recent-activity {
   h2 {
-    margin-bottom: 24px;
-    font-size: 24px;
+    margin-bottom: var(--space-6);
+    font-size: var(--text-h2);
+    color: var(--color-text-primary);
+  }
+
+  .activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .activity-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--primary-tint);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .activity-content {
+      flex: 1;
+
+      .activity-title {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+      }
+
+      .activity-time {
+        font-size: var(--text-body-sm);
+        color: var(--color-text-tertiary);
+      }
+    }
   }
 
   .empty-state {
     background: var(--color-surface);
     border-radius: var(--radius-lg);
-    padding: 64px;
+    padding: var(--space-16);
     text-align: center;
-    border: 1px dashed var(--color-border);
-    
+    border: 2px dashed var(--color-border);
+
     mat-icon {
       font-size: 64px;
       width: 64px;
       height: 64px;
       color: var(--color-border);
-      margin-bottom: 16px;
+      margin-bottom: var(--space-4);
     }
 
     p {
-      margin-bottom: 24px;
-      font-size: 16px;
+      margin-bottom: var(--space-6);
+      font-size: var(--text-body);
+      color: var(--color-text-secondary);
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
     }
   }
 }
 
-/* Mobile Responsive */
+/* =============================================================================
+   RESPONSIVE
+   ============================================================================= */
+
 @media (max-width: 768px) {
   .dashboard-container {
-    padding: 24px 16px;
+    padding: var(--space-6) var(--space-4);
   }
-  
+
   .stats-grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    gap: var(--space-4);
   }
 
   .stat-card {
-    grid-column: span 4; /* Full width on mobile */
+    grid-column: span 4;
   }
 }

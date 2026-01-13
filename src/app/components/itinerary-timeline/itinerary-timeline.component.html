@@ -54,14 +54,28 @@
 
                         <!-- Place Details -->
                         <div class="place-details">
-                            <!-- Category & Time Slot -->
+                            <!-- Category & Time Info -->
                             <div class="meta-row">
+                                <!-- Start Time -->
+                                <span class="time-badge" *ngIf="item.startTime">
+                                    <mat-icon>schedule</mat-icon>
+                                    {{ item.startTime }}
+                                    <span *ngIf="item.duration"> - {{ getEndTime(item.startTime, item.duration)
+                                        }}</span>
+                                </span>
+                                <!-- Duration -->
+                                <span class="duration-badge" *ngIf="item.duration">
+                                    <mat-icon>timer</mat-icon>
+                                    {{ formatDuration(item.duration) }}
+                                </span>
+                                <!-- Category -->
                                 <span class="category-tag"
                                     [style.backgroundColor]="getCategoryColor(item.place?.category) + '20'"
                                     [style.color]="getCategoryColor(item.place?.category)">
                                     <mat-icon>{{ getCategoryIcon(item.place?.category) }}</mat-icon>
                                     {{ item.place?.category || 'Place' }}
                                 </span>
+                                <!-- Time Slot -->
                                 <span class="time-slot" *ngIf="item.timeSlot">
                                     <mat-icon>{{ getTimeSlotIcon(item.timeSlot) }}</mat-icon>
                                     {{ getTimeSlotLabel(item.timeSlot) }}

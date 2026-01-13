@@ -1,31 +1,35 @@
+/* =============================================================================
+   ASK AI DIALOG - Electric Horizon Theme
+   ============================================================================= */
+
 .ask-ai-dialog {
-  padding: 8px;
+  padding: var(--space-2);
   max-width: 400px;
 }
 
 .dialog-header {
   text-align: center;
-  margin-bottom: 24px;
-  
+  margin-bottom: var(--space-6);
+
   .ai-icon {
     font-size: 48px;
-    margin-bottom: 16px;
+    margin-bottom: var(--space-4);
   }
-  
+
   h2 {
-    font-size: 24px;
-    font-weight: 600;
-    color: #1a1a2e;
-    margin: 0 0 8px;
+    font-size: var(--text-h2);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-2);
   }
-  
+
   p {
-    font-size: 14px;
-    color: #666;
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
     margin: 0;
-    
+
     strong {
-      color: #667eea;
+      color: var(--primary);
     }
   }
 }
@@ -33,65 +37,66 @@
 .options {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .option-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
-  border-radius: 12px;
-  border: 2px solid #e0e0e0;
-  background: white;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
   width: 100%;
-  
+
   &:hover {
-    border-color: #667eea;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(30, 144, 255, 0.15);
     transform: translateY(-2px);
   }
-  
+
   .option-icon {
     font-size: 32px;
     flex-shrink: 0;
   }
-  
+
   .option-content {
     flex: 1;
-    
+
     h3 {
-      font-size: 15px;
-      font-weight: 600;
-      color: #1a1a2e;
-      margin: 0 0 4px;
+      font-size: var(--text-body);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+      margin: 0 0 var(--space-1);
     }
-    
+
     p {
-      font-size: 12px;
-      color: #888;
+      font-size: var(--text-caption);
+      color: var(--color-text-tertiary);
       margin: 0;
     }
   }
-  
+
   .arrow {
-    color: #ccc;
+    color: var(--color-border);
     transition: color 0.2s;
   }
-  
+
   &:hover .arrow {
-    color: #667eea;
+    color: var(--primary);
   }
 }
 
 .ai-option:hover {
-  border-color: #667eea;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  border-color: var(--primary);
+  background: var(--primary-tint);
 }
 
 .manual-option:hover {
-  border-color: #10b981;
+  border-color: var(--color-success);
+  background: rgba(72, 187, 120, 0.05);
 }

@@ -1,23 +1,39 @@
+/* =============================================================================
+   AGENCY CONTAINER - Electric Horizon Theme
+   ============================================================================= */
+
 .agency-container {
-    height: 100vh;
+  height: 100vh;
 }
 
 .agency-sidenav {
-    width: 250px;
-    border-right: 1px solid rgba(0, 0, 0, 0.12);
-    display: flex;
-    flex-direction: column;
+  width: 250px;
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
 }
 
 .sidenav-footer {
-    margin-top: auto; /* Push to bottom if flex column works for mat-sidenav, otherwise might need ::ng-deep or structure change */
-    border-top: 1px solid rgba(0, 0, 0, 0.12);
+  margin-top: auto;
+  border-top: 1px solid var(--color-border);
 }
 
 mat-toolbar {
-    margin-bottom: 8px;
+  margin-bottom: var(--space-2);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white;
 }
 
 .selected {
-    background-color: rgba(0, 0, 0, 0.04);
+  background-color: var(--primary-tint) !important;
+  color: var(--primary) !important;
+}
+
+mat-nav-list {
+  a {
+    &:hover {
+      background-color: rgba(30, 144, 255, 0.08);
+    }
+  }
 }

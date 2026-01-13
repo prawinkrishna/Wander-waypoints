@@ -238,7 +238,9 @@ export class TripDetailsPage implements OnInit {
           address: result.place.address,
           dayNumber: result.dayNumber,
           timeSlot: result.timeSlot,
-          order: (this.trip!.places?.length || 0) + 1
+          order: (this.trip!.places?.length || 0) + 1,
+          duration: result.duration,
+          travelDuration: result.travelDuration
         }).subscribe({
           next: () => {
             this.loadTripDetails(); // Reload to show new place

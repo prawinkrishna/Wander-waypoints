@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../core/service/auth.service';
 import { MapService, SearchLocation } from '../../core/service/map.service';
 
@@ -19,7 +20,8 @@ export class NavbarComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private mapService: MapService
+    private mapService: MapService,
+    private snackBar: MatSnackBar
   ) {
     this.searchControl.valueChanges
       .pipe(
@@ -58,6 +60,26 @@ export class NavbarComponent {
     // Navigate to home if not already there
     if (this.router.url !== '/home') {
       this.router.navigate(['/home']);
+    }
+  }
+
+  onCreateTrip() {
+    if (this.isGuest) {
+      const snackBarRef = this.snackBar.open(
+        'Please login to create a trip',
+        'Login',
+        {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['login-prompt-snackbar']
+        }
+      );
+      snackBarRef.onAction().subscribe(() => {
+        this.router.navigate(['/login']);
+      });
+    } else {
+      this.router.navigate(['/create-trip']);
     }
   }
 

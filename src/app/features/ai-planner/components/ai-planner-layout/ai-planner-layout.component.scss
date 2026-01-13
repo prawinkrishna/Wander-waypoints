@@ -1,22 +1,43 @@
-// Workspace container
+/* =============================================================================
+   AI PLANNER LAYOUT - Electric Horizon Theme
+   ============================================================================= */
+
 .workspace-container {
-    display: flex;
-    height: calc(100vh - 64px); // Account for navbar
-    width: 100%;
+  display: flex;
+  height: calc(100vh - 64px);
+  width: 100%;
+  overflow: hidden;
+
+  .left-panel {
+    width: 35%;
+    height: 100%;
+    border-right: 1px solid var(--color-border);
+    background: var(--color-surface);
     overflow: hidden;
+  }
+
+  .right-panel {
+    width: 65%;
+    height: 100%;
+    background: var(--color-background);
+    overflow: hidden;
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .workspace-container {
+    flex-direction: column;
+
+    .left-panel,
+    .right-panel {
+      width: 100%;
+      height: 50%;
+    }
 
     .left-panel {
-        width: 35%;
-        height: 100%;
-        border-right: 1px solid #e0e0e0;
-        background: white;
-        overflow: hidden;
+      border-right: none;
+      border-bottom: 1px solid var(--color-border);
     }
-
-    .right-panel {
-        width: 65%;
-        height: 100%;
-        background: #f8f9fa;
-        overflow: hidden;
-    }
+  }
 }

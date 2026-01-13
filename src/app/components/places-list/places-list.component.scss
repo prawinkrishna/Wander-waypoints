@@ -1,45 +1,49 @@
+/* =============================================================================
+   PLACES LIST COMPONENT - Electric Horizon Theme
+   ============================================================================= */
+
 .filter-bar {
-  padding: 1rem;
+  padding: var(--space-4);
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
 
   input {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--color-border); /* Thinner border */
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    font-size: 0.95rem;
+    font-size: var(--text-body);
     transition: all 0.2s;
     background: var(--color-background);
 
     &:focus {
       outline: none;
-      border-color: var(--color-primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-focus);
       background: var(--color-surface);
     }
 
     &::placeholder {
-      color: var(--color-text-secondary);
+      color: var(--color-text-tertiary);
     }
   }
 }
 
 .filters {
-  padding: 1rem;
-  background: var(--color-background); /* Slight contrast */
+  padding: var(--space-4);
+  background: var(--color-background);
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
 
   .chip-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: var(--space-2);
 
     button {
       border-radius: var(--radius-full);
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       text-transform: none;
       transition: all 0.2s;
       border-color: var(--color-border);
@@ -49,14 +53,14 @@
       &:hover {
         transform: translateY(-1px);
         box-shadow: var(--shadow-sm);
-        border-color: var(--color-primary);
-        color: var(--color-primary);
+        border-color: var(--primary);
+        color: var(--primary);
       }
 
-      &.mat-primary { /* Assuming mat-stroked-button color="primary" applies this class or similar */
-         border-color: var(--color-primary);
-         color: var(--color-primary);
-         background: rgba(37, 99, 235, 0.05);
+      &.mat-primary {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-tint);
       }
     }
   }
@@ -77,11 +81,11 @@
   justify-content: center;
   height: 100%;
   color: var(--color-text-secondary);
-  gap: 1rem;
+  gap: var(--space-4);
 
   p {
-    font-weight: 500;
-    font-size: 0.95rem;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--text-body);
   }
 }
 
@@ -92,9 +96,9 @@
   justify-content: center;
   height: 100%;
   color: var(--color-error);
-  gap: 1rem;
+  gap: var(--space-4);
   text-align: center;
-  padding: 2rem;
+  padding: var(--space-8);
 
   mat-icon {
     font-size: 48px;
@@ -104,7 +108,7 @@
   }
 
   p {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--color-text-primary);
   }
 }
@@ -113,10 +117,10 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 1rem;
+  padding: var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-4);
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -127,17 +131,17 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #cbd5e0;
+    background: var(--color-border);
     border-radius: 3px;
 
     &:hover {
-      background: #a0aec0;
+      background: var(--color-text-tertiary);
     }
   }
 }
 
-// Ensure library component reflects selection state if it supports it
+// Selected state for trip cards
 ::ng-deep .trip-card.selected {
-  box-shadow: 0 0 0 2px var(--color-primary) !important;
+  box-shadow: 0 0 0 2px var(--primary) !important;
   transform: scale(1.01);
 }

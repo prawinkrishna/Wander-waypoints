@@ -140,6 +140,26 @@ export class ItineraryTimelineComponent implements OnInit, OnChanges {
         return km < 1 ? `${Math.round(km * 1000)}m` : `${km.toFixed(1)} km`;
     }
 
+    // Calculate End Time from Start Time + Duration
+    getEndTime(startTime: string | undefined, durationMinutes: number | undefined): string {
+        if (!startTime || !durationMinutes) return '';
+        const [hours, mins] = startTime.split(':').map(Number);
+        const totalMins = hours * 60 + mins + durationMinutes;
+        const endHour = Math.floor(totalMins / 60) % 24; // Handle overflow past midnight
+        const endMin = totalMins % 60;
+        return `${endHour.toString().padStart(2, '0')}:${endMin.toString().padStart(2, '0')}`;
+    }
+
+    // Format Duration for Display (e.g., 90 -> "1h 30m")
+    formatDuration(minutes: number | undefined): string {
+        if (!minutes) return '';
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        if (h > 0 && m > 0) return `${h}h ${m}m`;
+        if (h > 0) return `${h}h`;
+        return `${m}m`;
+    }
+
     // Get transport icon
     getTransportIcon(mode: string | undefined): string {
         switch (mode?.toLowerCase()) {
