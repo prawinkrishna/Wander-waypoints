@@ -20,7 +20,20 @@ export class AddPlaceDialogComponent implements OnInit {
   selectedPlace: SearchLocation | null = null;
   selectedDay = 1;
   selectedTimeSlot = 'morning';
+  selectedTransportMode = 'car';
+  travelTime = 30;
   searching = false;
+
+  transportModes = [
+    { value: 'walk', label: 'Walk', icon: 'directions_walk' },
+    { value: 'bus', label: 'Bus', icon: 'directions_bus' },
+    { value: 'train', label: 'Train/Metro', icon: 'directions_railway' },
+    { value: 'cab', label: 'Cab', icon: 'local_taxi' },
+    { value: 'car', label: 'Car', icon: 'directions_car' },
+    { value: 'bike', label: 'Bike', icon: 'directions_bike' },
+    { value: 'flight', label: 'Flight', icon: 'flight' },
+    { value: 'ferry', label: 'Ferry', icon: 'directions_boat' }
+  ];
 
   timeSlots = [
     { value: 'morning', label: 'Morning', icon: 'wb_sunny' },
@@ -77,7 +90,9 @@ export class AddPlaceDialogComponent implements OnInit {
       dayNumber: this.selectedDay,
       timeSlot: this.selectedTimeSlot,
       duration: 90, // Default 1.5 hours
-      travelDuration: 30 // Default 30 mins travel
+      travelDuration: this.travelTime,
+      transportMode: this.selectedTransportMode,
+      travelTimeFromPrev: this.travelTime
     });
   }
 

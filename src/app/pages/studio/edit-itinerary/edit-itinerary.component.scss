@@ -1,0 +1,815 @@
+.edit-itinerary-container {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .title-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--color-text-primary);
+        }
+
+        p {
+            margin: 0;
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+        }
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+
+        button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    }
+}
+
+// Status Badge
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+    }
+
+    &.status-draft {
+        background: #e0e0e0;
+        color: var(--color-text-secondary);
+    }
+
+    &.status-shared {
+        background: rgba(var(--primary-rgb), 0.15);
+        color: var(--primary);
+    }
+
+    &.status-reviewing {
+        background: rgba(237, 137, 54, 0.15);
+        color: var(--color-warning);
+    }
+
+    &.status-changes {
+        background: rgba(245, 101, 101, 0.15);
+        color: var(--color-error);
+    }
+
+    &.status-approved {
+        background: rgba(72, 187, 120, 0.15);
+        color: var(--color-success);
+    }
+
+    &.status-finalized {
+        background: linear-gradient(135deg, rgba(128, 90, 213, 0.15) 0%, rgba(103, 58, 183, 0.15) 100%);
+        color: #805AD5;
+    }
+}
+
+.editor-tabs {
+    ::ng-deep .mat-mdc-tab-body-wrapper {
+        flex: 1;
+    }
+}
+
+.tab-content {
+    padding: 24px 0;
+}
+
+// Forms
+.form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+
+    &.two-col > * {
+        flex: 1;
+    }
+
+    &.three-col > * {
+        flex: 1;
+    }
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+}
+
+.full-width {
+    width: 100%;
+}
+
+.section-title {
+    margin: 24px 0 16px;
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+// Day Groups
+.day-group {
+    margin-bottom: 16px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+    color: white;
+    cursor: pointer;
+
+    .day-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .day-number {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .day-date {
+        opacity: 0.9;
+        font-size: 0.875rem;
+    }
+
+    button {
+        color: white;
+    }
+}
+
+.activities-list {
+    padding: 16px;
+}
+
+.activity-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: var(--color-background);
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: var(--primary);
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .drag-handle {
+        cursor: grab;
+        color: var(--color-text-tertiary);
+        padding: 4px;
+
+        &:active {
+            cursor: grabbing;
+        }
+    }
+
+    .activity-content {
+        flex: 1;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+
+        .activity-time {
+            min-width: 60px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .activity-details {
+            flex: 1;
+
+            .activity-title {
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .activity-desc {
+                color: var(--color-text-secondary);
+                font-size: 0.875rem;
+                margin-bottom: 8px;
+            }
+
+            .activity-meta {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                color: #888;
+                font-size: 0.8rem;
+
+                mat-icon {
+                    font-size: 14px;
+                    width: 14px;
+                    height: 14px;
+                }
+            }
+        }
+    }
+
+    .activity-actions {
+        display: flex;
+        gap: 4px;
+    }
+
+    .activity-edit {
+        flex: 1;
+        padding: 8px;
+
+        .edit-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+
+            mat-form-field {
+                flex: 1;
+            }
+        }
+
+        .edit-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 12px;
+        }
+    }
+}
+
+// Accommodation & Transport
+.accommodation-card,
+.transport-card {
+    padding: 16px;
+    margin-bottom: 16px;
+    background: var(--color-background);
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+
+    .acc-row,
+    .transport-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        mat-form-field {
+            flex: 1;
+            min-width: 150px;
+
+            &.small {
+                min-width: 80px;
+                max-width: 100px;
+            }
+
+            &.wide {
+                min-width: 200px;
+                flex: 2;
+            }
+        }
+    }
+
+    .total-display {
+        font-weight: 600;
+        color: var(--primary);
+        min-width: 120px;
+    }
+}
+
+mat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+}
+
+// Pricing Table
+.pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+        background: var(--color-background);
+        font-weight: 600;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.875rem;
+
+        &.narrow {
+            width: 60px;
+        }
+
+        &:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+    }
+
+    .amount {
+        text-align: right;
+        font-family: monospace;
+        font-weight: 600;
+    }
+
+    .label {
+        text-align: right;
+        font-weight: 500;
+    }
+
+    tfoot tr {
+        background: var(--color-background);
+    }
+
+    .grand-total {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+
+        td {
+            color: white;
+            border-bottom: none;
+        }
+
+        .amount {
+            font-size: 1.1rem;
+        }
+    }
+}
+
+// Inclusions/Exclusions
+.two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.add-item {
+    margin-bottom: 16px;
+}
+
+.item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 0;
+        border-bottom: 1px solid #f0f0f0;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        span {
+            flex: 1;
+        }
+
+        button {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        &:hover button {
+            opacity: 1;
+        }
+    }
+}
+
+.icon-success {
+    color: var(--color-success);
+}
+
+.icon-error {
+    color: var(--color-error);
+}
+
+// Empty states
+.empty-message {
+    text-align: center;
+    color: var(--color-text-tertiary);
+    padding: 24px;
+    font-style: italic;
+}
+
+// Loading
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    gap: 16px;
+
+    p {
+        color: var(--color-text-secondary);
+    }
+}
+
+// CDK Drag
+.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.cdk-drag-placeholder {
+    opacity: 0.3;
+}
+
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.activities-list.cdk-drop-list-dragging .activity-card:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// ========================================
+// MOBILE RESPONSIVE STYLES
+// ========================================
+
+@media (max-width: 768px) {
+    .edit-itinerary-container {
+        padding: 16px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .header-left {
+            width: 100%;
+
+            .title-row {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            h1 {
+                font-size: 1.25rem;
+            }
+        }
+
+        .header-actions {
+            width: 100%;
+            flex-wrap: wrap;
+
+            button {
+                flex: 1;
+                min-width: 120px;
+                justify-content: center;
+                min-height: 44px;
+            }
+        }
+    }
+
+    .status-badge {
+        padding: 3px 10px;
+        font-size: 0.7rem;
+    }
+
+    .tab-content {
+        padding: 16px 0;
+    }
+
+    // Day Groups
+    .day-header {
+        padding: 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        .day-info {
+            gap: 12px;
+        }
+
+        .day-number {
+            font-size: 1rem;
+        }
+
+        .day-date {
+            font-size: 0.8rem;
+        }
+    }
+
+    .activities-list {
+        padding: 12px;
+    }
+
+    .activity-card {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+
+        .drag-handle {
+            align-self: flex-start;
+        }
+
+        .activity-content {
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+
+            .activity-time {
+                min-width: auto;
+            }
+        }
+
+        .activity-actions {
+            justify-content: flex-end;
+            width: 100%;
+            padding-top: 8px;
+            border-top: 1px dashed #e0e0e0;
+        }
+
+        .activity-edit {
+            width: 100%;
+            padding: 4px;
+
+            .edit-row {
+                flex-direction: column;
+                gap: 8px;
+
+                mat-form-field {
+                    width: 100%;
+                }
+            }
+
+            .edit-actions {
+                flex-wrap: wrap;
+
+                button {
+                    min-height: 44px;
+                }
+            }
+        }
+    }
+
+    // Accommodation & Transport
+    .accommodation-card,
+    .transport-card {
+        padding: 12px;
+
+        .acc-row,
+        .transport-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+
+            mat-form-field {
+                min-width: 100%;
+                max-width: 100%;
+
+                &.small {
+                    min-width: 100%;
+                    max-width: 100%;
+                }
+
+                &.wide {
+                    min-width: 100%;
+                }
+            }
+
+            .total-display {
+                text-align: right;
+                padding-top: 8px;
+            }
+        }
+    }
+
+    // Pricing Table
+    .pricing-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+
+        th, td {
+            padding: 10px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        input {
+            min-width: 80px;
+        }
+    }
+
+    .section-title {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .edit-itinerary-container {
+        padding: 12px;
+    }
+
+    .page-header {
+        gap: 12px;
+
+        .header-left {
+            h1 {
+                font-size: 1.1rem;
+            }
+
+            p {
+                font-size: 0.8rem;
+            }
+        }
+
+        .header-actions {
+            gap: 8px;
+
+            button {
+                flex: 1 1 100%;
+                font-size: 0.85rem;
+            }
+        }
+    }
+
+    .editor-tabs {
+        ::ng-deep {
+            .mat-mdc-tab-labels {
+                gap: 0;
+            }
+
+            .mat-mdc-tab {
+                min-width: auto;
+                padding: 0 12px;
+                font-size: 0.85rem;
+            }
+        }
+    }
+
+    .tab-content {
+        padding: 12px 0;
+    }
+
+    // Day Groups
+    .day-group {
+        margin-bottom: 12px;
+    }
+
+    .day-header {
+        padding: 10px;
+
+        .day-number {
+            font-size: 0.95rem;
+        }
+    }
+
+    .activities-list {
+        padding: 10px;
+    }
+
+    .activity-card {
+        padding: 10px;
+        margin-bottom: 10px;
+
+        .activity-content {
+            .activity-details {
+                .activity-title {
+                    font-size: 0.95rem;
+                }
+
+                .activity-desc {
+                    font-size: 0.8rem;
+                }
+
+                .activity-meta {
+                    font-size: 0.75rem;
+                }
+            }
+        }
+    }
+
+    // Accommodation & Transport
+    .accommodation-card,
+    .transport-card {
+        margin-bottom: 12px;
+    }
+
+    mat-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+
+        button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    // Pricing
+    .pricing-table {
+        th, td {
+            padding: 8px;
+            font-size: 0.8rem;
+        }
+
+        input {
+            padding: 6px;
+            font-size: 0.8rem;
+
+            &.narrow {
+                width: 50px;
+            }
+        }
+    }
+
+    // Inclusions/Exclusions
+    .add-item {
+        mat-form-field {
+            font-size: 0.85rem;
+        }
+    }
+
+    .item-list li {
+        font-size: 0.9rem;
+        padding: 6px 0;
+
+        button {
+            opacity: 1; // Always visible on mobile
+        }
+    }
+
+    // Empty states
+    .empty-message {
+        padding: 16px;
+        font-size: 0.9rem;
+    }
+
+    // Loading
+    .loading-container {
+        height: 40vh;
+
+        p {
+            font-size: 0.9rem;
+        }
+    }
+}

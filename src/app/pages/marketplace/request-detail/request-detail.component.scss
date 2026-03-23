@@ -1,0 +1,349 @@
+$primary: #48BB78;
+$secondary: #4299E1;
+$success: #48BB78;
+$warning: #ED8936;
+$text-primary: #1a1a2e;
+$text-secondary: #666;
+$bg-light: #f8f9fa;
+$border-light: #e0e0e0;
+
+.request-detail-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+// Back Button
+.back-btn {
+    color: $text-secondary;
+    margin-bottom: 20px;
+    font-weight: 500;
+
+    mat-icon {
+        margin-right: 4px;
+    }
+
+    &:hover {
+        color: $primary;
+    }
+}
+
+// Request Header Card
+.request-header-card {
+    padding: 28px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 32px;
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .request-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: $text-primary;
+        margin: 0;
+        flex: 1;
+    }
+
+    .request-description {
+        color: $text-secondary;
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 0 0 24px;
+    }
+}
+
+// Status Badge
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &.status-open {
+        background: rgba($success, 0.12);
+        color: darken($success, 10%);
+    }
+
+    &.status-progress {
+        background: rgba($primary, 0.12);
+        color: $primary;
+    }
+
+    &.status-completed {
+        background: rgba($success, 0.12);
+        color: darken($success, 15%);
+    }
+
+    &.status-cancelled {
+        background: rgba($secondary, 0.1);
+        color: $secondary;
+    }
+}
+
+// Details Grid
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+
+    .detail-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+
+        mat-icon {
+            color: $primary;
+            font-size: 22px;
+            width: 22px;
+            height: 22px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .detail-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: $text-secondary;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            color: $text-primary;
+            font-weight: 500;
+
+            .day-count {
+                color: $text-secondary;
+                font-weight: 400;
+                font-size: 13px;
+            }
+        }
+
+        .budget-value {
+            color: $success;
+            font-weight: 600;
+        }
+    }
+}
+
+// Sections
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 20px;
+
+    mat-icon {
+        color: $primary;
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .count-badge {
+        background: $primary;
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 10px;
+        border-radius: 12px;
+        margin-left: 4px;
+    }
+
+    &.accepted-title {
+        mat-icon {
+            color: $success;
+        }
+    }
+}
+
+// Accepted Bid Section
+.accepted-bid-section {
+    margin-bottom: 32px;
+    padding: 20px;
+    background: rgba($success, 0.04);
+    border: 1px solid rgba($success, 0.2);
+    border-radius: 12px;
+}
+
+// Bids Section
+.bids-section {
+    margin-bottom: 32px;
+}
+
+.bids-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+// Empty Bids
+.empty-bids {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 20px;
+    text-align: center;
+    background: $bg-light;
+    border-radius: 12px;
+    border: 1px dashed $border-light;
+
+    mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: $border-light;
+        margin-bottom: 12px;
+    }
+
+    h3 {
+        color: $text-primary;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 8px;
+    }
+
+    p {
+        color: $text-secondary;
+        font-size: 14px;
+        margin: 0;
+        max-width: 360px;
+        line-height: 1.5;
+    }
+}
+
+// Chat Section
+.chat-section {
+    margin-top: 32px;
+    border: 1px solid $border-light;
+    border-radius: 12px;
+    overflow: hidden;
+
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background: $bg-light;
+        border-bottom: 1px solid $border-light;
+
+        .section-title {
+            margin: 0;
+            font-size: 16px;
+        }
+    }
+}
+
+// Loading State
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    gap: 16px;
+
+    p {
+        color: $text-secondary;
+        font-size: 15px;
+    }
+}
+
+// Empty / Not Found State
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+
+    .empty-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        color: $border-light;
+        margin-bottom: 16px;
+    }
+
+    h3 {
+        color: $text-primary;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 8px;
+    }
+
+    p {
+        color: $text-secondary;
+        font-size: 15px;
+        margin: 0 0 24px;
+        max-width: 400px;
+    }
+
+    button {
+        background: $primary;
+        border-radius: 8px;
+        padding: 0 24px;
+        height: 44px;
+        font-weight: 600;
+
+        mat-icon {
+            margin-right: 4px;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .request-detail-page {
+        padding: 20px 16px;
+    }
+
+    .request-header-card {
+        padding: 20px;
+
+        .header-top {
+            flex-direction: column;
+        }
+
+        .request-title {
+            font-size: 22px;
+        }
+    }
+
+    .details-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .bids-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+}

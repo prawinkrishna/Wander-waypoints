@@ -1,0 +1,100 @@
+<div class="place-search-dialog">
+    <h2>Replace Place</h2>
+
+    <!-- Current Place Info -->
+    <div class="current-place">
+        <span class="label">Current:</span>
+        <span class="name">{{ data.currentPlace.name }}</span>
+        <span class="address" *ngIf="data.currentPlace.address">{{ data.currentPlace.address }}</span>
+    </div>
+
+    <!-- Mode Toggle -->
+    <div class="mode-toggle">
+        <button class="mode-btn" [class.active]="activeMode === 'search'" (click)="setMode('search')">
+            <mat-icon>search</mat-icon>
+            Search
+        </button>
+        <button class="mode-btn" [class.active]="activeMode === 'url'" (click)="setMode('url')">
+            <mat-icon>link</mat-icon>
+            Paste URL
+        </button>
+    </div>
+
+    <!-- Search Mode -->
+    <div class="search-mode" *ngIf="activeMode === 'search'">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Search for a place</mat-label>
+            <input matInput [formControl]="searchControl" placeholder="e.g., Amber Fort, Jaipur">
+            <mat-icon matPrefix>search</mat-icon>
+            <mat-spinner *ngIf="isSearching" diameter="20" matSuffix></mat-spinner>
+            <button *ngIf="searchControl.value" mat-icon-button matSuffix (click)="clearSearch()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-form-field>
+
+        <!-- Search Results -->
+        <div class="search-results" *ngIf="searchResults.length > 0 && !selectedPlace">
+            <button class="result-item" *ngFor="let result of searchResults" (click)="selectPlace(result)">
+                <mat-icon>place</mat-icon>
+                <div class="result-info">
+                    <span class="result-name">{{ result.name }}</span>
+                    <span class="result-address">{{ result.address }}</span>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- URL Mode -->
+    <div class="url-mode" *ngIf="activeMode === 'url'">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Paste Google Maps URL</mat-label>
+            <input matInput [formControl]="urlControl" placeholder="https://www.google.com/maps/place/...">
+            <mat-icon matPrefix>link</mat-icon>
+            <button *ngIf="urlControl.value" mat-icon-button matSuffix (click)="clearUrl()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-form-field>
+
+        <button mat-stroked-button color="primary" class="parse-btn"
+                (click)="parseUrl()"
+                [disabled]="!urlControl.value || isParsingUrl">
+            <mat-spinner *ngIf="isParsingUrl" diameter="18"></mat-spinner>
+            <span *ngIf="!isParsingUrl">Extract Place</span>
+        </button>
+
+        <div class="url-error" *ngIf="urlError">
+            <mat-icon>error_outline</mat-icon>
+            {{ urlError }}
+        </div>
+
+        <div class="url-hint">
+            <p>Supported URL formats:</p>
+            <ul>
+                <li>google.com/maps/place/...</li>
+                <li>maps.google.com/?q=...</li>
+                <li>goo.gl/maps/... (short links)</li>
+                <li>maps.app.goo.gl/... (app links)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Selected Place -->
+    <div class="selected-place" *ngIf="selectedPlace">
+        <mat-icon>check_circle</mat-icon>
+        <div class="place-info">
+            <span class="name">{{ selectedPlace.name }}</span>
+            <span class="address" *ngIf="selectedPlace.address !== selectedPlace.name">{{ selectedPlace.address }}</span>
+            <span class="coords" *ngIf="selectedPlace.latitude && selectedPlace.longitude">
+                {{ selectedPlace.latitude.toFixed(4) }}, {{ selectedPlace.longitude.toFixed(4) }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+        <button class="cancel-btn" (click)="onCancel()">Cancel</button>
+        <button class="confirm-btn" [disabled]="!selectedPlace" (click)="onConfirm()">
+            Replace
+        </button>
+    </div>
+</div>

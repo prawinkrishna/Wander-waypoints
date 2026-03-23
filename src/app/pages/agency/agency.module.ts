@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular'; // removing this line effectively by not including it in replacement if I could, but I need to match exact lines. 
-// Wait, I should use `replace_file_content` to replace the imports section.
+import { LayoutModule } from '@angular/cdk/layout';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -40,6 +39,7 @@ const routes: Routes = [
         CommonModule,
         SharedModule,
         RouterModule.forChild(routes),
+        LayoutModule,
         MatSidenavModule,
         MatToolbarModule,
         MatListModule,
@@ -52,3 +52,4 @@ const routes: Routes = [
     ]
 })
 export class AgencyModule { }
+

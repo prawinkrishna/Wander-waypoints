@@ -2,6 +2,6 @@
 
 <lib-profile [user]="user" [isOwnProfile]="isOwnProfile" [followStatus]="followStatus" [loading]="loading"
     (followClicked)="onFollowClicked()" (unfollowClicked)="onUnfollowClicked()"
-    (editProfileClicked)="onEditProfileClicked()" (tripClicked)="onTripClicked($event)"
-    (tabChanged)="onTabChanged($event)">
+    (editProfileClicked)="onEditProfileClicked()" (tripClicked)="onTripClicked($any($event))"
+    (tabChanged)="onTabChanged($any($event))">
 </lib-profile>

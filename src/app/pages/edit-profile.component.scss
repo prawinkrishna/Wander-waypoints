@@ -213,11 +213,11 @@
   .save-btn {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
     color: white;
-    box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
 
     &:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(30, 144, 255, 0.4);
+      box-shadow: 0 6px 16px rgba(var(--primary-rgb), 0.4);
     }
   }
 }

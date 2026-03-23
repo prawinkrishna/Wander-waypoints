@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit {
       this.trendingTrips = trips.map(t => ({
         id: t.tripId,
         title: t.title,
-        author: t.user?.username || 'Wander User',
+        author: t.user?.username || 'Trekio User',
         days: this.calculateDays(t),
         clones: 0,
         rating: 5.0,
@@ -83,7 +83,7 @@ export class HomeComponent implements OnInit {
   }
 
   openAiPlanner() {
-    this.router.navigate(['/ai-planner']);
+    this.router.navigate(['/create-trip']);
   }
 
   onPlaceSelected(place: Place): void {
@@ -100,5 +100,17 @@ export class HomeComponent implements OnInit {
 
   onMapMoved(bounds: [[number, number], [number, number]]) {
     this.mapService.updateBounds(bounds);
+  }
+
+  trackByFriendId(index: number, friend: any): string {
+    return friend.id;
+  }
+
+  trackByTripId(index: number, trip: any): string {
+    return trip.id;
+  }
+
+  scrollToMap() {
+    document.getElementById('explore-map')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }

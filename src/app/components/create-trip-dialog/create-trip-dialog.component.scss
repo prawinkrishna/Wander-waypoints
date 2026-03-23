@@ -18,6 +18,40 @@
   width: 100%;
 }
 
+// Fix textarea label overlap
+mat-form-field:has(textarea) {
+  ::ng-deep {
+    .mat-mdc-text-field-wrapper {
+      height: auto !important;
+      min-height: 52px;
+    }
+
+    .mat-mdc-form-field-flex {
+      align-items: flex-start !important;
+    }
+
+    .mat-mdc-form-field-infix {
+      padding-top: 16px !important;
+      padding-bottom: 8px !important;
+      min-height: auto !important;
+      height: auto !important;
+    }
+
+    .mat-mdc-floating-label {
+      top: 28px !important;
+    }
+
+    .mdc-floating-label--float-above {
+      transform: translateY(-34px) scale(0.75) !important;
+    }
+  }
+
+  textarea {
+    line-height: 1.5;
+    resize: vertical;
+  }
+}
+
 .date-row {
   display: flex;
   gap: var(--space-4);

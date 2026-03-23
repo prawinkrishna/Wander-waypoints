@@ -1,0 +1,208 @@
+$primary: #48BB78;
+$secondary: #4299E1;
+$success: #48BB78;
+$text-primary: #1a1a2e;
+$text-secondary: #666;
+$bg-light: #f8f9fa;
+$border-light: #e0e0e0;
+
+.my-requests-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+// Page Header
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    gap: 16px;
+
+    .header-content {
+        flex: 1;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: $text-primary;
+        margin: 0 0 4px;
+    }
+
+    .page-subtitle {
+        color: $text-secondary;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .post-btn {
+        background: $primary;
+        border-radius: 8px;
+        padding: 0 20px;
+        height: 44px;
+        font-weight: 600;
+        white-space: nowrap;
+
+        mat-icon {
+            margin-right: 4px;
+        }
+    }
+}
+
+// Sections
+.section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 20px;
+
+    mat-icon {
+        color: $primary;
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+    }
+
+    .count-badge {
+        background: $primary;
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-left: 4px;
+
+        &.muted {
+            background: $border-light;
+            color: $text-secondary;
+        }
+    }
+}
+
+// Requests Grid
+.requests-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.request-item {
+    position: relative;
+
+    .cancel-action {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 2;
+        color: $secondary;
+        background: rgba(255, 255, 255, 0.9);
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+
+        mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+        }
+
+        &:hover {
+            background: rgba($secondary, 0.1);
+        }
+    }
+}
+
+// Loading State
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    gap: 16px;
+
+    p {
+        color: $text-secondary;
+        font-size: 15px;
+    }
+}
+
+// Empty State
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+
+    .empty-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        color: $border-light;
+        margin-bottom: 16px;
+    }
+
+    h3 {
+        color: $text-primary;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 8px;
+    }
+
+    p {
+        color: $text-secondary;
+        font-size: 15px;
+        margin: 0 0 24px;
+        max-width: 420px;
+        line-height: 1.5;
+    }
+
+    button {
+        background: $primary;
+        border-radius: 8px;
+        padding: 0 24px;
+        height: 44px;
+        font-weight: 600;
+
+        mat-icon {
+            margin-right: 4px;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+    .requests-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .my-requests-page {
+        padding: 20px 16px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+
+        .post-btn {
+            align-self: flex-start;
+        }
+    }
+
+    .requests-grid {
+        grid-template-columns: 1fr;
+    }
+}

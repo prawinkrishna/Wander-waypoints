@@ -49,6 +49,23 @@
                 </div>
             </div>
         </div>
+
+        <div class="schedule-field">
+            <label>Getting There</label>
+            <div class="time-slots">
+                <button *ngFor="let mode of transportModes" class="time-slot"
+                    [class.active]="selectedTransportMode === mode.value"
+                    (click)="selectedTransportMode = mode.value">
+                    <mat-icon>{{ mode.icon }}</mat-icon>
+                    <span>{{ mode.label }}</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="schedule-field">
+            <label>Travel Time (minutes)</label>
+            <input type="number" [(ngModel)]="travelTime" min="1" max="1440" class="travel-time-input">
+        </div>
     </div>
 
     <!-- Actions -->

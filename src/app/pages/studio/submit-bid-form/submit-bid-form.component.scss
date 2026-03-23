@@ -1,0 +1,76 @@
+$primary: #48BB78;
+$secondary: #4299E1;
+$success: #48BB78;
+$warning: #ED8936;
+$text-primary: #1a1a2e;
+$text-secondary: #6b7280;
+$border-color: #e5e7eb;
+
+.bid-form-card {
+    border-radius: 12px;
+    padding: 24px;
+    border-left: 4px solid $primary;
+}
+
+.form-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 16px 0;
+}
+
+.bid-form {
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 8px;
+
+    button {
+        min-width: 120px;
+        height: 44px;
+        border-radius: 8px;
+        font-weight: 600;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+    }
+
+    .btn-spinner {
+        display: inline-block;
+
+        ::ng-deep circle {
+            stroke: white;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .bid-form-card {
+        padding: 16px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+
+        button {
+            width: 100%;
+        }
+    }
+}

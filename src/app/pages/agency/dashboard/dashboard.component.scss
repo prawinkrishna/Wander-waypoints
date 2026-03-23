@@ -103,3 +103,61 @@
 .text-medium {
   color: var(--color-text-tertiary);
 }
+
+/* =============================================================================
+   RESPONSIVE
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  .content-padding {
+    padding: var(--space-3);
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+
+  .stat-card {
+    mat-card-content {
+      padding: var(--space-4) !important;
+    }
+
+    .stat-flex {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .stat-icon-container {
+      margin: 0 0 var(--space-2) 0;
+    }
+
+    .stat-text {
+      h3 {
+        font-size: var(--text-h3);
+      }
+      p {
+        font-size: var(--text-caption);
+      }
+    }
+  }
+
+  .section-title {
+    font-size: var(--text-body);
+  }
+
+  // Horizontal scroll for activity table
+  .activity-card {
+    overflow-x: auto;
+
+    mat-table {
+      min-width: 500px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

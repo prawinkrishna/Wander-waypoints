@@ -1,0 +1,217 @@
+<div class="create-itinerary-container">
+    <div class="page-header">
+        <h1>Create New Itinerary</h1>
+        <p>Fill in the trip details and let AI generate a professional itinerary for your client</p>
+    </div>
+
+    <div class="content-grid" [class.with-preview]="showPreview">
+        <!-- Form Section -->
+        <mat-card class="form-card">
+            <mat-card-header>
+                <mat-card-title>Trip Details</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <form [formGroup]="tripForm">
+                    <!-- Client Information -->
+                    <h3 class="section-title">
+                        <mat-icon>person</mat-icon>
+                        Client Information
+                    </h3>
+                    <div class="form-row">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Client Name</mat-label>
+                            <input matInput formControlName="clientName" placeholder="John Doe">
+                            <mat-error *ngIf="tripForm.get('clientName')?.hasError('required')">
+                                Client name is required
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-row two-col">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Email</mat-label>
+                            <input matInput type="email" formControlName="clientEmail" placeholder="john@example.com">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Phone</mat-label>
+                            <input matInput formControlName="clientPhone" placeholder="+91 98765 43210">
+                        </mat-form-field>
+                    </div>
+
+                    <mat-divider></mat-divider>
+
+                    <!-- Trip Details -->
+                    <h3 class="section-title">
+                        <mat-icon>flight_takeoff</mat-icon>
+                        Trip Details
+                    </h3>
+                    <div class="form-row">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Destination</mat-label>
+                            <input matInput formControlName="destination" placeholder="e.g., Goa, Rajasthan, Kerala">
+                            <mat-error *ngIf="tripForm.get('destination')?.hasError('required')">
+                                Destination is required
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-row three-col">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Start Date</mat-label>
+                            <input matInput [matDatepicker]="picker" formControlName="startDate">
+                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Duration (Days)</mat-label>
+                            <input matInput type="number" formControlName="duration" min="1" max="30">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Travelers</mat-label>
+                            <input matInput type="number" formControlName="travelers" min="1" max="50">
+                        </mat-form-field>
+                    </div>
+
+                    <mat-divider></mat-divider>
+
+                    <!-- Preferences -->
+                    <h3 class="section-title">
+                        <mat-icon>tune</mat-icon>
+                        Preferences
+                    </h3>
+                    <div class="form-row two-col">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Trip Type</mat-label>
+                            <mat-select formControlName="tripType">
+                                <mat-option *ngFor="let type of tripTypes" [value]="type.value">
+                                    {{ type.label }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Budget Category</mat-label>
+                            <mat-select formControlName="budgetCategory">
+                                <mat-option *ngFor="let budget of budgetCategories" [value]="budget.value">
+                                    {{ budget.label }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="interests-section">
+                        <label>Interests</label>
+                        <div class="interest-chips">
+                            <mat-chip-listbox multiple>
+                                <mat-chip-option *ngFor="let interest of interestOptions"
+                                    [selected]="selectedInterests.includes(interest)"
+                                    (click)="toggleInterest(interest)">
+                                    {{ interest }}
+                                </mat-chip-option>
+                            </mat-chip-listbox>
+                        </div>
+                    </div>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Special Requirements</mat-label>
+                        <textarea matInput formControlName="specialRequirements" rows="3"
+                            placeholder="Any specific requests, dietary restrictions, accessibility needs..."></textarea>
+                    </mat-form-field>
+                </form>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-raised-button color="primary" (click)="generateItinerary()"
+                    [disabled]="isGenerating || tripForm.invalid">
+                    <mat-icon *ngIf="!isGenerating">auto_awesome</mat-icon>
+                    <mat-spinner *ngIf="isGenerating" diameter="20"></mat-spinner>
+                    {{ isGenerating ? 'Generating...' : 'Generate Itinerary' }}
+                </button>
+                <button mat-button (click)="resetForm()" *ngIf="generatedItinerary">
+                    <mat-icon>refresh</mat-icon>
+                    Reset
+                </button>
+            </mat-card-actions>
+        </mat-card>
+
+        <!-- Preview Section -->
+        <div class="preview-section" *ngIf="showPreview && generatedItinerary">
+            <mat-card class="preview-card">
+                <mat-card-header>
+                    <mat-card-title>{{ generatedItinerary.trip_title }}</mat-card-title>
+                    <mat-card-subtitle>
+                        {{ generatedItinerary.destination }} |
+                        {{ generatedItinerary.duration_days }} Days / {{ generatedItinerary.duration_nights }} Nights |
+                        {{ generatedItinerary.travelers }} Travelers
+                    </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <p class="summary">{{ generatedItinerary.summary }}</p>
+
+                    <!-- Day-wise Itinerary -->
+                    <mat-expansion-panel *ngFor="let day of generatedItinerary.itinerary" class="day-panel">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                Day {{ day.day_number }}: {{ day.theme }}
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+
+                        <div class="activity-list">
+                            <div class="activity-item" *ngFor="let activity of day.activities">
+                                <div class="activity-time">
+                                    {{ activity.start_time }} - {{ activity.end_time }}
+                                </div>
+                                <div class="activity-content">
+                                    <strong>{{ activity.activity_title }}</strong>
+                                    <p>{{ activity.description }}</p>
+                                    <span class="place-name">
+                                        <mat-icon>place</mat-icon> {{ activity.place_name }}
+                                    </span>
+                                    <span class="activity-cost" *ngIf="activity.estimated_cost">
+                                        {{ formatCurrency(activity.estimated_cost) }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-expansion-panel>
+
+                    <!-- Hotels -->
+                    <h4 class="preview-section-title">
+                        <mat-icon>hotel</mat-icon> Recommended Hotels
+                    </h4>
+                    <div class="hotel-cards">
+                        <div class="hotel-card" *ngFor="let hotel of generatedItinerary.recommended_hotels">
+                            <div class="hotel-name">{{ hotel.hotel_name }}</div>
+                            <div class="hotel-rating" *ngIf="hotel.star_rating">
+                                <mat-icon *ngFor="let star of [].constructor(hotel.star_rating)">star</mat-icon>
+                            </div>
+                            <div class="hotel-details">
+                                <span *ngIf="hotel.room_type">{{ hotel.room_type }}</span>
+                                <span *ngIf="hotel.per_night_cost">{{ formatCurrency(hotel.per_night_cost) }}/night</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Budget -->
+                    <h4 class="preview-section-title">
+                        <mat-icon>account_balance_wallet</mat-icon> Estimated Budget
+                    </h4>
+                    <table class="budget-table">
+                        <tr *ngFor="let item of generatedItinerary.budget_breakdown">
+                            <td>{{ item.category }}</td>
+                            <td>{{ item.description }}</td>
+                            <td class="amount">{{ formatCurrency(item.total) }}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="2"><strong>Estimated Total</strong></td>
+                            <td class="amount"><strong>{{ formatCurrency(generatedItinerary.estimated_total) }}</strong></td>
+                        </tr>
+                    </table>
+                </mat-card-content>
+                <mat-card-actions align="end">
+                    <button mat-raised-button color="primary" (click)="saveAndEdit()" [disabled]="isSaving">
+                        <mat-icon *ngIf="!isSaving">edit</mat-icon>
+                        <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
+                        {{ isSaving ? 'Saving...' : 'Save & Edit' }}
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </div>
+</div>

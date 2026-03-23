@@ -1,0 +1,401 @@
+// Design System Colors
+$primary: #48BB78;
+$primary-hover: #38A169;
+$secondary: #4299E1;
+$success: #48BB78;
+$warning: #ED8936;
+$bg-light: #F7F9FA;
+$surface-light: #FFFFFF;
+$text-primary: #1A202C;
+$text-secondary: #4A5568;
+$text-tertiary: #A0AEC0;
+$border-light: #E2E8F0;
+
+.dashboard-container {
+    padding: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    @media (max-width: 768px) {
+        padding: 20px 16px;
+    }
+}
+
+// Onboarding Section (non-agent users)
+.onboarding-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+
+    .onboarding-card {
+        text-align: center;
+        max-width: 560px;
+        padding: 48px 40px;
+        background: $surface-light;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+        .onboarding-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, $primary 0%, $primary-hover 100%);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 24px;
+
+            mat-icon {
+                font-size: 40px;
+                width: 40px;
+                height: 40px;
+                color: white;
+            }
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: $text-primary;
+            margin: 0 0 12px;
+        }
+
+        > p {
+            color: $text-secondary;
+            line-height: 1.6;
+            margin: 0 0 32px;
+        }
+
+        .onboarding-features {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 32px;
+            text-align: left;
+
+            .onboarding-feature {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                background: $bg-light;
+                border-radius: 8px;
+
+                mat-icon {
+                    font-size: 20px;
+                    width: 20px;
+                    height: 20px;
+                    color: $primary;
+                }
+
+                span {
+                    font-size: 0.925rem;
+                    color: $text-primary;
+                }
+            }
+        }
+
+        .onboarding-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            button {
+                border-radius: 12px;
+                padding: 12px 24px;
+                font-weight: 600;
+                height: auto;
+            }
+        }
+    }
+}
+
+// Dashboard Header
+.dashboard-header {
+    margin-bottom: 32px;
+
+    .welcome-title {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: $text-primary;
+        margin: 0 0 8px;
+
+        @media (max-width: 768px) {
+            font-size: 1.5rem;
+        }
+    }
+
+    .welcome-subtitle {
+        font-size: 1rem;
+        color: $text-secondary;
+        margin: 0;
+    }
+}
+
+// Stats Grid
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .stat-card {
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+        mat-card-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 24px !important;
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            mat-icon {
+                font-size: 28px;
+                width: 28px;
+                height: 28px;
+                color: white;
+            }
+
+            &.total {
+                background: linear-gradient(135deg, $primary 0%, $primary-hover 100%);
+            }
+
+            &.month {
+                background: linear-gradient(135deg, $success 0%, darken($success, 10%) 100%);
+            }
+
+            &.drafts {
+                background: linear-gradient(135deg, $warning 0%, darken($warning, 10%) 100%);
+            }
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+
+            .stat-value {
+                font-size: 2rem;
+                font-weight: 700;
+                color: $text-primary;
+                line-height: 1;
+            }
+
+            .stat-label {
+                font-size: 0.875rem;
+                color: $text-secondary;
+                margin-top: 4px;
+            }
+        }
+    }
+}
+
+// Quick Actions
+.quick-actions {
+    margin-bottom: 32px;
+
+    .create-btn {
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        height: auto;
+
+        mat-icon {
+            margin-right: 8px;
+        }
+    }
+}
+
+// Recent Section
+.recent-section {
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: $text-primary;
+            margin: 0;
+        }
+
+        button {
+            font-weight: 500;
+
+            mat-icon {
+                margin-left: 4px;
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+            }
+        }
+    }
+
+    .loading-container {
+        display: flex;
+        justify-content: center;
+        padding: 48px 0;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 64px 24px;
+        background: $surface-light;
+        border-radius: 12px;
+        border: 1px dashed $border-light;
+
+        .empty-icon {
+            font-size: 64px;
+            width: 64px;
+            height: 64px;
+            color: $text-tertiary;
+            margin-bottom: 16px;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: $text-primary;
+            margin: 0 0 8px;
+        }
+
+        p {
+            color: $text-secondary;
+            margin: 0 0 24px;
+        }
+
+        button {
+            border-radius: 8px;
+
+            mat-icon {
+                margin-right: 8px;
+            }
+        }
+    }
+
+    .itineraries-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .itinerary-card {
+        border-radius: 12px;
+        cursor: pointer;
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+        &:hover {
+            box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.12);
+            transform: translateY(-2px);
+        }
+
+        mat-card-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px !important;
+
+            @media (max-width: 768px) {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+
+        .itinerary-info {
+            .itinerary-title {
+                font-size: 1rem;
+                font-weight: 600;
+                color: $text-primary;
+                margin: 0 0 8px;
+            }
+
+            .itinerary-meta {
+                display: flex;
+                gap: 16px;
+                margin: 0;
+
+                @media (max-width: 480px) {
+                    flex-direction: column;
+                    gap: 4px;
+                }
+
+                .client-name,
+                .date {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    font-size: 0.875rem;
+                    color: $text-secondary;
+
+                    mat-icon {
+                        font-size: 16px;
+                        width: 16px;
+                        height: 16px;
+                    }
+                }
+            }
+        }
+
+        .itinerary-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            @media (max-width: 768px) {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .status-badge {
+                padding: 4px 12px;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+
+                &.status-draft {
+                    background: rgba(160, 174, 192, 0.15);
+                    color: $text-secondary;
+                }
+
+                &.status-shared {
+                    background: rgba(var(--primary-rgb), 0.1);
+                    color: $primary;
+                }
+
+                &.status-approved {
+                    background: rgba(72, 187, 120, 0.1);
+                    color: $success;
+                }
+
+                &.status-finalized {
+                    background: rgba(72, 187, 120, 0.15);
+                    color: darken($success, 10%);
+                }
+            }
+
+            .arrow-icon {
+                color: $text-tertiary;
+            }
+        }
+    }
+}

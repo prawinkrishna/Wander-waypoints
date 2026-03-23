@@ -1,1 +1,199 @@
-/* Booking page styles */
+$primary: #48BB78;
+$success: #48BB78;
+$warning: #ED8936;
+$error: #F56565;
+$text-primary: #1A202C;
+$text-secondary: #4A5568;
+$text-tertiary: #A0AEC0;
+$bg-light: #F7F9FA;
+$surface-light: #FFFFFF;
+$border-light: #E2E8F0;
+
+.booking-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 24px 40px;
+
+    @media (max-width: 768px) {
+        padding: 72px 16px 24px;
+    }
+}
+
+.page-header {
+    margin-bottom: 24px;
+
+    h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: $text-primary;
+    }
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    padding: 80px 0;
+}
+
+// Tabs
+::ng-deep .mat-mdc-tab-labels {
+    gap: 8px;
+}
+
+::ng-deep .mat-mdc-tab .mdc-tab__text-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-count {
+    background: $primary;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    margin-left: 4px;
+}
+
+.tab-content {
+    padding: 24px 0;
+}
+
+// Empty State
+.empty-state {
+    text-align: center;
+    padding: 64px 24px;
+
+    .empty-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        color: $text-tertiary;
+        margin-bottom: 16px;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $text-primary;
+        margin-bottom: 8px;
+    }
+
+    p {
+        color: $text-secondary;
+        margin-bottom: 24px;
+    }
+}
+
+// Booking Cards
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.booking-card {
+    border-radius: 12px;
+    cursor: default;
+
+    mat-card-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px;
+
+        @media (max-width: 600px) {
+            flex-direction: column;
+        }
+    }
+}
+
+.booking-info {
+    flex: 1;
+
+    .booking-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: $text-primary;
+        margin: 0 0 12px;
+    }
+
+    .booking-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.875rem;
+            color: $text-secondary;
+
+            mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                color: $text-tertiary;
+            }
+        }
+    }
+
+    .cancellation-reason {
+        margin-top: 8px;
+        font-size: 0.875rem;
+        color: $text-tertiary;
+        font-style: italic;
+    }
+}
+
+.booking-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+
+    @media (max-width: 600px) {
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+}
+
+// Status Chips
+.status-chip {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+
+    &.status-pending {
+        background: rgba($warning, 0.15);
+        color: $warning;
+    }
+
+    &.status-confirmed {
+        background: rgba($success, 0.15);
+        color: $success;
+    }
+
+    &.status-completed {
+        background: rgba($primary, 0.15);
+        color: $primary;
+    }
+
+    &.status-cancelled {
+        background: rgba($error, 0.15);
+        color: $error;
+    }
+}

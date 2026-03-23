@@ -52,8 +52,8 @@
                             </div>
                         </div>
 
-                        <!-- Place Details -->
-                        <div class="place-details">
+                        <!-- Place Details - View Mode -->
+                        <div class="place-details" *ngIf="!item.isEditing">
                             <!-- Category & Time Info -->
                             <div class="meta-row">
                                 <!-- Start Time -->
@@ -105,6 +105,11 @@
 
                             <!-- Action Buttons -->
                             <div class="action-buttons">
+                                <button class="action-btn edit" *ngIf="enableInlineEditing && isOwner"
+                                    (click)="startEditing(item); $event.stopPropagation()">
+                                    <mat-icon>edit</mat-icon>
+                                    Edit
+                                </button>
                                 <button class="action-btn directions"
                                     (click)="openDirections(item); $event.stopPropagation()">
                                     <mat-icon>directions</mat-icon>
@@ -118,6 +123,64 @@
                             </div>
                         </div>
 
+                        <!-- Place Details - Edit Mode -->
+                        <div class="place-details edit-mode" *ngIf="item.isEditing && item.editData" (click)="$event.stopPropagation()">
+                            <div class="edit-row">
+                                <div class="edit-field">
+                                    <label>Activity Name</label>
+                                    <input type="text" [(ngModel)]="item.editData.name"
+                                        (keydown)="onEditFieldKeydown($event, item)"
+                                        placeholder="Activity name">
+                                </div>
+                            </div>
+                            <div class="edit-row two-col">
+                                <div class="edit-field">
+                                    <label>Start Time</label>
+                                    <input type="time" [(ngModel)]="item.editData.startTime"
+                                        (keydown)="onEditFieldKeydown($event, item)">
+                                </div>
+                                <div class="edit-field">
+                                    <label>Duration (mins)</label>
+                                    <input type="number" [(ngModel)]="item.editData.duration"
+                                        (keydown)="onEditFieldKeydown($event, item)"
+                                        placeholder="60">
+                                </div>
+                            </div>
+                            <div class="edit-row">
+                                <div class="edit-field">
+                                    <label>Location/Address</label>
+                                    <input type="text" [(ngModel)]="item.editData.address"
+                                        (keydown)="onEditFieldKeydown($event, item)"
+                                        placeholder="Address">
+                                </div>
+                            </div>
+                            <div class="edit-row">
+                                <div class="edit-field">
+                                    <label>Notes</label>
+                                    <textarea [(ngModel)]="item.editData.notes"
+                                        (keydown)="onEditFieldKeydown($event, item)"
+                                        placeholder="Add notes..."
+                                        rows="2"></textarea>
+                                </div>
+                            </div>
+                            <div class="edit-row two-col">
+                                <div class="edit-field">
+                                    <label>Transport Mode</label>
+                                    <select [(ngModel)]="item.editData!.transportMode">
+                                        <option *ngFor="let mode of transportModes" [value]="mode.value">{{ mode.label }}</option>
+                                    </select>
+                                </div>
+                                <div class="edit-field">
+                                    <label>Travel Time (mins)</label>
+                                    <input type="number" [(ngModel)]="item.editData!.travelTimeFromPrev" placeholder="15">
+                                </div>
+                            </div>
+                            <div class="edit-actions">
+                                <button class="cancel-btn" (click)="cancelEditing(item)">Cancel</button>
+                                <button class="save-btn" (click)="saveEditing(item)">Save</button>
+                            </div>
+                        </div>
+
                         <!-- Delete Button (Owner Only) -->
                         <button class="delete-btn" *ngIf="isOwner"
                             (click)="onDeletePlace(item.tripPlaceId); $event.stopPropagation()">
@@ -126,15 +189,44 @@
                     </div>
 
                     <!-- Travel Connector -->
-                    <div class="travel-connector" *ngIf="!last && (item.travelTimeFromPrev || item.distanceFromPrev)">
-                        <div class="travel-line"></div>
-                        <div class="travel-info">
-                            <mat-icon>{{ getTransportIcon(item.transportMode) }}</mat-icon>
-                            <span *ngIf="item.travelTimeFromPrev">{{ formatTravelTime(item.travelTimeFromPrev) }}</span>
-                            <span class="separator" *ngIf="item.travelTimeFromPrev && item.distanceFromPrev">•</span>
-                            <span *ngIf="item.distanceFromPrev">{{ formatDistance(item.distanceFromPrev) }}</span>
+                    <ng-container *ngIf="!last">
+                        <!-- View Mode -->
+                        <div class="travel-connector" [class.editable]="enableInlineEditing && isOwner"
+                            *ngIf="editingConnectorId !== group.places[i + 1]?.tripPlaceId"
+                            (click)="enableInlineEditing && isOwner && startConnectorEditing(group.places[i + 1]); $event.stopPropagation()">
+                            <div class="travel-line"></div>
+                            <div class="travel-info">
+                                <mat-icon>{{ getTransportIcon(group.places[i + 1]?.transportMode || item.transportMode) }}</mat-icon>
+                                <span *ngIf="group.places[i + 1]?.travelTimeFromPrev || item.travelTimeFromPrev">
+                                    {{ formatTravelTime(group.places[i + 1]?.travelTimeFromPrev || item.travelTimeFromPrev) }}
+                                </span>
+                                <span class="separator" *ngIf="(group.places[i + 1]?.travelTimeFromPrev || item.travelTimeFromPrev) && item.distanceFromPrev">•</span>
+                                <span *ngIf="item.distanceFromPrev">{{ formatDistance(item.distanceFromPrev) }}</span>
+                                <mat-icon class="edit-hint" *ngIf="enableInlineEditing && isOwner">edit</mat-icon>
+                            </div>
                         </div>
-                    </div>
+                        <!-- Edit Mode -->
+                        <div class="travel-connector connector-edit"
+                            *ngIf="editingConnectorId === group.places[i + 1]?.tripPlaceId && connectorEditData"
+                            (click)="$event.stopPropagation()">
+                            <div class="transport-chips">
+                                <button *ngFor="let mode of transportModes" class="transport-chip"
+                                    [class.active]="connectorEditData.transportMode === mode.value"
+                                    (click)="connectorEditData.transportMode = mode.value">
+                                    <mat-icon>{{ mode.icon }}</mat-icon>
+                                    <span>{{ mode.label }}</span>
+                                </button>
+                            </div>
+                            <div class="connector-time-input">
+                                <label>Travel Time (mins)</label>
+                                <input type="number" [(ngModel)]="connectorEditData.travelTimeFromPrev" min="1" max="1440">
+                            </div>
+                            <div class="connector-edit-actions">
+                                <button class="cancel-btn" (click)="cancelConnectorEditing()">Cancel</button>
+                                <button class="save-btn" (click)="saveConnectorEditing(group.places[i + 1])">Save</button>
+                            </div>
+                        </div>
+                    </ng-container>
 
                     <!-- CDK Drag Placeholder -->
                     <div class="drag-placeholder" *cdkDragPlaceholder></div>

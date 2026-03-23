@@ -11,26 +11,6 @@ export class SocialService {
 
     constructor(private http: HttpClient) { }
 
-    likeEntity(data: { entityId: string, entityType: 'trip' | 'place' | 'post' }): Observable<any> {
-        return this.http.post(`${this.apiUrl}/likes`, data);
-    }
-
-    unlikeEntity(id: string): Observable<any> {
-        return this.http.delete(`${this.apiUrl}/likes/${id}`);
-    }
-
-    addComment(data: { entityId: string, entityType: 'trip' | 'place' | 'post', text: string }): Observable<any> {
-        return this.http.post(`${this.apiUrl}/comments`, data);
-    }
-
-    getComments(entityId: string): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/comments/${entityId}`);
-    }
-
-    shareEntity(data: { entityId: string, entityType: 'trip' | 'place', sharedWith: string }): Observable<any> {
-        return this.http.post(`${this.apiUrl}/shares`, data);
-    }
-
     getFriendFootprints(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/users/footprints`);
     }

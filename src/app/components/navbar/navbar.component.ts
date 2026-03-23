@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { debounceTime, switchMap } from 'rxjs/operators';
@@ -6,22 +6,30 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../core/service/auth.service';
 import { MapService, SearchLocation } from '../../core/service/map.service';
+import { NotificationService, Notification } from '../../core/service/notification.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   searchControl = new FormControl();
   filteredOptions: SearchLocation[] = [];
   provider = new OpenStreetMapProvider();
+  mobileMenuOpen = false;
+  notificationDropdownOpen = false;
+  notifications: Notification[] = [];
+  unreadCount = 0;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private mapService: MapService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public themeService: ThemeService,
+    public notificationService: NotificationService
   ) {
     this.searchControl.valueChanges
       .pipe(
@@ -31,7 +39,6 @@ export class NavbarComponent {
           try {
             return await this.mapService.searchPlaces(value).toPromise();
           } catch (error) {
-            console.error('Search error', error);
             return [];
           }
         })
@@ -39,6 +46,60 @@ export class NavbarComponent {
       .subscribe((results: any[]) => {
         this.filteredOptions = results;
       });
+  }
+
+  ngOnInit() {
+    if (this.authService.isAuthenticatedUser()) {
+      this.notificationService.startPolling();
+      this.notificationService.unreadCount$.subscribe(count => {
+        this.unreadCount = count;
+      });
+    }
+  }
+
+  toggleNotificationDropdown() {
+    this.notificationDropdownOpen = !this.notificationDropdownOpen;
+    if (this.notificationDropdownOpen) {
+      this.loadNotifications();
+    }
+  }
+
+  closeNotificationDropdown() {
+    this.notificationDropdownOpen = false;
+  }
+
+  loadNotifications() {
+    this.notificationService.getNotifications(1, 10).subscribe({
+      next: (data) => this.notifications = data,
+      error: () => this.notifications = []
+    });
+  }
+
+  markAsRead(notification: Notification) {
+    if (!notification.read) {
+      this.notificationService.markAsRead(notification.id).subscribe();
+      notification.read = true;
+    }
+  }
+
+  markAllAsRead() {
+    this.notificationService.markAllAsRead().subscribe({
+      next: () => {
+        for (const n of this.notifications) {
+          n.read = true;
+        }
+      }
+    });
+  }
+
+  getNotificationIcon(type: string): string {
+    switch (type) {
+      case 'follow': return 'person_add';
+      case 'like': return 'favorite';
+      case 'comment': return 'chat_bubble';
+      case 'booking': return 'book_online';
+      default: return 'notifications';
+    }
   }
 
   get isGuest(): boolean {
@@ -49,6 +110,39 @@ export class NavbarComponent {
     return this.authService.getCurrentUser();
   }
 
+  get needsEmailVerification(): boolean {
+    return this.authService.isAuthenticatedUser() && !this.authService.isEmailVerified();
+  }
+
+  get isAgencyUser(): boolean {
+    return this.authService.isAgencyUser();
+  }
+
+  get isConsumerUser(): boolean {
+    return this.authService.isConsumerUser();
+  }
+
+  get hasAgency(): boolean {
+    return this.authService.hasAgency();
+  }
+
+  /** True for any authenticated user who can access /studio (agency_admin OR INFLUENCER+agency) */
+  get canAccessStudio(): boolean {
+    return this.isAgencyUser || this.hasAgency;
+  }
+
+  get logoRoute(): string {
+    return this.authService.getDefaultRoute();
+  }
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen = false;
+  }
+
   displayFn(location: SearchLocation): string {
     return location && location.label ? location.label : '';
   }
@@ -57,13 +151,13 @@ export class NavbarComponent {
     const location: SearchLocation = event.option.value;
     this.mapService.selectLocation(location);
 
-    // Navigate to home if not already there
     if (this.router.url !== '/home') {
       this.router.navigate(['/home']);
     }
   }
 
   onCreateTrip() {
+    this.closeMobileMenu();
     if (this.isGuest) {
       const snackBarRef = this.snackBar.open(
         'Please login to create a trip',
@@ -84,11 +178,13 @@ export class NavbarComponent {
   }
 
   onLogout() {
+    this.closeMobileMenu();
     this.authService.logout();
     this.router.navigate(['/login']);
   }
 
   onLogin() {
+    this.closeMobileMenu();
     this.router.navigate(['/login']);
   }
 }

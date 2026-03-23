@@ -1,0 +1,146 @@
+// =============================================================================
+// RESPONSIVE BREAKPOINTS - Trekio Design System
+// =============================================================================
+
+// Breakpoint values
+$breakpoint-mobile-sm: 320px;
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 768px;
+$breakpoint-laptop: 1024px;
+$breakpoint-desktop: 1280px;
+$breakpoint-wide: 1536px;
+
+// =============================================================================
+// MOBILE FIRST MIXINS (min-width)
+// =============================================================================
+
+// Small mobile and up
+@mixin mobile-sm-up {
+  @media (min-width: $breakpoint-mobile-sm) {
+    @content;
+  }
+}
+
+// Mobile and up
+@mixin mobile-up {
+  @media (min-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+// Tablet and up
+@mixin tablet-up {
+  @media (min-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+// Laptop and up
+@mixin laptop-up {
+  @media (min-width: $breakpoint-laptop) {
+    @content;
+  }
+}
+
+// Desktop and up
+@mixin desktop-up {
+  @media (min-width: $breakpoint-desktop) {
+    @content;
+  }
+}
+
+// Wide screens and up
+@mixin wide-up {
+  @media (min-width: $breakpoint-wide) {
+    @content;
+  }
+}
+
+// =============================================================================
+// DESKTOP FIRST MIXINS (max-width) - Use for overrides
+// =============================================================================
+
+// Mobile only (up to tablet)
+@mixin mobile-only {
+  @media (max-width: #{$breakpoint-tablet - 1px}) {
+    @content;
+  }
+}
+
+// Tablet only
+@mixin tablet-only {
+  @media (min-width: $breakpoint-tablet) and (max-width: #{$breakpoint-laptop - 1px}) {
+    @content;
+  }
+}
+
+// Tablet and below
+@mixin tablet-down {
+  @media (max-width: #{$breakpoint-laptop - 1px}) {
+    @content;
+  }
+}
+
+// Laptop and below
+@mixin laptop-down {
+  @media (max-width: #{$breakpoint-desktop - 1px}) {
+    @content;
+  }
+}
+
+// =============================================================================
+// UTILITY MIXINS
+// =============================================================================
+
+// Hide on mobile
+@mixin hide-mobile {
+  @include mobile-only {
+    display: none !important;
+  }
+}
+
+// Hide on desktop
+@mixin hide-desktop {
+  @include tablet-up {
+    display: none !important;
+  }
+}
+
+// Show only on mobile
+@mixin show-mobile-only {
+  display: none !important;
+  
+  @include mobile-only {
+    display: block !important;
+  }
+}
+
+// Touch-friendly sizing (44px minimum tap target)
+@mixin touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+// Safe area padding for notched devices
+@mixin safe-area-padding {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+// Container responsive padding
+@mixin container-padding {
+  padding-left: 16px;
+  padding-right: 16px;
+  
+  @include tablet-up {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  
+  @include desktop-up {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}

@@ -1,42 +1,49 @@
-# 🚀 ELECTRIC HORIZON — COMPLETE TRAVEL APP DESIGN SYSTEM
+# TREKIO DESIGN SYSTEM — Nature Meets Ocean Palette
 ## Production-Ready Color Codes & AI Coding Rules (2026)
 
-**FILE NAME:** `design-system-electric-horizon.md`  
-**ENFORCEMENT:** AI MUST use ONLY the hex codes defined in this file.  
+**FILE NAME:** `design-system-electric-horizon.md`
+**ENFORCEMENT:** AI MUST use ONLY the hex codes defined in this file.
 **STATUS:** PRODUCTION READY
+**PALETTE:** Three-Color Rule: 60-30-10 (Mint Green / Deep Charcoal / Ocean Blue)
 
 ---
 
-## 🎨 CORE BRAND COLORS (Primary Actions)
+## CORE BRAND COLORS (Three-Color Rule: 60-30-10)
 
-### PRIMARY ELECTRIC BLUE SYSTEM
-- **Primary:** `#1E90FF` — Primary buttons, active nav, links (8.2:1 contrast)
-- **Hover:** `#0F7BEF` — Hover state (-15% brightness)
-- **Light:** `#4DA8FF` — Icons, secondary elements
-- **Active:** `#1560C3` — Pressed / active state (-25% brightness)
-- **Tint:** `#EBF3FF` — Subtle backgrounds (10% opacity)
+### PRIMARY MINT GREEN SYSTEM (60% — Nav, headers, brand, backgrounds, buttons)
+- **Primary:** `#48BB78` — Primary buttons, active nav, brand identity
+- **Hover:** `#38A169` — Hover state (darker green)
+- **Light:** `#68D391` — Icons, secondary elements (lighter green)
+- **Active:** `#2F855A` — Pressed / active state
+- **Tint:** `#F0FFF4` — Subtle backgrounds (very light green)
+- **RGB:** `72, 187, 120`
 
-### NEON CORAL SYSTEM (Social / Urgency)
-- **Primary:** `#FF4757` — Likes, hearts, urgent CTAs (6.8:1 contrast)
-- **Hover:** `#E63946`
-- **Light:** `#FF6B82` — Badges, notifications
-- **Strong:** `#C82333` — Critical emphasis
-- **Tint:** `#FFF0F1` — Subtle coral background (5% opacity)
+### SECONDARY DEEP CHARCOAL (30% — Text, cards, structure, contrast)
+- **Text Primary:** `#2D3748` — Headings, body text
+- **Text Secondary:** `#4A5568` — Descriptions, labels
+- **Text Tertiary:** `#A0AEC0` — Muted, placeholder
+
+### ACCENT OCEAN BLUE SYSTEM (10% — CTAs, links, interactive elements, badges)
+- **Accent:** `#4299E1` — Book Now CTAs, links, interactive highlights
+- **Hover:** `#3182CE` — Hover state (darker blue)
+- **Light:** `#63B3ED` — Badges, info elements
+- **Active:** `#2B6CB0` — Pressed / active state
+- **Tint:** `#EBF8FF` — Subtle blue backgrounds
 
 ---
 
-## 🧱 NEUTRAL SYSTEM (Foundation)
+## NEUTRAL SYSTEM (Foundation)
 
 ### LIGHT MODE (Default)
 - Page Background: `#F7F9FA`
 - Card Surface: `#FFFFFF`
-- Primary Text: `#1A202C`
+- Primary Text: `#2D3748`
 - Secondary Text: `#4A5568`
 - Tertiary Text: `#A0AEC0`
 - Borders: `#E2E8F0`
 - Shadows: `rgba(0,0,0,0.08)`
 
-### DARK MODE (Auto-detect)
+### DARK MODE (Class-based toggle + system preference fallback)
 - Page Background: `#1A202C`
 - Card Surface: `#2D3748`
 - Primary Text: `#F7FAFC`
@@ -44,10 +51,12 @@
 - Tertiary Text: `#718096`
 - Borders: `#4A5568`
 - Shadows: `rgba(0,0,0,0.24)`
+- Primary (dark): `#68D391` (lighter green for dark backgrounds)
+- Accent (dark): `#63B3ED` (lighter blue for dark backgrounds)
 
 ---
 
-## ✅ STATUS & SEMANTIC COLORS
+## STATUS & SEMANTIC COLORS
 - **Success:** `#48BB78` — Confirmed, verified
 - **Warning:** `#ED8936` — Limited, pending
 - **Error:** `#F56565` — Failed, validation
@@ -56,55 +65,54 @@
 
 ---
 
-## ❤️ SOCIAL ENGAGEMENT COLORS
+## SOCIAL ENGAGEMENT COLORS
 - Like / Heart: `#FF4757`
 - Follow: `#9F7AEA`
 - Share: `#319795`
-- Comment: `#4DA8FF`
+- Comment: `#4299E1`
 
 ---
 
-## 🎯 COMPONENT COLOR RULES (MANDATORY)
+## COMPONENT COLOR RULES (MANDATORY)
 
 ### 1. BUTTONS (44px minimum height)
 
 **PRIMARY ACTION**
-- Background: `#1E90FF`
+- Background: `#48BB78`
 - Text: `#FFFFFF`
-- Hover: `#0F7BEF`
-- Active: `#1560C3`
-- Focus Ring: `0 0 0 2px rgba(30,144,255,0.3)`
+- Hover: `#38A169`
+- Active: `#2F855A`
+- Focus Ring: `0 0 0 2px rgba(72,187,120,0.3)`
 - Disabled: `#A0AEC0`
 
-**SECONDARY ACTION**
-- Background: `#FF4757`
+**CTA / ACCENT ACTION (Book Now, Sign Up)**
+- Background: `#4299E1`
 - Text: `#FFFFFF`
-- Hover: `#E63946`
-- Outline: `2px solid #FF4757`
+- Hover: `#3182CE`
 
 **GHOST BUTTON**
 - Background: `transparent`
-- Text: `#1E90FF`
-- Hover BG: `#EBF3FF`
+- Text: `#48BB78`
+- Hover BG: `#F0FFF4`
 
 ---
 
 ### 2. TRIP CARDS
 - Background: `#FFFFFF`
 - Border: `1px solid #E2E8F0`
-- Title: `#1A202C`
+- Title: `#2D3748`
 - Location: `#4A5568`
 - Price: `#48BB78`
 - Like Active: `#FF4757`
 - Shadow: `0 4px 12px rgba(0,0,0,0.08)`
-- Hover Shadow: `0 8px 24px rgba(30,144,255,0.12)`
+- Hover Shadow: `0 8px 24px rgba(72,187,120,0.12)`
 
 ---
 
 ### 3. BOOKING SECTION
-- Primary CTA (“Book Now”): `#FF4757`
-- Secondary CTA: `#1E90FF`
-- Price Normal: `#1A202C`
+- Primary CTA ("Book Now"): `#4299E1`
+- Secondary CTA: `#48BB78`
+- Price Normal: `#2D3748`
 - Price Discount: `#48BB78`
 - Availability:
   - Available: `#48BB78`
@@ -114,182 +122,72 @@
 ---
 
 ### 4. USER PROFILES
-- Header Gradient: `linear-gradient(135deg, #1E90FF 0%, #0F7BEF 100%)`
+- Header Gradient: `linear-gradient(135deg, #48BB78 0%, #38A169 100%)`
 - Username: `#FFFFFF`
 - Bio: `#4A5568` / `#F7FAFC`
-- Follow Button: `#FF4757`
+- Follow Button: `#4299E1`
 - Stats: `#A0AEC0`
 - Verified Badge: `#48BB78`
 
 ---
 
 ### 5. NAVIGATION
-- Active Tab: `#1E90FF`
+- Active Tab: `#48BB78`
 - Inactive Tab: `#4A5568`
-- Active BG: `#EBF3FF`
-- Hover BG: `rgba(30,144,255,0.08)`
+- Active BG: `#F0FFF4`
+- Hover BG: `rgba(72,187,120,0.08)`
 - Mobile Nav BG: `#FFFFFF` / `#2D3748`
 
 ---
 
 ### 6. FORMS & INPUTS
 - Border Default: `#E2E8F0`
-- Border Focus: `#1E90FF`
+- Border Focus: `#48BB78`
 - Border Error: `#F56565`
 - Placeholder: `#A0AEC0`
-- Label: `#1A202C` / `#F7FAFC`
+- Label: `#2D3748` / `#F7FAFC`
 - Error Text: `#F56565`
 
 ---
 
-## 🌙 DARK MODE OVERRIDES
+## DARK MODE OVERRIDES
+
+Toggle mechanism: `.dark-theme` class on `<html>` + `@media (prefers-color-scheme: dark)` fallback.
+
 ```css
-@media (prefers-color-scheme: dark) {
-  .btn-primary {
-    background: #4299E1;
-    color: #1A202C;
-  }
+:root.dark-theme {
+  --primary: #68D391;
+  --primary-hover: #48BB78;
+  --accent: #63B3ED;
+  --accent-hover: #4299E1;
+  --color-background: #1A202C;
+  --color-surface: #2D3748;
+  --color-text-primary: #F7FAFC;
+  --color-text-secondary: #A0AEC0;
+  --color-border: #4A5568;
 }
- use like 
- :root {
-  --primary: #1E90FF;
-  --primary-hover: #0F7BEF;
-  --primary-dark: #1560C3;
-  --secondary: #FF4757;
-  --secondary-hover: #E63946;
-
-  --bg-light: #F7F9FA;
-  --surface-light: #FFFFFF;
-  --text-primary-light: #1A202C;
-  --text-secondary-light: #4A5568;
-  --border-light: #E2E8F0;
-
-  --bg-dark: #1A202C;
-  --surface-dark: #2D3748;
-  --text-primary-dark: #F7FAFC;
-  --text-secondary-dark: #A0AEC0;
-  --border-dark: #4A5568;
-
-  --success: #48BB78;
-  --warning: #ED8936;
-  --error: #F56565;
-}
----
-
-## ⭕ BORDER RADIUS SYSTEM (MANDATORY)
-
-Purpose: Ensure modern, friendly, mobile-first UI consistency  
-Rule: **AI must NEVER invent radius values**
-
-### RADIUS SCALE
-- **Radius XS:** `4px` → Badges, tags, indicators
-- **Radius SM:** `8px` → Inputs, small buttons
-- **Radius MD:** `12px` → Cards, modals, dropdowns
-- **Radius LG:** `16px` → Primary buttons, panels
-- **Radius XL:** `24px` → Hero cards, bottom sheets
-- **Radius FULL:** `9999px` → Pills, avatars, profile images
-
-### USAGE RULES
-- Buttons → `16px`
-- Cards → `12px`
-- Modals / Sheets → `16px–24px`
-- Inputs → `8px`
-- Avatars → `9999px`
-
-🚫 Never mix random radii  
-✅ Use only values from this scale
+```
 
 ---
 
-## 📏 SPACING SYSTEM (8-POINT GRID — STRICT)
-
-Purpose: Visual rhythm, readability, responsive layouts  
-Rule: **ALL margins & paddings must use this scale**
-
-### SPACING SCALE
-- **0:** `0px`
-- **1:** `4px`
-- **2:** `8px`
-- **3:** `12px`
-- **4:** `16px`
-- **5:** `20px`
-- **6:** `24px`
-- **8:** `32px`
-- **10:** `40px`
-- **12:** `48px`
-- **16:** `64px`
-- **20:** `80px`
-
-### COMMON USAGE
-- Button padding: `12px 20px`
-- Card padding: `16px–24px`
-- Section spacing: `40px–64px`
-- Form field gap: `12px`
-- Icon-text gap: `8px`
-
-🚫 Never use odd values (13px, 18px, 27px)  
-✅ Always snap to spacing scale
-
----
-
-## 🔤 TYPOGRAPHY SYSTEM (HIGH CONVERSION, MOBILE-FIRST)
-
-### FONT FAMILY (MANDATORY)
-- **Primary Font:** `Inter`
-- **Fallback:** `system-ui, -apple-system, BlinkMacSystemFont, sans-serif`
-
-Reason:  
-✔ Excellent readability  
-✔ Designed for UI  
-✔ Works across Android, iOS, Web  
-✔ Strong numeric clarity (prices, dates)
-
----
-
-### TYPE SCALE (REM-BASED)
-
-| Role | Size | Line Height | Weight | Usage |
-|----|----|----|----|----|
-| Display XL | `3rem` (48px) | 1.1 | 700 | Hero headlines |
-| Display L | `2.25rem` (36px) | 1.2 | 700 | Page titles |
-| H1 | `1.875rem` (30px) | 1.3 | 600 | Section headers |
-| H2 | `1.5rem` (24px) | 1.35 | 600 | Card titles |
-| H3 | `1.25rem` (20px) | 1.4 | 600 | Sub-sections |
-| Body LG | `1.125rem` (18px) | 1.6 | 400 | Primary content |
-| Body | `1rem` (16px) | 1.6 | 400 | Default text |
-| Body SM | `0.875rem` (14px) | 1.5 | 400 | Labels, meta |
-| Caption | `0.75rem` (12px) | 1.4 | 400 | Hints, footnotes |
-
----
-
-### TEXT COLOR RULES
-- Headings → `#1A202C` / `#F7FAFC`
-- Body → `#4A5568` / `#A0AEC0`
-- Muted → `#A0AEC0`
-- Links → `#1E90FF`
-- Errors → `#F56565`
-
-🚫 Never use pure black  
-🚫 Never reduce body text below `14px`
-
----
-
-## 🧠 TYPOGRAPHY BEHAVIOR RULES (AI ENFORCED)
-
-✅ Line length: 60–75 characters  
-✅ Sentence case for UI labels  
-✅ Title Case only for headings  
-✅ Prices must be bold  
-✅ Buttons use **Medium (500–600)** weight  
-✅ No letter-spacing on body text  
-✅ Uppercase only for short badges
-
----
-
-## 🧩 CSS VARIABLES — RADIUS, SPACING, TYPOGRAPHY
+## CSS VARIABLES
 
 ```css
 :root {
+  /* === PRIMARY (Mint Green) === */
+  --primary: #48BB78;
+  --primary-hover: #38A169;
+  --primary-light: #68D391;
+  --primary-active: #2F855A;
+  --primary-tint: #F0FFF4;
+  --primary-rgb: 72, 187, 120;
+
+  /* === ACCENT (Ocean Blue) === */
+  --accent: #4299E1;
+  --accent-hover: #3182CE;
+  --accent-light: #63B3ED;
+  --accent-tint: #EBF8FF;
+
   /* === RADIUS === */
   --radius-xs: 4px;
   --radius-sm: 8px;
@@ -323,3 +221,54 @@ Reason:
   --text-body-sm: 0.875rem;
   --text-caption: 0.75rem;
 }
+```
+
+---
+
+## BORDER RADIUS SYSTEM (MANDATORY)
+
+- **Radius XS:** `4px` — Badges, tags, indicators
+- **Radius SM:** `8px` — Inputs, small buttons
+- **Radius MD:** `12px` — Cards, modals, dropdowns
+- **Radius LG:** `16px` — Primary buttons, panels
+- **Radius XL:** `24px` — Hero cards, bottom sheets
+- **Radius FULL:** `9999px` — Pills, avatars, profile images
+
+---
+
+## SPACING SYSTEM (8-POINT GRID — STRICT)
+
+- **0:** `0px`
+- **1:** `4px`
+- **2:** `8px`
+- **3:** `12px`
+- **4:** `16px`
+- **5:** `20px`
+- **6:** `24px`
+- **8:** `32px`
+- **10:** `40px`
+- **12:** `48px`
+- **16:** `64px`
+- **20:** `80px`
+
+---
+
+## TYPOGRAPHY SYSTEM
+
+### FONT FAMILY (MANDATORY)
+- **Primary Font:** `Inter`
+- **Fallback:** `system-ui, -apple-system, BlinkMacSystemFont, sans-serif`
+
+### TYPE SCALE (REM-BASED)
+
+| Role | Size | Line Height | Weight | Usage |
+|----|----|----|----|----|
+| Display XL | `3rem` (48px) | 1.1 | 700 | Hero headlines |
+| Display L | `2.25rem` (36px) | 1.2 | 700 | Page titles |
+| H1 | `1.875rem` (30px) | 1.3 | 600 | Section headers |
+| H2 | `1.5rem` (24px) | 1.35 | 600 | Card titles |
+| H3 | `1.25rem` (20px) | 1.4 | 600 | Sub-sections |
+| Body LG | `1.125rem` (18px) | 1.6 | 400 | Primary content |
+| Body | `1rem` (16px) | 1.6 | 400 | Default text |
+| Body SM | `0.875rem` (14px) | 1.5 | 400 | Labels, meta |
+| Caption | `0.75rem` (12px) | 1.4 | 400 | Hints, footnotes |
