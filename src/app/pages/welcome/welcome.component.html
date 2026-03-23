@@ -1,0 +1,145 @@
+<div class="welcome-page">
+    <!-- Navigation -->
+    <nav class="welcome-nav">
+        <div class="nav-content">
+            <div class="logo">
+                <img src="images/trekio-pin.png" alt="Trekio" class="logo-pin">
+                <span class="logo-text">trek<span class="logo-text-io">io</span></span>
+            </div>
+            <div class="nav-actions">
+                <button mat-button class="login-btn" (click)="navigateToLogin()">Login</button>
+                <button mat-raised-button color="primary" class="signup-btn" (click)="navigateToRegister()">
+                    Sign Up Free
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Your Next Adventure<br>Starts Here</h1>
+            <p class="hero-subtitle">
+                Discover trips, plan with AI, and connect with travelers worldwide.<br>
+                Or power your travel agency with professional tools.
+            </p>
+            <div class="hero-actions">
+                <button mat-raised-button color="primary" class="cta-primary" (click)="navigateToRegister()">
+                    Get Started Free
+                </button>
+                <button mat-stroked-button class="cta-secondary" (click)="navigateToLogin()">
+                    I'm a Travel Agent
+                </button>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-illustration">
+                <mat-icon class="hero-icon-main">flight_takeoff</mat-icon>
+                <mat-icon class="hero-icon-1">location_on</mat-icon>
+                <mat-icon class="hero-icon-2">hotel</mat-icon>
+                <mat-icon class="hero-icon-3">directions_car</mat-icon>
+            </div>
+        </div>
+    </section>
+
+    <!-- Audience Toggle -->
+    <section class="audience-section">
+        <div class="section-content">
+            <div class="audience-toggle">
+                <button class="toggle-btn" [class.active]="activeAudience === 'travelers'"
+                    (click)="activeAudience = 'travelers'">
+                    <mat-icon>hiking</mat-icon>
+                    For Travelers
+                </button>
+                <button class="toggle-btn" [class.active]="activeAudience === 'agents'"
+                    (click)="activeAudience = 'agents'">
+                    <mat-icon>business_center</mat-icon>
+                    For Travel Agents
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works-section">
+        <div class="section-content">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps-grid">
+                <ng-container *ngIf="activeAudience === 'travelers'">
+                    <div class="step-card" *ngFor="let step of consumerSteps">
+                        <div class="step-number">{{ step.number }}</div>
+                        <h3 class="step-title">{{ step.title }}</h3>
+                        <p class="step-description">{{ step.description }}</p>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="activeAudience === 'agents'">
+                    <div class="step-card" *ngFor="let step of agentSteps">
+                        <div class="step-number">{{ step.number }}</div>
+                        <h3 class="step-title">{{ step.title }}</h3>
+                        <p class="step-description">{{ step.description }}</p>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="section-content">
+            <h2 class="section-title" *ngIf="activeAudience === 'travelers'">Explore, Plan & Share</h2>
+            <h2 class="section-title" *ngIf="activeAudience === 'agents'">Everything You Need</h2>
+            <div class="features-grid">
+                <ng-container *ngIf="activeAudience === 'travelers'">
+                    <div class="feature-card" *ngFor="let feature of consumerFeatures">
+                        <div class="feature-icon">
+                            <mat-icon>{{ feature.icon }}</mat-icon>
+                        </div>
+                        <h3 class="feature-title">{{ feature.title }}</h3>
+                        <p class="feature-description">{{ feature.description }}</p>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="activeAudience === 'agents'">
+                    <div class="feature-card" *ngFor="let feature of agentFeatures">
+                        <div class="feature-icon agent">
+                            <mat-icon>{{ feature.icon }}</mat-icon>
+                        </div>
+                        <h3 class="feature-title">{{ feature.title }}</h3>
+                        <p class="feature-description">{{ feature.description }}</p>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2 class="cta-title">Ready to Get Started?</h2>
+            <p class="cta-subtitle">
+                Whether you're planning your next trip or building your travel business — Trekio has you covered.
+            </p>
+            <div class="cta-actions">
+                <button mat-raised-button class="cta-button" (click)="navigateToRegister()">
+                    Sign Up Free
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="welcome-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="images/trekio-pin.png" alt="Trekio" class="footer-pin">
+                <span class="footer-logo-text">trek<span class="footer-logo-text-io">io</span></span>
+                <p class="footer-tagline">Create journeys worth sharing.</p>
+            </div>
+            <div class="footer-links">
+                <a routerLink="/privacy">Privacy</a>
+                <a routerLink="/terms">Terms</a>
+                <a routerLink="/contact">Contact</a>
+            </div>
+            <p class="footer-copyright">&copy; 2026 Trekio. All rights reserved.</p>
+        </div>
+    </footer>
+</div>

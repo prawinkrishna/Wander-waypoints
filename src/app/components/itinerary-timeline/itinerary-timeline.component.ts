@@ -2,10 +2,22 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { TripPlace } from '../../../../projects/wander-library/src/lib/models/trip-place.model';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 
 interface DayGroup {
     dayNumber: number;
-    places: TripPlace[];
+    places: (TripPlace & { isEditing?: boolean; editData?: EditableFields })[];
+}
+
+interface EditableFields {
+    name: string;
+    startTime: string;
+    duration: number;
+    notes: string;
+    address: string;
+    transportMode: string;
+    travelTimeFromPrev: number;
 }
 
 @Component({
@@ -17,16 +29,33 @@ export class ItineraryTimelineComponent implements OnInit, OnChanges {
     @Input() tripPlaces: TripPlace[] = [];
     @Input() isOwner: boolean = false;
     @Input() tripStartDate: Date | string | null = null;
+    @Input() enableInlineEditing: boolean = false;
     @Output() placeDeleted = new EventEmitter<string>();
     @Output() placesReordered = new EventEmitter<TripPlace[]>();
+    @Output() placeUpdated = new EventEmitter<{ tripPlaceId: string; data: Partial<TripPlace & { place: any }> }>();
 
     groupedPlaces: DayGroup[] = [];
     collapsedDays = new Set<number>();
 
+    // Transport editing
+    transportModes = [
+        { value: 'walk', label: 'Walk', icon: 'directions_walk' },
+        { value: 'bus', label: 'Bus', icon: 'directions_bus' },
+        { value: 'train', label: 'Train/Metro', icon: 'directions_railway' },
+        { value: 'cab', label: 'Cab', icon: 'local_taxi' },
+        { value: 'car', label: 'Car', icon: 'directions_car' },
+        { value: 'bike', label: 'Bike', icon: 'directions_bike' },
+        { value: 'flight', label: 'Flight', icon: 'flight' },
+        { value: 'ferry', label: 'Ferry', icon: 'directions_boat' }
+    ];
+
+    editingConnectorId: string | null = null;
+    connectorEditData: { transportMode: string; travelTimeFromPrev: number } | null = null;
+
     // Default placeholder image
     readonly defaultImage = 'assets/images/place-placeholder.svg';
 
-    constructor(private router: Router) { }
+    constructor(private router: Router, private dialog: MatDialog) { }
 
     ngOnInit(): void {
         this.groupPlacesByDay();
@@ -221,9 +250,21 @@ export class ItineraryTimelineComponent implements OnInit, OnChanges {
     }
 
     onDeletePlace(tripPlaceId: string) {
-        if (confirm('Remove this place from your itinerary?')) {
-            this.placeDeleted.emit(tripPlaceId);
-        }
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                title: 'Remove Place',
+                message: 'Remove this place from your itinerary?',
+                type: 'warning',
+                confirmText: 'Remove',
+                cancelText: 'Cancel'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(confirmed => {
+            if (confirmed) {
+                this.placeDeleted.emit(tripPlaceId);
+            }
+        });
     }
 
     onReorderPlace(event: CdkDragDrop<TripPlace[]>, dayGroup: DayGroup) {
@@ -240,5 +281,110 @@ export class ItineraryTimelineComponent implements OnInit, OnChanges {
     getPlaceCount(dayNumber: number): number {
         const group = this.groupedPlaces.find(g => g.dayNumber === dayNumber);
         return group?.places.length || 0;
+    }
+
+    // Inline Editing Methods
+    startEditing(item: TripPlace & { isEditing?: boolean; editData?: EditableFields }) {
+        if (!this.enableInlineEditing || !this.isOwner) return;
+
+        item.isEditing = true;
+        item.editData = {
+            name: item.place?.name || '',
+            startTime: item.startTime || '',
+            duration: item.duration || 0,
+            notes: item.notes || '',
+            address: item.place?.address || '',
+            transportMode: item.transportMode || 'car',
+            travelTimeFromPrev: item.travelTimeFromPrev || 0
+        };
+    }
+
+    cancelEditing(item: TripPlace & { isEditing?: boolean; editData?: EditableFields }) {
+        item.isEditing = false;
+        item.editData = undefined;
+    }
+
+    saveEditing(item: TripPlace & { isEditing?: boolean; editData?: EditableFields }) {
+        if (!item.editData) return;
+
+        const updateData = {
+            startTime: item.editData.startTime,
+            duration: item.editData.duration,
+            notes: item.editData.notes,
+            transportMode: item.editData.transportMode,
+            travelTimeFromPrev: item.editData.travelTimeFromPrev,
+            place: {
+                name: item.editData.name,
+                address: item.editData.address
+            }
+        };
+
+        // Update local state
+        item.startTime = item.editData.startTime;
+        item.duration = item.editData.duration;
+        item.notes = item.editData.notes;
+        item.transportMode = item.editData.transportMode;
+        item.travelTimeFromPrev = item.editData.travelTimeFromPrev;
+        if (item.place) {
+            item.place.name = item.editData.name;
+            item.place.address = item.editData.address;
+        }
+
+        // Emit event for parent to save
+        this.placeUpdated.emit({
+            tripPlaceId: item.tripPlaceId,
+            data: updateData
+        });
+
+        item.isEditing = false;
+        item.editData = undefined;
+    }
+
+    onEditFieldKeydown(event: KeyboardEvent, item: TripPlace & { isEditing?: boolean; editData?: EditableFields }) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            this.saveEditing(item);
+        } else if (event.key === 'Escape') {
+            this.cancelEditing(item);
+        }
+    }
+
+    // Connector editing methods
+    startConnectorEditing(nextItem: TripPlace) {
+        if (!this.enableInlineEditing || !this.isOwner) return;
+
+        this.editingConnectorId = nextItem.tripPlaceId;
+        this.connectorEditData = {
+            transportMode: nextItem.transportMode || 'car',
+            travelTimeFromPrev: nextItem.travelTimeFromPrev || 0
+        };
+    }
+
+    saveConnectorEditing(nextItem: TripPlace) {
+        if (!this.connectorEditData) return;
+
+        nextItem.transportMode = this.connectorEditData.transportMode;
+        nextItem.travelTimeFromPrev = this.connectorEditData.travelTimeFromPrev;
+
+        this.placeUpdated.emit({
+            tripPlaceId: nextItem.tripPlaceId,
+            data: {
+                transportMode: this.connectorEditData.transportMode,
+                travelTimeFromPrev: this.connectorEditData.travelTimeFromPrev
+            }
+        });
+
+        this.editingConnectorId = null;
+        this.connectorEditData = null;
+    }
+
+    cancelConnectorEditing() {
+        this.editingConnectorId = null;
+        this.connectorEditData = null;
+    }
+
+    getTransportLabel(mode: string): string {
+        const found = this.transportModes.find(m => m.value === mode);
+        return found ? found.label : mode;
     }
 }

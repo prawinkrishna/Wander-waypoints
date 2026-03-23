@@ -1,0 +1,146 @@
+<div class="auth-container">
+  <div class="auth-wrapper">
+    <!-- Left Panel: Visual/Brand -->
+    <div class="auth-visual">
+      <div class="visual-content">
+        <h1>Trekio</h1>
+        <p>Your journey begins here. Discover, plan, and share your next adventure.</p>
+        <div class="visual-decoration">
+          <mat-icon>flight_takeoff</mat-icon>
+          <mat-icon>public</mat-icon>
+          <mat-icon>camera_alt</mat-icon>
+        </div>
+      </div>
+      <div class="visual-overlay"></div>
+    </div>
+
+    <!-- Right Panel: Content -->
+    <div class="auth-form-panel">
+      <!-- Mobile Header -->
+      <div class="mobile-header">
+        <h1>Trekio</h1>
+      </div>
+
+      <div class="form-content">
+        <!-- Pending State: Check your email -->
+        <div *ngIf="state === 'pending'" class="state-content">
+          <div class="state-icon pending-icon">
+            <mat-icon>mark_email_unread</mat-icon>
+          </div>
+          <h2>Check your email</h2>
+          <p *ngIf="email">
+            We've sent a verification link to <strong>{{ email }}</strong>.
+            Click the link in the email to verify your account.
+          </p>
+          <p *ngIf="!email">
+            We've sent a verification link to your email address.
+            Click the link in the email to verify your account.
+          </p>
+
+          <!-- Resend Success Message -->
+          <div class="alert success" *ngIf="resendSuccess">
+            <mat-icon>check_circle</mat-icon>
+            <span>Verification email resent successfully!</span>
+          </div>
+
+          <!-- Error Message -->
+          <div class="alert error" *ngIf="errorMessage">
+            <mat-icon>error</mat-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+
+          <div class="tips">
+            <p class="tip-title">Didn't receive the email?</p>
+            <ul>
+              <li>Check your spam or junk folder</li>
+              <li>Make sure you entered the correct email</li>
+              <li>Wait a few minutes and try again</li>
+            </ul>
+          </div>
+
+          <button
+            mat-raised-button
+            color="primary"
+            class="submit-btn"
+            (click)="resendVerification()"
+            [disabled]="resendLoading || !email">
+            <mat-spinner *ngIf="resendLoading" diameter="20"></mat-spinner>
+            <span *ngIf="!resendLoading">Resend Verification Email</span>
+          </button>
+
+          <div class="back-to-login">
+            <a (click)="goToLogin()" class="link">
+              <mat-icon>arrow_back</mat-icon>
+              Back to login
+            </a>
+          </div>
+        </div>
+
+        <!-- Verifying State: Processing -->
+        <div *ngIf="state === 'verifying'" class="state-content">
+          <div class="state-icon verifying-icon">
+            <mat-spinner diameter="50"></mat-spinner>
+          </div>
+          <h2>Verifying your email...</h2>
+          <p>Please wait while we verify your email address.</p>
+        </div>
+
+        <!-- Success State: Email verified -->
+        <div *ngIf="state === 'success'" class="state-content">
+          <div class="state-icon success-icon">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <h2>Email Verified!</h2>
+          <p>
+            Your email has been verified successfully. You're being redirected to your dashboard...
+          </p>
+          <mat-spinner diameter="24" class="redirect-spinner"></mat-spinner>
+        </div>
+
+        <!-- Error State: Link expired or invalid -->
+        <div *ngIf="state === 'error'" class="state-content">
+          <div class="state-icon error-icon">
+            <mat-icon>link_off</mat-icon>
+          </div>
+          <h2>Verification Failed</h2>
+          <p>
+            {{ errorMessage || 'This verification link is invalid or has expired. Please request a new one.' }}
+          </p>
+
+          <!-- Resend Success Message -->
+          <div class="alert success" *ngIf="resendSuccess">
+            <mat-icon>check_circle</mat-icon>
+            <span>Verification email resent successfully!</span>
+          </div>
+
+          <button
+            *ngIf="email"
+            mat-raised-button
+            color="primary"
+            class="submit-btn"
+            (click)="resendVerification()"
+            [disabled]="resendLoading">
+            <mat-spinner *ngIf="resendLoading" diameter="20"></mat-spinner>
+            <span *ngIf="!resendLoading">Resend Verification Email</span>
+          </button>
+
+          <button
+            *ngIf="!email"
+            mat-raised-button
+            color="primary"
+            class="submit-btn"
+            (click)="goToRegister()">
+            Register Again
+          </button>
+
+          <div class="back-to-login">
+            <a (click)="goToLogin()" class="link">
+              <mat-icon>arrow_back</mat-icon>
+              Back to login
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

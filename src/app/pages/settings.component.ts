@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../core/service/auth.service';
 import { SocialService } from '../core/service/social.service';
+import { UserService } from '../core/service/user.service';
+import { ConfirmDialogComponent } from '../components/shared/confirm-dialog/confirm-dialog.component';
+import { environment } from '../../environments/environment';
 
 interface NotificationSetting {
   key: string;
@@ -28,10 +33,16 @@ export class SettingsComponent implements OnInit {
   pendingRequests: any[] = [];
   loadingRequests = false;
 
-  // Password Change Form
-  passwordForm!: FormGroup;
-  showCurrentPassword = false;
-  showNewPassword = false;
+  // Agent upgrade
+  isConsumerUser = false;
+  upgradingToAgent = false;
+
+  // Privacy Settings
+  privacySettings = {
+    isPublicProfile: true,
+    defaultTripPublic: false,
+    showOnMap: true,
+  };
 
   // Notification Settings
   notificationSettings: NotificationSetting[] = [
@@ -52,30 +63,19 @@ export class SettingsComponent implements OnInit {
   ];
 
   constructor(
-    private fb: FormBuilder,
     private authService: AuthService,
     private socialService: SocialService,
-    private router: Router
+    private userService: UserService,
+    private http: HttpClient,
+    private router: Router,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit() {
-    this.initForms();
+    this.isConsumerUser = this.authService.isConsumerUser();
     this.loadUserData();
     this.loadPendingRequests();
-  }
-
-  initForms() {
-    this.passwordForm = this.fb.group({
-      currentPassword: ['', [Validators.required, Validators.minLength(6)]],
-      newPassword: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
-    }, { validators: this.passwordMatchValidator });
-  }
-
-  passwordMatchValidator(group: FormGroup) {
-    const newPass = group.get('newPassword')?.value;
-    const confirmPass = group.get('confirmPassword')?.value;
-    return newPass === confirmPass ? null : { passwordMismatch: true };
   }
 
   loadUserData() {
@@ -87,6 +87,20 @@ export class SettingsComponent implements OnInit {
         next: (data) => {
           this.user = data;
           this.loading = false;
+
+          // Load notification preferences from user data
+          if (data.notificationPreferences) {
+            for (const setting of this.notificationSettings) {
+              if (data.notificationPreferences[setting.key] !== undefined) {
+                setting.enabled = data.notificationPreferences[setting.key];
+              }
+            }
+          }
+
+          // Load privacy settings from user data
+          this.privacySettings.isPublicProfile = data.isPublicProfile ?? true;
+          this.privacySettings.defaultTripPublic = data.defaultTripPublic ?? false;
+          this.privacySettings.showOnMap = data.showOnMap ?? true;
         },
         error: () => {
           this.user = currentUser;
@@ -103,23 +117,29 @@ export class SettingsComponent implements OnInit {
     this.clearMessages();
   }
 
-  onChangePassword() {
-    if (this.passwordForm.invalid) return;
-
-    this.saving = true;
-    this.clearMessages();
-
-    // TODO: Connect to backend password change endpoint
-    setTimeout(() => {
-      this.saving = false;
-      this.successMessage = 'Password changed successfully!';
-      this.passwordForm.reset();
-    }, 1000);
-  }
-
   onToggleNotification(setting: NotificationSetting) {
     setting.enabled = !setting.enabled;
-    // TODO: Save to backend
+    this.saveNotificationPreferences();
+  }
+
+  private saveNotificationPreferences() {
+    const prefs: Record<string, boolean> = {};
+    for (const s of this.notificationSettings) {
+      prefs[s.key] = s.enabled;
+    }
+
+    const userId = this.user?.userId || this.user?.id;
+    if (!userId) return;
+
+    this.userService.updateProfile(userId, { notificationPreferences: prefs }).subscribe({
+      next: () => {
+        this.successMessage = 'Notification preferences saved.';
+        setTimeout(() => this.clearMessages(), 2000);
+      },
+      error: () => {
+        this.errorMessage = 'Failed to save notification preferences.';
+      }
+    });
   }
 
   onLogout() {
@@ -128,11 +148,33 @@ export class SettingsComponent implements OnInit {
   }
 
   onDeleteAccount() {
-    const confirmed = confirm('Are you sure you want to delete your account? This action cannot be undone.');
-    if (confirmed) {
-      // TODO: Connect to backend delete account endpoint
-      alert('Account deletion is not yet implemented.');
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete Account',
+        message: 'Are you sure you want to delete your account? This action cannot be undone.',
+        type: 'danger',
+        confirmText: 'Delete',
+        cancelText: 'Cancel'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        const userId = this.user?.userId || this.user?.id;
+        if (!userId) return;
+
+        this.userService.deleteUser(userId).subscribe({
+          next: () => {
+            this.snackBar.open('Account deleted successfully.', 'Close', { duration: 3000 });
+            this.authService.logout();
+            this.router.navigate(['/welcome']);
+          },
+          error: () => {
+            this.snackBar.open('Failed to delete account. Please try again.', 'Close', { duration: 3000 });
+          }
+        });
+      }
+    });
   }
 
   loadPendingRequests() {
@@ -172,9 +214,80 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  upgradeToAgent() {
+    if (this.upgradingToAgent) return;
+    this.upgradingToAgent = true;
+    this.clearMessages();
+
+    const userId = this.user?.userId || this.user?.id;
+    if (!userId) {
+      this.errorMessage = 'User not found. Please try again.';
+      this.upgradingToAgent = false;
+      return;
+    }
+
+    // Step 1: Update role to agency_admin
+    this.userService.updateProfile(userId, { role: 'agency_admin' }).subscribe({
+      next: (updatedUser) => {
+        // Step 2: Create default agency
+        this.http.post(`${environment.apiUrl}/agency`, {
+          name: (this.user?.username || 'My') + "'s Travel Agency",
+          userId: userId
+        }).subscribe({
+          next: () => {
+            // Step 3: Refresh user data in auth service using current auth user as base
+            const currentAuthUser = this.authService.getCurrentUser();
+            this.authService.refreshUser({ ...currentAuthUser, role: 'agency_admin' });
+            this.isConsumerUser = false;
+            this.upgradingToAgent = false;
+            this.successMessage = 'You are now a travel agent! Redirecting to Studio...';
+            setTimeout(() => {
+              this.router.navigate(['/studio/dashboard']);
+            }, 1500);
+          },
+          error: () => {
+            // Agency creation failed but role was updated — still redirect
+            const currentAuthUser = this.authService.getCurrentUser();
+            this.authService.refreshUser({ ...currentAuthUser, role: 'agency_admin' });
+            this.isConsumerUser = false;
+            this.upgradingToAgent = false;
+            this.successMessage = 'Role upgraded! Redirecting to Studio...';
+            setTimeout(() => {
+              this.router.navigate(['/studio/dashboard']);
+            }, 1500);
+          }
+        });
+      },
+      error: () => {
+        this.errorMessage = 'Failed to upgrade account. Please try again.';
+        this.upgradingToAgent = false;
+      }
+    });
+  }
+
   clearMessages() {
     this.successMessage = '';
     this.errorMessage = '';
+  }
+
+  onTogglePrivacy(key: string) {
+    (this.privacySettings as any)[key] = !(this.privacySettings as any)[key];
+    this.savePrivacySettings();
+  }
+
+  private savePrivacySettings() {
+    const userId = this.user?.userId || this.user?.id;
+    if (!userId) return;
+
+    this.userService.updateProfile(userId, this.privacySettings).subscribe({
+      next: () => {
+        this.successMessage = 'Privacy settings saved.';
+        setTimeout(() => this.clearMessages(), 2000);
+      },
+      error: () => {
+        this.errorMessage = 'Failed to save privacy settings.';
+      }
+    });
   }
 
   goBack() {

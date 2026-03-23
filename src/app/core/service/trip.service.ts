@@ -69,4 +69,12 @@ export class TripService {
     getUserTrips(userId: string): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}?userId=${userId}`);
     }
+
+    updateTripPlace(tripPlaceId: string, data: any): Observable<any> {
+        return this.http.patch(`${environment.apiUrl}/trip-place/${tripPlaceId}`, data);
+    }
+
+    replaceItinerary(tripId: string, itinerary: any[]): Observable<any> {
+        return this.http.post(`${this.apiUrl}/${tripId}/replace-itinerary`, { itinerary });
+    }
 }

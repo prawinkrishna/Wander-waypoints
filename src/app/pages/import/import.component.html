@@ -1,0 +1,102 @@
+<app-navbar></app-navbar>
+
+<div class="import-container">
+  <!-- Idle: URL Input -->
+  <div class="import-card" *ngIf="state === 'idle'">
+    <div class="import-header">
+      <mat-icon class="header-icon">link</mat-icon>
+      <h1>Import Places</h1>
+      <p class="subtitle">Paste a YouTube or Instagram link to extract travel places</p>
+    </div>
+
+    <mat-form-field appearance="outline" class="url-field">
+      <mat-label>Paste URL here</mat-label>
+      <input matInput [(ngModel)]="url" (paste)="onPaste($event)"
+        placeholder="https://www.youtube.com/watch?v=..." (keyup.enter)="onExtract()">
+      <mat-icon matPrefix>link</mat-icon>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" class="extract-btn" (click)="onExtract()" [disabled]="!url.trim()">
+      <mat-icon>search</mat-icon>
+      Extract Places
+    </button>
+
+    <div class="supported-platforms">
+      <div class="platform">
+        <mat-icon>smart_display</mat-icon>
+        <span>YouTube videos & shorts</span>
+      </div>
+      <div class="platform">
+        <mat-icon>camera_alt</mat-icon>
+        <span>Instagram posts & reels</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Extracting: Loading -->
+  <div class="import-card loading-card" *ngIf="state === 'extracting'">
+    <mat-spinner diameter="48"></mat-spinner>
+    <h2>Analyzing content...</h2>
+    <p>Extracting travel places from the link</p>
+  </div>
+
+  <!-- Review: Place Checklist -->
+  <div class="import-card review-card" *ngIf="state === 'review'">
+    <div class="review-header">
+      <button mat-icon-button (click)="onBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="review-title">
+        <h2>{{ sourceTitle }}</h2>
+        <p>Found {{ places.length }} places</p>
+      </div>
+    </div>
+
+    <div class="select-all" (click)="toggleAll()">
+      <mat-checkbox [checked]="allSelected" (change)="toggleAll()"></mat-checkbox>
+      <span>Select All</span>
+    </div>
+
+    <div class="places-list">
+      <div class="place-item" *ngFor="let place of places" (click)="place.selected = !place.selected; onPlaceToggle()">
+        <mat-checkbox [checked]="place.selected" (change)="place.selected = $event.checked; onPlaceToggle()"
+          (click)="$event.stopPropagation()"></mat-checkbox>
+        <div class="place-info">
+          <div class="place-name">{{ place.name }}</div>
+          <mat-chip-set>
+            <mat-chip [class]="'category-' + place.category.toLowerCase()">{{ place.category }}</mat-chip>
+          </mat-chip-set>
+          <div class="place-description">{{ place.description }}</div>
+          <div class="place-reason" *ngIf="place.reason_to_visit">
+            <mat-icon>lightbulb</mat-icon>
+            {{ place.reason_to_visit }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button mat-raised-button color="primary" class="create-trip-btn" (click)="onCreateTrip()"
+      [disabled]="selectedCount === 0">
+      <mat-icon>add</mat-icon>
+      {{ existingTripId ? 'Add' : 'Create Trip with' }} {{ selectedCount }} places
+    </button>
+  </div>
+
+  <!-- Saving -->
+  <div class="import-card loading-card" *ngIf="state === 'saving'">
+    <mat-spinner diameter="48"></mat-spinner>
+    <h2>{{ existingTripId ? 'Adding places...' : 'Creating your trip...' }}</h2>
+    <p>Saving {{ selectedCount }} places</p>
+  </div>
+
+  <!-- Error -->
+  <div class="import-card error-card" *ngIf="state === 'error'">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <h2>Something went wrong</h2>
+    <p>{{ errorMessage }}</p>
+    <button mat-raised-button color="primary" (click)="onRetry()">
+      <mat-icon>refresh</mat-icon>
+      Try Again
+    </button>
+  </div>
+</div>

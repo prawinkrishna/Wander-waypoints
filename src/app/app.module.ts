@@ -1,7 +1,7 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, ErrorHandler } from '@angular/core';
+import { BrowserModule, Meta, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -19,14 +19,18 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { EditProfileComponent } from './pages/edit-profile.component';
 import { SettingsComponent } from './pages/settings.component';
-import { CreateTripComponent } from './pages/create-trip.component';
-import { AskAiDialogComponent } from './components/ask-ai-dialog.component';
+import { CreateTripComponent } from './pages/create-trip/create-trip.component';
 import { AddPlaceDialogComponent } from './components/add-place-dialog.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { LegalComponent } from './pages/legal/legal.component';
+import { GlobalErrorHandler } from './core/global-error-handler';
 
 @NgModule({
   declarations: [
@@ -35,8 +39,9 @@ import { AddPlaceDialogComponent } from './components/add-place-dialog.component
     EditProfileComponent,
     SettingsComponent,
     CreateTripComponent,
-    AskAiDialogComponent,
-    AddPlaceDialogComponent
+    AddPlaceDialogComponent,
+    NotFoundComponent,
+    LegalComponent
   ],
   imports: [
     BrowserModule,
@@ -55,18 +60,24 @@ import { AddPlaceDialogComponent } from './components/add-place-dialog.component
     MatDatepickerModule,
     MatNativeDateModule,
     MatDialogModule,
+    MatListModule,
+    MatMenuModule,
     CommonModule,
     WanderLibraryModule,
-    SharedModule,
-    RouterModule.forRoot([]),
-
+    SharedModule
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
+    {
+      provide: ErrorHandler,
+      useClass: GlobalErrorHandler
+    },
+    Meta,
+    Title
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]

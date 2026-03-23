@@ -239,6 +239,145 @@
 }
 
 /* =============================================================================
+   BOOKING CARD
+   ============================================================================= */
+
+.booking-card {
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.05) 0%, rgba(var(--accent-rgb), 0.05) 100%) !important;
+  border: 2px solid var(--primary) !important;
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--primary) !important;
+
+    mat-icon {
+      color: var(--primary);
+    }
+  }
+
+  .booking-info {
+    .price-display {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--color-border);
+
+      .currency {
+        font-size: var(--text-body);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-secondary);
+      }
+
+      .amount {
+        font-size: 2.5rem;
+        font-weight: var(--font-weight-bold);
+        color: var(--primary);
+        line-height: 1;
+      }
+
+      .per-person {
+        font-size: var(--text-body-sm);
+        color: var(--color-text-tertiary);
+      }
+    }
+
+    .booking-details {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+
+      .detail-row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        color: var(--color-text-secondary);
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          color: var(--primary);
+        }
+      }
+    }
+
+    .inclusions, .exclusions {
+      margin-bottom: var(--space-4);
+
+      h4 {
+        font-size: var(--text-body-sm);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin: 0 0 var(--space-2);
+      }
+    }
+
+    .inclusion-tags, .exclusion-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--radius-full);
+        font-size: var(--text-caption);
+        font-weight: var(--font-weight-medium);
+
+        mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+        }
+
+        &.included {
+          background: rgba(76, 175, 80, 0.15);
+          color: #2e7d32;
+
+          mat-icon {
+            color: #4caf50;
+          }
+        }
+
+        &.excluded {
+          background: rgba(244, 67, 54, 0.1);
+          color: #c62828;
+
+          mat-icon {
+            color: #f44336;
+          }
+        }
+      }
+    }
+
+    .book-now-btn {
+      width: 100%;
+      height: 52px;
+      font-size: var(--text-body);
+      font-weight: var(--font-weight-semibold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      margin-top: var(--space-4);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      border-radius: var(--radius-md);
+
+      &:disabled {
+        background: var(--color-text-tertiary);
+      }
+    }
+  }
+}
+
+/* =============================================================================
    PLACES CARD
    ============================================================================= */
 
@@ -355,7 +494,7 @@
   padding: var(--space-12) var(--space-8);
   text-align: center;
 
-  mat-icon {
+  > mat-icon {
     font-size: 64px;
     width: 64px;
     height: 64px;
@@ -375,10 +514,49 @@
     margin: 0 0 var(--space-6);
   }
 
-  button {
+  .empty-actions {
     display: flex;
-    align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-4);
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+  }
+}
+
+.ai-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.ai-overlay-content {
+  text-align: center;
+  color: white;
+
+  h2 {
+    margin: var(--space-6) 0 var(--space-2);
+    font-size: var(--text-h3);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--text-body-sm);
+    opacity: 0.8;
+  }
+
+  mat-spinner {
+    margin: 0 auto;
   }
 }
 
@@ -547,12 +725,14 @@
 
 @media (max-width: 768px) {
   .trip-content {
-    padding: var(--space-4);
+    padding: var(--space-3);
+    padding-bottom: 100px; // Space for fixed booking bar
   }
 
   .trip-header {
     flex-direction: column;
-    padding: var(--space-6);
+    padding: var(--space-4);
+    gap: var(--space-4);
 
     .header-content h1 {
       font-size: var(--text-h2);
@@ -565,6 +745,109 @@
   }
 
   .map-container {
-    height: 300px;
+    height: 250px;
   }
+
+  // Booking card mobile styles
+  .booking-card {
+    // Hide the regular booking card on mobile, show fixed bar instead
+    display: none !important;
+  }
+
+  .detail-card {
+    mat-card-header {
+      padding: var(--space-4);
+    }
+
+    mat-card-content {
+      padding: 0 var(--space-4) var(--space-4);
+    }
+  }
+
+  .places-list {
+    .place-item {
+      padding: var(--space-3);
+      flex-wrap: wrap;
+
+      .place-name {
+        font-size: var(--text-body-sm);
+      }
+    }
+  }
+}
+
+/* =============================================================================
+   FIXED MOBILE BOOKING BAR
+   ============================================================================= */
+
+.mobile-booking-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  padding: var(--space-3) var(--space-4);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  border-top: 1px solid var(--color-border);
+  padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .price-info {
+    flex: 1;
+
+    .price-amount {
+      font-size: var(--text-h3);
+      font-weight: var(--font-weight-bold);
+      color: var(--primary);
+    }
+
+    .price-label {
+      font-size: var(--text-caption);
+      color: var(--color-text-tertiary);
+    }
+  }
+
+  .mobile-book-btn {
+    height: 48px;
+    padding: 0 var(--space-6);
+    font-weight: var(--font-weight-semibold);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%) !important;
+    border-radius: var(--radius-md);
+    white-space: nowrap;
+  }
+}
+
+/* =============================================================================
+   AI MODIFY BUTTON
+   ============================================================================= */
+
+.ai-modify-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%) !important;
+  color: white !important;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* =============================================================================
+   AI CHAT PANEL POSITIONING
+   ============================================================================= */
+
+// Hide mobile booking bar when AI chat is open
+:host-context(.ai-chat-open) .mobile-booking-bar {
+  display: none !important;
 }

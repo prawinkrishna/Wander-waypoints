@@ -265,6 +265,43 @@
   }
 }
 
+.agent-upgrade {
+  border: 1px solid rgba(var(--primary-rgb), 0.3);
+  background: rgba(var(--primary-rgb), 0.03);
+
+  h3 {
+    color: var(--primary);
+  }
+
+  p {
+    font-size: var(--text-body-sm);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-4);
+    line-height: 1.6;
+  }
+}
+
+.upgrade-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white;
+  border: none;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+  }
+}
+
 /* =============================================================================
    NOTIFICATION ITEMS
    ============================================================================= */

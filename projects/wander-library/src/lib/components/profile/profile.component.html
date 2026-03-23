@@ -76,10 +76,6 @@
         <mat-icon>{{ getFollowButtonIcon() }}</mat-icon>
         <span>{{ getFollowButtonText() }}</span>
       </button>
-      <button mat-stroked-button class="message-btn">
-        <mat-icon>mail_outline</mat-icon>
-        <span>Message</span>
-      </button>
     </ng-container>
   </div>
 
@@ -132,17 +128,31 @@
 
     <!-- Map Tab -->
     <div class="tab-content" *ngIf="activeTab === 'map'">
-      <div class="map-placeholder">
+      <div class="profile-map-container" *ngIf="mapPlaces.length > 0">
+        <lib-gps [places]="mapPlaces"></lib-gps>
+      </div>
+      <div class="empty-state" *ngIf="mapPlaces.length === 0">
         <mat-icon>map</mat-icon>
-        <p>World map coming soon...</p>
+        <p>No visited places yet. Start traveling to see your map!</p>
       </div>
     </div>
 
     <!-- Saved Tab -->
     <div class="tab-content" *ngIf="activeTab === 'saved'">
-      <div class="empty-state">
+      <div class="trips-grid" *ngIf="savedTrips.length > 0">
+        <div class="trip-card" *ngFor="let trip of savedTrips" (click)="onTripClick(trip.tripId)">
+          <div class="trip-image" [style.backgroundImage]="'url(' + getTripImage(trip) + ')'">
+            <span class="trip-duration">{{ getDuration(trip) }}</span>
+          </div>
+          <div class="trip-details">
+            <h4>{{ trip.title }}</h4>
+            <span class="trip-date">{{ trip.startDate | date:'MMM yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="savedTrips.length === 0">
         <mat-icon>bookmark_border</mat-icon>
-        <p>No saved places yet.</p>
+        <p>No saved trips yet. Like trips to save them here!</p>
       </div>
     </div>
   </div>

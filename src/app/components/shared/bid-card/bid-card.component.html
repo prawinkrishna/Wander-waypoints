@@ -1,0 +1,42 @@
+<mat-card class="bid-card" (click)="onViewDetails()">
+    <div class="card-header">
+        <div class="agency-info">
+            <div class="agency-logo" *ngIf="bid.agency?.logoUrl; else placeholderLogo">
+                <img [src]="bid.agency?.logoUrl" [alt]="bid.agency?.name" />
+            </div>
+            <ng-template #placeholderLogo>
+                <div class="agency-logo placeholder">
+                    <mat-icon>business</mat-icon>
+                </div>
+            </ng-template>
+            <div class="agency-details">
+                <h4 class="agency-name">{{ bid.agency?.name || 'Travel Agency' }}</h4>
+                <span class="bid-date">{{ bid.createdAt | date:'mediumDate' }}</span>
+            </div>
+        </div>
+        <span class="status-badge" [ngClass]="getStatusClass(bid.status)">
+            {{ bid.status | titlecase }}
+        </span>
+    </div>
+
+    <div class="card-body">
+        <div class="price-row">
+            <span class="proposed-price">{{ formatPrice(bid.proposedPrice, bid.currency) }}</span>
+            <span class="valid-until" *ngIf="bid.validUntil">
+                Valid until {{ bid.validUntil | date:'mediumDate' }}
+            </span>
+        </div>
+        <p class="description">{{ truncatedDescription }}</p>
+    </div>
+
+    <div class="card-footer" *ngIf="canShowActions">
+        <button mat-flat-button color="primary" class="accept-btn" (click)="onAccept($event)">
+            <mat-icon>check_circle</mat-icon>
+            Accept
+        </button>
+        <button mat-stroked-button color="warn" class="reject-btn" (click)="onReject($event)">
+            <mat-icon>cancel</mat-icon>
+            Reject
+        </button>
+    </div>
+</mat-card>

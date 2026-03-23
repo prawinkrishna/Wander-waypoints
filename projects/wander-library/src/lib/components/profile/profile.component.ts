@@ -51,6 +51,12 @@ export class ProfileComponent implements OnInit, OnChanges {
 
   activeTab: string = 'trips';
   tabs: string[] = ['trips', 'map', 'saved'];
+  mapPlaces: any[] = [];
+  savedTrips: any[] = [];
+
+  @Input() set savedTripsInput(trips: any[]) {
+    this.savedTrips = trips || [];
+  }
 
   profileStats: ProfileStats = {
     trips: 0,
@@ -61,11 +67,28 @@ export class ProfileComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.calculateStats();
+    this.extractMapPlaces();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['user']) {
       this.calculateStats();
+      this.extractMapPlaces();
+    }
+  }
+
+  private extractMapPlaces(): void {
+    this.mapPlaces = [];
+    if (!this.user?.trips) return;
+
+    for (const trip of this.user.trips) {
+      if (trip.tripPlaces) {
+        for (const tp of trip.tripPlaces) {
+          if (tp.place && tp.place.latitude && tp.place.longitude) {
+            this.mapPlaces.push(tp.place);
+          }
+        }
+      }
     }
   }
 

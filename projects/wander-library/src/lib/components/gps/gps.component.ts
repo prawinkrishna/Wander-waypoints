@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, OnDestroy, Output, PLATFORM_ID, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnChanges, OnInit, OnDestroy, Output, PLATFORM_ID, SimpleChanges, ViewChild } from '@angular/core';
 import { Place } from '../../models/place.model';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
@@ -11,6 +11,8 @@ import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
   styleUrls: ['./gps.component.scss']
 })
 export class GpsComponent implements OnInit, OnChanges, OnDestroy {
+  @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef<HTMLDivElement>;
+
   @Input() places: any[] = []; // Can be Place[] or TripPlace[]
   @Input() searchFn: ((query: string) => Promise<any[]>) | null = null;
   @Input() selectedPlace: Place | null = null;
@@ -25,6 +27,7 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
   private markerClusterGroup!: L.MarkerClusterGroup;
   private routeLayers: L.LayerGroup = L.layerGroup();
   private userLocationMarker: L.Marker | null = null;
+  private resizeObserver: ResizeObserver | null = null;
 
   // Day colors for route lines and markers
   private dayColors = [
@@ -61,6 +64,7 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
     if (this.map) {
       this.map.remove();
       this.map = null;
@@ -71,14 +75,10 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
     if (this.map) return;
 
     setTimeout(() => {
-      const mapElement = document.getElementById('map');
-      if (!mapElement) return;
+      const el = this.mapContainer?.nativeElement;
+      if (!el) return;
 
-      if ((mapElement as any)._leaflet_id) {
-        this.map?.remove();
-      }
-
-      this.map = L.map('map', {
+      this.map = L.map(el, {
         center: [13.0827, 80.2707],
         zoom: 10,
         zoomControl: false,
@@ -139,11 +139,17 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
 
       // Fix: Disable click propagation to allow typing in the search box
       setTimeout(() => {
-        const searchInput = document.querySelector('.leaflet-control-geosearch form');
+        const searchInput = el.querySelector('.leaflet-control-geosearch form');
         if (searchInput) {
           L.DomEvent.disableClickPropagation(searchInput as HTMLElement);
         }
       }, 500);
+
+      // Observe container resizes to keep tiles rendered correctly
+      this.resizeObserver = new ResizeObserver(() => {
+        if (this.map) this.map.invalidateSize();
+      });
+      this.resizeObserver.observe(el);
 
       this.addGeolocationControl();
       this.updateMapContent();
@@ -174,7 +180,9 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
         ...placeData,     // Properties of Place
         _dayNumber: day,  // Internal use
         _order: order,    // Internal use
-        _original: item   // Keep reference
+        _original: item,  // Keep reference
+        _lat: parseFloat(placeData.latitude),
+        _lng: parseFloat(placeData.longitude),
       };
     }).sort((a, b) => {
       if (a._dayNumber !== b._dayNumber) return a._dayNumber - b._dayNumber;
@@ -188,23 +196,39 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
       dayGroups.get(p._dayNumber)?.push(p);
     });
 
-    // 3. Draw Routes
+    // 3. Draw Transport-Aware Route Segments
     dayGroups.forEach((places, dayNum) => {
-      const latLngs = places
-        .filter(p => p.latitude && p.longitude)
-        .map(p => [parseFloat(p.latitude), parseFloat(p.longitude)] as [number, number]);
+      const validPlaces = places.filter(p => this.isValidCoord(p._lat, p._lng));
+      if (validPlaces.length < 2) return;
 
-      if (latLngs.length > 1) {
-        const color = this.dayColors[(dayNum - 1) % this.dayColors.length];
+      const color = this.dayColors[(dayNum - 1) % this.dayColors.length];
 
-        // Draw dashed line for route
-        L.polyline(latLngs, {
-          color: color,
-          weight: 4,
-          opacity: 0.7,
-          dashArray: '10, 10',
-          lineCap: 'round'
-        }).addTo(this.routeLayers);
+      for (let i = 0; i < validPlaces.length - 1; i++) {
+        const from = validPlaces[i];
+        const to = validPlaces[i + 1];
+        const transportMode = to._original?.transportMode;
+        const category = this.getTransportCategory(transportMode);
+
+        let points: [number, number][];
+        if (category === 'flight') {
+          points = this.generateArcPoints([from._lat, from._lng], [to._lat, to._lng]);
+        } else {
+          points = [[from._lat, from._lng], [to._lat, to._lng]];
+        }
+
+        const polyline = L.polyline(points, this.getRouteStyle(category, color));
+        polyline.addTo(this.routeLayers);
+
+        // Tooltip on route hover
+        const label = transportMode
+          ? `${transportMode}${to._original?.travelDuration ? ' - ' + this.formatDuration(to._original.travelDuration) : ''}`
+          : '';
+        if (label) {
+          polyline.bindTooltip(label, { sticky: true, direction: 'top', className: 'route-tooltip' });
+        }
+
+        // Transport icon at midpoint
+        this.addTransportIcon(from, to, category, color);
       }
     });
 
@@ -214,24 +238,24 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
       const color = this.dayColors[(dayNum - 1) % this.dayColors.length];
 
       places.forEach((place, index) => {
-        if (!place.latitude || !place.longitude) return;
+        if (!this.isValidCoord(place._lat, place._lng)) return;
 
         globalIndex++;
         const seqNum = index + 1; // 1-based index per day
 
         // Create Numbered Icon
         const icon = L.divIcon({
-          html: `<div class="seq-marker" style="background-color: ${color}; box-shadow: 0 0 0 3px rgba(${this.hexToRgb(color)}, 0.3)">
-                         <span>${seqNum}</span>
+          html: `<div class="pin-marker" style="background-color: ${color}; box-shadow: 0 3px 8px rgba(0,0,0,0.35)">
+                         <span class="pin-number">${seqNum}</span>
                          <div class="day-tag">Day ${dayNum}</div>
                        </div>`,
-          className: 'custom-seq-marker',
-          iconSize: [30, 30],
-          iconAnchor: [15, 34], // Bottom point
-          popupAnchor: [0, -34]
+          className: 'custom-pin-marker',
+          iconSize: [32, 42],
+          iconAnchor: [16, 42],
+          popupAnchor: [0, -42]
         });
 
-        const marker = L.marker([+place.latitude, +place.longitude], { icon });
+        const marker = L.marker([place._lat, place._lng], { icon });
 
         // Determine button text and action
         const isBookable = place.category?.toLowerCase()?.includes('hotel') ||
@@ -292,7 +316,13 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
 
     // Fit bounds to show all markers
     if (this.markers.size > 0) {
-      this.map.fitBounds(this.markerClusterGroup.getBounds(), { padding: [50, 50] });
+      const bounds = this.markerClusterGroup.getBounds();
+      this.map.invalidateSize();
+      setTimeout(() => {
+        if (this.map) {
+          this.map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+        }
+      }, 50);
     }
   }
 
@@ -323,6 +353,10 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
 
       this.friendMarkers.push(marker);
     });
+  }
+
+  private isValidCoord(lat: number, lng: number): boolean {
+    return !isNaN(lat) && !isNaN(lng) && !(lat === 0 && lng === 0);
   }
 
   // Helper to convert Hex to RGB for rgba string
@@ -408,6 +442,87 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
         });
       }
     }
+  }
+
+  private getTransportCategory(mode?: string | null): string {
+    const m = mode?.toLowerCase()?.trim() || '';
+    if (['walk', 'walking'].includes(m)) return 'walk';
+    if (['bike', 'bicycle', 'cycling'].includes(m)) return 'bike';
+    if (['train', 'metro', 'subway', 'tram', 'rail'].includes(m)) return 'rail';
+    if (['flight', 'plane', 'air'].includes(m)) return 'flight';
+    if (m.includes('ferry') || m.includes('boat')) return 'ferry';
+    return 'road';
+  }
+
+  private getRouteStyle(category: string, color: string): L.PolylineOptions {
+    const base: L.PolylineOptions = { color, opacity: 0.7, lineCap: 'round', lineJoin: 'round' };
+    switch (category) {
+      case 'walk':   return { ...base, weight: 3, dashArray: '4, 8' };
+      case 'bike':   return { ...base, weight: 3 };
+      case 'rail':   return { ...base, weight: 4, dashArray: '12, 6, 2, 6' };
+      case 'flight': return { ...base, weight: 2.5, dashArray: '8, 8' };
+      case 'ferry':  return { ...base, weight: 3, dashArray: '8, 4, 2, 4' };
+      default:       return { ...base, weight: 4 }; // road — solid
+    }
+  }
+
+  private generateArcPoints(from: [number, number], to: [number, number], numPoints: number = 20): [number, number][] {
+    const points: [number, number][] = [];
+    const midLat = (from[0] + to[0]) / 2;
+    const midLng = (from[1] + to[1]) / 2;
+    const dx = to[1] - from[1];
+    const dy = to[0] - from[0];
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    // Control point offset perpendicular to the line
+    const offset = dist * 0.2;
+    const ctrlLat = midLat + (dx / dist) * offset;
+    const ctrlLng = midLng - (dy / dist) * offset;
+
+    for (let i = 0; i <= numPoints; i++) {
+      const t = i / numPoints;
+      const lat = (1 - t) * (1 - t) * from[0] + 2 * (1 - t) * t * ctrlLat + t * t * to[0];
+      const lng = (1 - t) * (1 - t) * from[1] + 2 * (1 - t) * t * ctrlLng + t * t * to[1];
+      points.push([lat, lng]);
+    }
+    return points;
+  }
+
+  private formatDuration(minutes: number): string {
+    if (!minutes || minutes <= 0) return '';
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    if (h > 0 && m > 0) return `${h}h ${m}m`;
+    if (h > 0) return `${h}h`;
+    return `${m}m`;
+  }
+
+  private getTransportMaterialIcon(category: string): string {
+    switch (category) {
+      case 'walk':   return 'directions_walk';
+      case 'bike':   return 'directions_bike';
+      case 'rail':   return 'directions_railway';
+      case 'flight': return 'flight';
+      case 'ferry':  return 'directions_boat';
+      default:       return 'directions_car';
+    }
+  }
+
+  private addTransportIcon(from: any, to: any, category: string, color: string): void {
+    const midLat = (from._lat + to._lat) / 2;
+    const midLng = (from._lng + to._lng) / 2;
+    const iconName = this.getTransportMaterialIcon(category);
+
+    const icon = L.divIcon({
+      html: `<div class="transport-icon-marker" style="background-color: ${color}">
+               <span class="material-icons">${iconName}</span>
+             </div>`,
+      className: 'custom-transport-icon',
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
+
+    L.marker([midLat, midLng], { icon, interactive: false, zIndexOffset: -100 })
+      .addTo(this.routeLayers);
   }
 
   public flyToLocation(lat: number, lng: number, zoom: number = 13): void {

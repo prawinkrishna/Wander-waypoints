@@ -144,8 +144,82 @@
   overflow-y: auto;
 }
 
+/* =============================================================================
+   ALERT MESSAGES
+   ============================================================================= */
+
 .alert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   margin: var(--space-4) var(--space-8) 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.4;
+  animation: slideDown 0.25s ease-out;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  span {
+    flex: 1;
+  }
+
+  &.error {
+    background: rgba(245, 101, 101, 0.1);
+    color: #c53030;
+    border: 1px solid rgba(245, 101, 101, 0.25);
+
+    mat-icon {
+      color: #e53e3e;
+    }
+  }
+
+  &.success {
+    background: rgba(72, 187, 120, 0.1);
+    color: #276749;
+    border: 1px solid rgba(72, 187, 120, 0.25);
+
+    mat-icon {
+      color: #48BB78;
+    }
+  }
+
+  .alert-close {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    line-height: 28px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: inherit;
+      opacity: 0.6;
+    }
+
+    &:hover mat-icon {
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* =============================================================================
@@ -226,13 +300,13 @@ form {
   font-size: var(--text-body);
   font-weight: var(--font-weight-semibold);
   border-radius: var(--radius-md) !important;
-  box-shadow: 0 4px 6px -1px rgba(30, 144, 255, 0.2) !important;
+  box-shadow: 0 4px 6px -1px rgba(var(--primary-rgb), 0.2) !important;
   margin-top: var(--space-2);
   background-color: var(--primary) !important;
   color: white !important;
 
   &:hover:not(:disabled) {
-    box-shadow: 0 10px 15px -3px rgba(30, 144, 255, 0.3) !important;
+    box-shadow: 0 10px 15px -3px rgba(var(--primary-rgb), 0.3) !important;
     transform: translateY(-1px);
   }
 }

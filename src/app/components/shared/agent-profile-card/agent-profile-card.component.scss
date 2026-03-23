@@ -1,0 +1,150 @@
+$primary: #48BB78;
+$secondary: #4299E1;
+$success: #48BB78;
+$warning: #ED8936;
+
+.agent-card {
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 16px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.agent-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    &.placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba($primary, 0.1);
+
+        mat-icon {
+            color: $primary;
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+        }
+    }
+}
+
+.agent-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.name-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .agent-name {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a1a2e;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .verified-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: $primary;
+    }
+}
+
+.rating-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+
+    .stars {
+        display: flex;
+        align-items: center;
+    }
+
+    .star-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: #ddd;
+
+        &.filled {
+            color: $warning;
+        }
+    }
+
+    .rating-text {
+        font-size: 13px;
+        font-weight: 500;
+        color: #666;
+        margin-left: 2px;
+    }
+}
+
+.specializations {
+    margin-bottom: 12px;
+
+    mat-chip-set {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .spec-chip {
+        font-size: 12px;
+        min-height: 26px;
+        padding: 4px 10px;
+        background-color: rgba($primary, 0.08) !important;
+        color: $primary !important;
+        border-radius: 9999px;
+    }
+}
+
+.card-footer {
+    display: flex;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+
+    .stat {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 13px;
+        color: #666;
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+            color: $primary;
+        }
+    }
+}

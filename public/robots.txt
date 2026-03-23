@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /studio/
+Disallow: /settings
+Disallow: /profile/edit
+
+Sitemap: https://wanderwaypoints.com/sitemap.xml

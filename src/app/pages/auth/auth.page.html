@@ -3,7 +3,7 @@
     <!-- Left Panel: Visual/Brand -->
     <div class="auth-visual">
       <div class="visual-content">
-        <h1>Wander</h1>
+        <h1>Trekio</h1>
         <p>Your journey begins here. Discover, plan, and share your next adventure.</p>
         <div class="visual-decoration">
             <mat-icon>flight_takeoff</mat-icon>
@@ -18,17 +18,20 @@
     <div class="auth-form-panel">
       <!-- Mobile Header (only visible on small screens) -->
       <div class="mobile-header">
-        <h1>Wander</h1>
+        <h1>Trekio</h1>
         <p>Welcome back!</p>
       </div>
 
       <!-- Alert Messages -->
       <div class="alert error" *ngIf="errorMessage">
-        <mat-icon>error</mat-icon>
+        <mat-icon>error_outline</mat-icon>
         <span>{{ errorMessage }}</span>
+        <button mat-icon-button class="alert-close" (click)="errorMessage = ''">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
       <div class="alert success" *ngIf="successMessage">
-        <mat-icon>check_circle</mat-icon>
+        <mat-icon>check_circle_outline</mat-icon>
         <span>{{ successMessage }}</span>
       </div>
 
@@ -69,7 +72,7 @@
               </div>
 
               <div class="form-actions">
-                <a class="forgot-password">Forgot password?</a>
+                <a class="forgot-password" routerLink="/auth/forgot-password">Forgot password?</a>
               </div>
 
               <button mat-raised-button color="primary" type="submit" class="submit-btn" [disabled]="loading">
@@ -78,13 +81,14 @@
               </button>
             </form>
 
-            <div class="divider">
+            <!-- PHASE 2: Restore guest login when social features are enabled -->
+            <!-- <div class="divider">
               <span>or</span>
             </div>
 
             <button mat-stroked-button class="guest-btn" (click)="onGuestLogin()" [disabled]="loading">
               Continue as Guest
-            </button>
+            </button> -->
           </div>
         </mat-tab>
 
@@ -150,7 +154,8 @@
                 </mat-form-field>
               </div>
 
-              <div class="form-group">
+              <!-- PHASE 2: Restore role selection when social features are enabled -->
+              <!-- <div class="form-group">
                 <label class="form-label">Role</label>
                 <mat-form-field appearance="outline" subscriptSizing="dynamic">
                   <mat-select formControlName="role" placeholder="Select your role">
@@ -160,7 +165,7 @@
                   </mat-select>
                   <mat-icon matPrefix>category</mat-icon>
                 </mat-form-field>
-              </div>
+              </div> -->
 
               <button mat-raised-button color="primary" type="submit" class="submit-btn" [disabled]="loading">
                 <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>

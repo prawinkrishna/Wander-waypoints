@@ -93,7 +93,6 @@ export class UserProfileComponent implements OnInit {
                     this.followStatus = res.status;
                 },
                 error: (err) => {
-                    console.error('Failed to follow user', err);
                 }
             });
         }
@@ -109,7 +108,6 @@ export class UserProfileComponent implements OnInit {
                     this.followStatus = 'NONE';
                 },
                 error: (err) => {
-                    console.error('Failed to unfollow user', err);
                 }
             });
         }
@@ -124,6 +122,6 @@ export class UserProfileComponent implements OnInit {
     }
 
     onTabChanged(tab: string) {
-        console.log('Tab changed:', tab);
+        // Tab changed - could be used for analytics or lazy loading
     }
 }

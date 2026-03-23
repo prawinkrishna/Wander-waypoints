@@ -1,0 +1,1345 @@
+// Password Gate
+.password-gate {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 24px;
+    background: #f8f9fa;
+
+    .password-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 40px;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+
+        .lock-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            margin: 0 0 8px;
+            color: #333;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .password-error {
+            color: #F56565;
+            font-size: 0.85rem;
+            margin: -8px 0 12px;
+        }
+
+        button {
+            width: 100%;
+            min-height: 44px;
+        }
+    }
+}
+
+.shared-itinerary-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px;
+    background: #fff;
+}
+
+// Fix textarea label overlap
+mat-form-field:has(textarea) {
+    ::ng-deep {
+        .mat-mdc-text-field-wrapper {
+            height: auto !important;
+            min-height: 52px;
+        }
+
+        .mat-mdc-form-field-flex {
+            align-items: flex-start !important;
+        }
+
+        .mat-mdc-form-field-infix {
+            padding-top: 16px !important;
+            padding-bottom: 8px !important;
+            min-height: auto !important;
+            height: auto !important;
+        }
+
+        .mat-mdc-floating-label {
+            top: 28px !important;
+        }
+
+        .mdc-floating-label--float-above {
+            transform: translateY(-34px) scale(0.75) !important;
+        }
+    }
+
+    textarea {
+        line-height: 1.5;
+        resize: vertical;
+    }
+}
+
+// Agency Header
+.agency-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 24px;
+
+    .agency-branding {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        .agency-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .agency-name {
+            margin: 0;
+            color: #333;
+            font-size: 1.25rem;
+        }
+
+        .agency-tagline {
+            margin: 4px 0 0;
+            color: #666;
+            font-size: 0.875rem;
+        }
+    }
+
+    .agency-contact {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 0.875rem;
+        color: #666;
+
+        span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                color: var(--primary);
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+
+        .agency-branding {
+            flex-direction: column;
+        }
+
+        .agency-contact {
+            align-items: center;
+        }
+    }
+}
+
+// Itinerary Header
+.itinerary-header {
+    margin-bottom: 32px;
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 24px;
+
+        @media (max-width: 768px) {
+            flex-direction: column-reverse;
+        }
+    }
+
+    .header-text {
+        flex: 1;
+
+        h1 {
+            margin: 12px 0 8px;
+            color: #333;
+            font-size: 2rem;
+        }
+
+        .dates {
+            margin: 0;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .client-name {
+            margin: 8px 0 0;
+            color: var(--primary);
+            font-weight: 500;
+        }
+    }
+
+    .header-image {
+        width: 200px;
+        height: 150px;
+        border-radius: 12px;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            width: 100%;
+            height: 200px;
+        }
+    }
+
+    .description {
+        margin: 16px 0 0;
+        color: #666;
+        line-height: 1.6;
+    }
+}
+
+// Status Badge
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    &.status-draft {
+        background: #e0e0e0;
+        color: #666;
+    }
+
+    &.status-shared, &.status-reviewing {
+        background: rgba(var(--primary-rgb), 0.15);
+        color: var(--primary);
+    }
+
+    &.status-changes {
+        background: rgba(237, 137, 54, 0.15);
+        color: #ED8936;
+    }
+
+    &.status-approved {
+        background: rgba(72, 187, 120, 0.15);
+        color: #48BB78;
+    }
+
+    &.status-finalized {
+        background: linear-gradient(135deg, rgba(128, 90, 213, 0.15) 0%, rgba(103, 58, 183, 0.15) 100%);
+        color: #805AD5;
+    }
+}
+
+// Sections
+.section {
+    margin-bottom: 40px;
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0 0 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--primary);
+        color: #333;
+        font-size: 1.25rem;
+
+        mat-icon {
+            color: var(--primary);
+        }
+    }
+
+    .sub-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 12px;
+        color: #333;
+        font-size: 1rem;
+    }
+}
+
+// Day Groups
+.day-group {
+    margin-bottom: 24px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+
+    .day-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 20px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-active) 100%);
+        color: white;
+
+        .day-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .day-date {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+    }
+}
+
+// Activity Cards
+.activities-list {
+    padding: 20px;
+}
+
+.activity-card {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    &:hover {
+        border-color: var(--primary);
+    }
+
+    &.approved {
+        border-color: #48BB78;
+        background: rgba(72, 187, 120, 0.05);
+    }
+
+    &.rejected {
+        border-color: #F56565;
+        background: rgba(245, 101, 101, 0.05);
+    }
+
+    .activity-content {
+        flex: 1;
+        display: flex;
+        gap: 16px;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+        }
+    }
+
+    .activity-time {
+        min-width: 60px;
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    .activity-details {
+        flex: 1;
+
+        .activity-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .activity-desc {
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .activity-meta {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #888;
+            font-size: 0.85rem;
+
+            mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        .client-notes {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed #e0e0e0;
+
+            .full-width {
+                width: 100%;
+            }
+        }
+    }
+
+    .activity-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        button.active {
+            background: rgba(var(--primary-rgb), 0.1);
+        }
+    }
+
+    .activity-edit {
+        flex: 1;
+
+        .edit-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .full-width {
+            width: 100%;
+        }
+
+        .edit-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 16px;
+        }
+    }
+}
+
+// Accommodation Cards
+.accommodation-cards {
+    display: grid;
+    gap: 16px;
+}
+
+.accommodation-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+    }
+
+    .hotel-info {
+        h3 {
+            margin: 0 0 4px;
+            color: #333;
+        }
+
+        .stars {
+            color: #FFD700;
+
+            mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        .room-type {
+            margin: 8px 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    }
+
+    .stay-details {
+        display: flex;
+        gap: 24px;
+
+        .detail {
+            text-align: center;
+
+            .label {
+                display: block;
+                font-size: 0.75rem;
+                color: #888;
+                text-transform: uppercase;
+            }
+
+            .value {
+                font-weight: 600;
+                color: #333;
+            }
+        }
+    }
+
+    .cost {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+}
+
+// Transport List
+.transport-list {
+    display: grid;
+    gap: 12px;
+}
+
+.transport-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+
+    .transport-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: var(--primary);
+    }
+
+    .transport-details {
+        flex: 1;
+
+        .transport-type {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .transport-route {
+            color: #666;
+        }
+
+        .transport-meta {
+            font-size: 0.85rem;
+            color: #888;
+
+            span {
+                margin-right: 8px;
+            }
+        }
+    }
+
+    .transport-cost {
+        font-weight: 600;
+        color: var(--primary);
+    }
+}
+
+// Pricing Table
+.pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    th, td {
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .right {
+        text-align: right;
+    }
+
+    .label {
+        text-align: right;
+        font-weight: 500;
+    }
+
+    tfoot tr {
+        background: #f8f9fa;
+    }
+
+    .grand-total {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-active) 100%);
+
+        td {
+            color: white;
+            font-weight: 700;
+            border-bottom: none;
+        }
+    }
+}
+
+// Inclusions Section
+.inclusions-section {
+    .two-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .item-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+    }
+}
+
+.icon-success {
+    color: #48BB78;
+}
+
+.icon-error {
+    color: #F56565;
+}
+
+// Info blocks
+.info-block {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+
+    h4 {
+        margin: 0 0 8px;
+        color: #333;
+    }
+
+    p {
+        margin: 0;
+        color: #666;
+        line-height: 1.6;
+        white-space: pre-wrap;
+    }
+}
+
+// Footer Actions
+.actions-footer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px 24px;
+    margin: 40px -24px -24px;
+
+    .footer-content {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            gap: 16px;
+            text-align: center;
+        }
+    }
+
+    .footer-text {
+        margin: 0;
+        color: #666;
+    }
+
+    .footer-actions {
+        display: flex;
+        gap: 12px;
+
+        button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    }
+}
+
+// Status Banner
+.status-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+    margin-top: 24px;
+    border-radius: 8px;
+    font-weight: 500;
+
+    &.status-changes {
+        background: rgba(237, 137, 54, 0.15);
+        color: #c47600;
+    }
+
+    &.status-approved {
+        background: rgba(72, 187, 120, 0.15);
+        color: #276749;
+    }
+
+    &.status-finalized {
+        background: linear-gradient(135deg, rgba(128, 90, 213, 0.15) 0%, rgba(103, 58, 183, 0.15) 100%);
+        color: #553c9a;
+    }
+}
+
+// Validity Notice
+.validity-notice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 12px;
+    background: rgba(237, 137, 54, 0.1);
+    border-radius: 8px;
+    color: #c47600;
+    font-size: 0.9rem;
+}
+
+// Loading & Error
+.loading-container,
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 16px;
+
+    p {
+        color: #666;
+    }
+}
+
+.error-container {
+    mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        color: #F56565;
+    }
+
+    h2 {
+        margin: 0;
+        color: #333;
+    }
+}
+
+// Status History
+.section-title.clickable {
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+        color: var(--primary);
+    }
+
+    .expand-icon {
+        margin-left: auto;
+    }
+}
+
+.history-timeline {
+    padding: 16px 0;
+
+    .history-item {
+        display: flex;
+        gap: 16px;
+        padding-bottom: 20px;
+        position: relative;
+
+        &:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 36px;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+
+        .history-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f0f4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+                color: var(--primary);
+            }
+        }
+
+        .history-content {
+            flex: 1;
+
+            .history-status {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 4px;
+            }
+
+            .history-meta {
+                display: flex;
+                gap: 12px;
+                font-size: 0.8rem;
+                color: #888;
+
+                .history-actor {
+                    font-weight: 500;
+                    color: #666;
+                }
+            }
+
+            .history-message {
+                margin-top: 6px;
+                font-size: 0.85rem;
+                color: #555;
+                background: #f8f9fa;
+                padding: 8px 12px;
+                border-radius: 6px;
+                border-left: 3px solid var(--primary);
+            }
+        }
+    }
+}
+
+// ========================================
+// MOBILE RESPONSIVE STYLES
+// ========================================
+
+// Tablet and Mobile (max 768px)
+@media (max-width: 768px) {
+    .shared-itinerary-page {
+        padding: 16px;
+    }
+
+    // Itinerary Header adjustments
+    .itinerary-header {
+        margin-bottom: 24px;
+
+        .header-text {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .dates {
+                font-size: 1rem;
+            }
+        }
+    }
+
+    // Section title
+    .section {
+        margin-bottom: 32px;
+
+        .section-title {
+            font-size: 1.1rem;
+            gap: 8px;
+        }
+    }
+
+    // Day Groups
+    .day-group {
+        .day-header {
+            padding: 12px 16px;
+            gap: 12px;
+
+            .day-badge {
+                padding: 3px 10px;
+                font-size: 0.85rem;
+            }
+
+            .day-date {
+                font-size: 0.85rem;
+            }
+        }
+    }
+
+    // Activities
+    .activities-list {
+        padding: 16px;
+    }
+
+    .activity-card {
+        padding: 12px;
+        gap: 12px;
+
+        .activity-details {
+            .activity-title {
+                font-size: 1rem;
+            }
+
+            .activity-desc {
+                font-size: 0.875rem;
+            }
+        }
+
+        .activity-actions {
+            flex-direction: row;
+        }
+    }
+
+    // Transport cards
+    .transport-card {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+
+        .transport-icon {
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+        }
+
+        .transport-details {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .transport-cost {
+            width: 100%;
+            text-align: right;
+            padding-top: 8px;
+            border-top: 1px dashed #e0e0e0;
+        }
+    }
+
+    // Pricing Table - horizontal scroll wrapper
+    .pricing-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+
+        th, td {
+            padding: 10px 12px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+        }
+    }
+
+    // Footer Actions
+    .actions-footer {
+        padding: 16px;
+        margin: 32px -16px -16px;
+
+        .footer-actions {
+            flex-direction: column;
+            width: 100%;
+
+            button {
+                width: 100%;
+                justify-content: center;
+                min-height: 44px; // Touch-friendly
+            }
+        }
+    }
+
+    // Status Banner
+    .status-banner {
+        padding: 12px;
+        font-size: 0.9rem;
+        flex-wrap: wrap;
+        text-align: center;
+    }
+
+    // Validity Notice
+    .validity-notice {
+        padding: 10px;
+        font-size: 0.85rem;
+        flex-wrap: wrap;
+        text-align: center;
+    }
+}
+
+// Mobile Only (max 576px)
+@media (max-width: 576px) {
+    .shared-itinerary-page {
+        padding: 12px;
+    }
+
+    // Agency Header - stack everything
+    .agency-header {
+        padding: 16px;
+        gap: 12px;
+
+        .agency-branding {
+            gap: 12px;
+
+            .agency-logo {
+                width: 50px;
+                height: 50px;
+            }
+
+            .agency-name {
+                font-size: 1.1rem;
+            }
+
+            .agency-tagline {
+                font-size: 0.8rem;
+            }
+        }
+
+        .agency-contact {
+            font-size: 0.8rem;
+            gap: 6px;
+
+            span mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+            }
+        }
+    }
+
+    // Itinerary Header
+    .itinerary-header {
+        margin-bottom: 20px;
+
+        .header-text {
+            h1 {
+                font-size: 1.25rem;
+                line-height: 1.3;
+            }
+
+            .dates {
+                font-size: 0.9rem;
+            }
+
+            .client-name {
+                font-size: 0.9rem;
+            }
+        }
+
+        .header-image {
+            height: 160px;
+            border-radius: 8px;
+        }
+
+        .description {
+            font-size: 0.9rem;
+            margin-top: 12px;
+        }
+    }
+
+    // Status Badge
+    .status-badge {
+        padding: 4px 10px;
+        font-size: 0.7rem;
+    }
+
+    // Sections
+    .section {
+        margin-bottom: 24px;
+
+        .section-title {
+            font-size: 1rem;
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+
+            mat-icon {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .sub-title {
+            font-size: 0.9rem;
+        }
+    }
+
+    // Day Groups
+    .day-group {
+        margin-bottom: 16px;
+        border-radius: 8px;
+
+        .day-header {
+            padding: 10px 12px;
+            gap: 8px;
+
+            .day-badge {
+                padding: 2px 8px;
+                font-size: 0.8rem;
+            }
+
+            .day-date {
+                font-size: 0.8rem;
+            }
+        }
+    }
+
+    // Activities
+    .activities-list {
+        padding: 12px;
+    }
+
+    .activity-card {
+        padding: 10px;
+        margin-bottom: 12px;
+        flex-direction: column;
+        gap: 8px;
+
+        .activity-content {
+            gap: 8px;
+        }
+
+        .activity-time {
+            min-width: auto;
+            font-size: 0.9rem;
+        }
+
+        .activity-details {
+            .activity-title {
+                font-size: 0.95rem;
+                line-height: 1.3;
+            }
+
+            .activity-desc {
+                font-size: 0.85rem;
+                line-height: 1.5;
+            }
+
+            .activity-meta {
+                font-size: 0.8rem;
+            }
+
+            .client-notes {
+                margin-top: 12px;
+                padding-top: 12px;
+            }
+        }
+
+        .activity-actions {
+            flex-direction: row;
+            justify-content: flex-end;
+            padding-top: 8px;
+            border-top: 1px dashed #e0e0e0;
+        }
+
+        .activity-edit {
+            .edit-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    }
+
+    // Accommodation Cards
+    .accommodation-card {
+        padding: 16px;
+        gap: 12px;
+
+        .hotel-info {
+            h3 {
+                font-size: 1rem;
+            }
+
+            .room-type {
+                font-size: 0.85rem;
+            }
+        }
+
+        .stay-details {
+            gap: 16px;
+            width: 100%;
+            justify-content: center;
+
+            .detail {
+                .label {
+                    font-size: 0.7rem;
+                }
+
+                .value {
+                    font-size: 0.9rem;
+                }
+            }
+        }
+
+        .cost {
+            font-size: 1.1rem;
+        }
+    }
+
+    // Transport Cards
+    .transport-card {
+        padding: 12px;
+
+        .transport-icon {
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+        }
+
+        .transport-details {
+            .transport-type {
+                font-size: 0.95rem;
+            }
+
+            .transport-route {
+                font-size: 0.85rem;
+            }
+
+            .transport-meta {
+                font-size: 0.8rem;
+            }
+        }
+    }
+
+    // Pricing Table - stack as cards on very small screens
+    .pricing-table {
+        th, td {
+            padding: 8px 10px;
+            font-size: 0.8rem;
+        }
+
+        .grand-total .amount {
+            font-size: 1rem;
+        }
+    }
+
+    // Inclusions
+    .inclusions-section {
+        .item-list li {
+            font-size: 0.9rem;
+            padding: 6px 0;
+        }
+    }
+
+    // Info blocks
+    .info-block {
+        padding: 12px;
+
+        h4 {
+            font-size: 0.95rem;
+        }
+
+        p {
+            font-size: 0.85rem;
+        }
+    }
+
+    // Footer Actions
+    .actions-footer {
+        padding: 12px;
+        margin: 24px -12px -12px;
+
+        .footer-text {
+            font-size: 0.85rem;
+        }
+
+        .footer-actions {
+            gap: 8px;
+
+            button {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+        }
+    }
+
+    // Status Banner
+    .status-banner {
+        padding: 10px;
+        font-size: 0.85rem;
+        gap: 8px;
+
+        mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    // Validity Notice
+    .validity-notice {
+        font-size: 0.8rem;
+        gap: 6px;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    // Loading & Error
+    .loading-container,
+    .error-container {
+        min-height: 40vh;
+        padding: 24px;
+    }
+
+    .error-container {
+        mat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            font-size: 0.9rem;
+        }
+    }
+}

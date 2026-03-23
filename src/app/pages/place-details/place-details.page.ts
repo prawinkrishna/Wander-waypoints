@@ -3,7 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PlaceService } from '../../core/service/place.service';
 import { TripService } from '../../core/service/trip.service';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Place } from '../../../../projects/wander-library/src/lib/models/place.model';
+import { AddToTripDialogComponent } from '../../components/add-to-trip-dialog/add-to-trip-dialog.component';
 
 @Component({
   selector: 'app-place-details',
@@ -22,7 +24,8 @@ export class PlaceDetailsPage implements OnInit {
     private router: Router,
     private placeService: PlaceService,
     private tripService: TripService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit() {
@@ -46,8 +49,7 @@ export class PlaceDetailsPage implements OnInit {
         this.place = place;
         this.isLoading = false;
       },
-      error: (err) => {
-        console.error('Error loading place:', err);
+      error: () => {
         this.error = 'Failed to load place details. The place may not exist.';
         this.isLoading = false;
       }
@@ -60,32 +62,45 @@ export class PlaceDetailsPage implements OnInit {
       next: (trips) => {
         this.userTrips = trips;
       },
-      error: (err) => {
-        console.error('Error loading user trips:', err);
-      }
+      error: () => {}
     });
   }
 
   onAddToTrip() {
-    // TODO: Implement add to trip dialog
-    // For V1, we can show a simple select dialog with user's trips
     if (this.userTrips.length === 0) {
-      alert('You need to create a trip first before adding places.');
-      this.router.navigate(['/profile']);
+      this.snackBar.open('You need to create a trip first before adding places.', 'Close', { duration: 3000 });
+      this.router.navigate(['/create-trip']);
       return;
     }
 
-    // Simple implementation for V1
-    const tripOptions = this.userTrips.map((t, i) => `${i + 1}. ${t.title}`).join('\n');
-    const selection = prompt(`Select a trip to add this place to:\n\n${tripOptions}\n\nEnter trip number:`);
-
-    if (selection) {
-      const index = parseInt(selection) - 1;
-      if (index >= 0 && index < this.userTrips.length) {
-        const selectedTrip = this.userTrips[index];
-        alert(`Place added to "${selectedTrip.title}"!\n\n(Note: Full implementation coming in next update)`);
+    const dialogRef = this.dialog.open(AddToTripDialogComponent, {
+      width: '450px',
+      maxWidth: '95vw',
+      data: {
+        trips: this.userTrips,
+        placeName: this.place?.name || 'this place'
       }
-    }
+    });
+
+    dialogRef.afterClosed().subscribe((selectedTrip: any) => {
+      if (selectedTrip && this.place) {
+        this.tripService.addPlace(selectedTrip.tripId, {
+          placeId: this.place.placeId,
+          placeName: this.place.name,
+          latitude: this.place.latitude,
+          longitude: this.place.longitude,
+          address: this.place.address,
+          order: 1
+        }).subscribe({
+          next: () => {
+            this.snackBar.open(`Place added to "${selectedTrip.title}"!`, 'Close', { duration: 3000 });
+          },
+          error: () => {
+            this.snackBar.open('Failed to add place to trip.', 'Close', { duration: 3000 });
+          }
+        });
+      }
+    });
   }
 
   onViewOnMap() {
@@ -103,12 +118,12 @@ export class PlaceDetailsPage implements OnInit {
     if (navigator.share) {
       navigator.share({
         title: this.place.name,
-        text: `Check out ${this.place.name} on Wander!`,
+        text: `Check out ${this.place.name} on Trekio!`,
         url: url
-      }).catch(err => console.log('Error sharing:', err));
+      }).catch(() => {});
     } else {
       navigator.clipboard.writeText(url).then(() => {
-        alert('Link copied to clipboard!');
+        this.snackBar.open('Link copied to clipboard!', 'Close', { duration: 2000 });
       });
     }
   }

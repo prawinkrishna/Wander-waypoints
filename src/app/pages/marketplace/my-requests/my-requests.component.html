@@ -1,0 +1,75 @@
+<div class="my-requests-page">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">My Trip Requests</h1>
+            <p class="page-subtitle">Track your trip requests and manage proposals from travel agents</p>
+        </div>
+        <button mat-flat-button color="primary" class="post-btn" routerLink="/marketplace/create-request">
+            <mat-icon>add</mat-icon>
+            New Request
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading your requests...</p>
+    </div>
+
+    <ng-container *ngIf="!isLoading">
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="requests.length === 0">
+            <mat-icon class="empty-icon">flight_takeoff</mat-icon>
+            <h3>No trip requests yet</h3>
+            <p>Post your first trip request and let expert travel agents send you customized proposals.</p>
+            <button mat-flat-button color="primary" routerLink="/marketplace/create-request">
+                <mat-icon>add</mat-icon>
+                Post Your First Request
+            </button>
+        </div>
+
+        <!-- Active Requests -->
+        <ng-container *ngIf="requests.length > 0">
+            <div class="section" *ngIf="activeRequests.length > 0">
+                <h2 class="section-title">
+                    <mat-icon>pending_actions</mat-icon>
+                    Active Requests
+                    <span class="count-badge">{{ activeRequests.length }}</span>
+                </h2>
+                <div class="requests-grid">
+                    <div class="request-item" *ngFor="let request of activeRequests; trackBy: trackByRequestId">
+                        <app-trip-request-card
+                            [request]="request"
+                            (viewDetails)="onViewRequest($event)">
+                        </app-trip-request-card>
+                        <button mat-icon-button
+                                class="cancel-action"
+                                matTooltip="Cancel this request"
+                                *ngIf="request.status === 'open'"
+                                (click)="onCancelRequest(request.tripRequestId); $event.stopPropagation()">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Closed Requests -->
+            <div class="section" *ngIf="closedRequests.length > 0">
+                <h2 class="section-title">
+                    <mat-icon>history</mat-icon>
+                    Past Requests
+                    <span class="count-badge muted">{{ closedRequests.length }}</span>
+                </h2>
+                <div class="requests-grid">
+                    <div class="request-item" *ngFor="let request of closedRequests; trackBy: trackByRequestId">
+                        <app-trip-request-card
+                            [request]="request"
+                            (viewDetails)="onViewRequest($event)">
+                        </app-trip-request-card>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+</div>

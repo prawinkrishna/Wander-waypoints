@@ -18,8 +18,8 @@ export class TripManagementComponent implements OnInit {
                 id: t.tripId,
                 title: t.title,
                 status: t.isPublic ? 'Published' : 'Draft',
-                views: Math.floor(Math.random() * 5000), // Mock
-                sales: Math.floor(Math.random() * 200), // Mock
+                views: t.views || 0,
+                sales: t.bookedSlots || 0,
                 date: new Date(t.startDate).toLocaleDateString()
             }));
         });

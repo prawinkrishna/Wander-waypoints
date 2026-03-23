@@ -1,0 +1,141 @@
+<h2 mat-dialog-title>Share Itinerary</h2>
+
+<mat-dialog-content>
+    <div class="share-dialog-content" *ngIf="!isLoading; else loading">
+        <!-- Enable Sharing Toggle -->
+        <div class="toggle-section">
+            <div class="toggle-info">
+                <span class="toggle-label">Enable Sharing</span>
+                <span class="toggle-desc">Generate a link to share with your client</span>
+            </div>
+            <mat-slide-toggle
+                [checked]="isShared"
+                (change)="toggleSharing($event.checked)"
+                [disabled]="isSaving"
+                color="primary">
+            </mat-slide-toggle>
+        </div>
+
+        <!-- Email Notification (shown before enabling) -->
+        <div class="email-section" *ngIf="!isShared">
+            <mat-checkbox
+                [(ngModel)]="sendEmailOnShare"
+                [disabled]="isSaving"
+                color="primary">
+                Send email to client
+            </mat-checkbox>
+            <div class="email-fields" *ngIf="sendEmailOnShare">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Client Email</mat-label>
+                    <input matInput type="email" [(ngModel)]="clientEmail" placeholder="client@example.com">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Client Name (optional)</mat-label>
+                    <input matInput [(ngModel)]="clientName" placeholder="John Doe">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- Share Link Section -->
+        <div class="link-section" *ngIf="isShared">
+            <label>Share Link</label>
+            <div class="link-input-group">
+                <input type="text" [value]="shareUrl" readonly class="link-input">
+                <button mat-icon-button color="primary" (click)="copyLink()" matTooltip="Copy link">
+                    <mat-icon>content_copy</mat-icon>
+                </button>
+            </div>
+            <p class="link-created" *ngIf="shareTokenCreatedAt">
+                Created: {{ shareTokenCreatedAt | date:'medium' }}
+            </p>
+        </div>
+
+        <!-- Client Permissions -->
+        <div class="permissions-section" *ngIf="isShared">
+            <label>Client Permissions</label>
+            <mat-radio-group
+                [value]="clientEditMode"
+                (change)="updateEditMode($event.value)"
+                class="permissions-group">
+                <mat-radio-button
+                    *ngFor="let option of editModeOptions"
+                    [value]="option.value"
+                    [disabled]="isSaving">
+                    <div class="permission-option">
+                        <span class="option-label">{{ option.label }}</span>
+                        <span class="option-desc">{{ option.description }}</span>
+                    </div>
+                </mat-radio-button>
+            </mat-radio-group>
+        </div>
+
+        <!-- Link Expiration -->
+        <div class="expiry-section" *ngIf="isShared">
+            <label>Link Expiration</label>
+            <div class="expiry-row">
+                <mat-form-field appearance="outline">
+                    <mat-label>Expires on</mat-label>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="shareExpiresAt"
+                           [min]="minDate" (dateChange)="updateExpiration()" [disabled]="isSaving">
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <button mat-icon-button (click)="clearExpiration()" *ngIf="shareExpiresAt"
+                        matTooltip="Remove expiration" [disabled]="isSaving">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <p class="hint-text" *ngIf="!shareExpiresAt">No expiration set - link will work until sharing is disabled</p>
+        </div>
+
+        <!-- Password Protection -->
+        <div class="password-section" *ngIf="isShared">
+            <div class="toggle-section compact">
+                <div class="toggle-info">
+                    <span class="toggle-label">Password Protection</span>
+                    <span class="toggle-desc">Require a password to view the itinerary</span>
+                </div>
+                <mat-slide-toggle
+                    [(ngModel)]="requirePassword"
+                    (change)="togglePasswordProtection()"
+                    [disabled]="isSaving"
+                    color="primary">
+                </mat-slide-toggle>
+            </div>
+            <div class="password-fields" *ngIf="requirePassword">
+                <p class="password-status" *ngIf="hasPassword">
+                    <mat-icon class="status-icon success">check_circle</mat-icon>
+                    Password is set
+                </p>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ hasPassword ? 'Change Password' : 'Set Password' }}</mat-label>
+                    <input matInput type="password" [(ngModel)]="sharePassword"
+                           [placeholder]="hasPassword ? 'Enter new password' : 'Enter password'">
+                </mat-form-field>
+                <button mat-stroked-button color="primary" (click)="setPassword()"
+                        [disabled]="!sharePassword || isSaving">
+                    {{ hasPassword ? 'Update Password' : 'Set Password' }}
+                </button>
+            </div>
+        </div>
+
+        <!-- Regenerate Link -->
+        <div class="regenerate-section" *ngIf="isShared">
+            <button mat-stroked-button (click)="regenerateLink()" [disabled]="isSaving">
+                <mat-icon>refresh</mat-icon>
+                Regenerate Link
+            </button>
+            <span class="regenerate-hint">This will invalidate the previous link</span>
+        </div>
+    </div>
+
+    <ng-template #loading>
+        <div class="loading-spinner">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
+    </ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="close()">Done</button>
+</mat-dialog-actions>

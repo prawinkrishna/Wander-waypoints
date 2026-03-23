@@ -1,5 +1,14 @@
 <app-navbar></app-navbar>
 
+<!-- AI Generation Overlay -->
+<div class="ai-overlay" *ngIf="generatingAI">
+    <div class="ai-overlay-content">
+        <mat-spinner diameter="48"></mat-spinner>
+        <h2>Generating your itinerary...</h2>
+        <p>Our AI is crafting a personalized travel plan</p>
+    </div>
+</div>
+
 <div class="trip-details-container">
     <!-- Loading State -->
     <div class="loading-container" *ngIf="isLoading">
@@ -68,6 +77,10 @@
                         <mat-icon>delete</mat-icon>
                         Delete
                     </button>
+                    <button mat-raised-button class="ai-modify-btn" (click)="toggleAiChat()" *ngIf="trip.places?.length">
+                        <mat-icon>auto_awesome</mat-icon>
+                        AI Modify
+                    </button>
                 </div>
             </div>
         </div>
@@ -88,6 +101,74 @@
                     </mat-card-content>
                 </mat-card>
 
+                <!-- Booking Card (for bookable trips) -->
+                <mat-card class="booking-card" *ngIf="trip.isBookable">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>confirmation_number</mat-icon>
+                            Book This Trip
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="booking-info">
+                            <div class="price-display">
+                                <span class="currency">{{ trip.currency || 'INR' }}</span>
+                                <span class="amount">{{ trip.pricePerPerson | number }}</span>
+                                <span class="per-person">per person</span>
+                            </div>
+
+                            <div class="booking-details">
+                                <div class="detail-row" *ngIf="trip.tripType">
+                                    <mat-icon>group</mat-icon>
+                                    <span>{{ trip.tripType | titlecase }} Trip</span>
+                                </div>
+                                <div class="detail-row" *ngIf="trip.totalSlots">
+                                    <mat-icon>event_seat</mat-icon>
+                                    <span>{{ (trip.totalSlots - (trip.bookedSlots || 0)) }} slots available</span>
+                                </div>
+                                <div class="detail-row" *ngIf="trip.minGroupSize || trip.maxGroupSize">
+                                    <mat-icon>people_outline</mat-icon>
+                                    <span>
+                                        <ng-container *ngIf="trip.minGroupSize && trip.maxGroupSize">
+                                            {{ trip.minGroupSize }} - {{ trip.maxGroupSize }} travelers
+                                        </ng-container>
+                                        <ng-container *ngIf="trip.minGroupSize && !trip.maxGroupSize">
+                                            Min {{ trip.minGroupSize }} travelers
+                                        </ng-container>
+                                        <ng-container *ngIf="!trip.minGroupSize && trip.maxGroupSize">
+                                            Max {{ trip.maxGroupSize }} travelers
+                                        </ng-container>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="inclusions" *ngIf="trip.inclusions?.length">
+                                <h4>Inclusions</h4>
+                                <div class="inclusion-tags">
+                                    <span class="tag included" *ngFor="let item of trip.inclusions">
+                                        <mat-icon>check_circle</mat-icon> {{ item }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="exclusions" *ngIf="trip.exclusions?.length">
+                                <h4>Exclusions</h4>
+                                <div class="exclusion-tags">
+                                    <span class="tag excluded" *ngFor="let item of trip.exclusions">
+                                        <mat-icon>cancel</mat-icon> {{ item }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <button mat-raised-button color="primary" class="book-now-btn" (click)="openBookingDialog()"
+                                [disabled]="((trip.totalSlots || 0) - (trip.bookedSlots || 0)) <= 0">
+                                <mat-icon>shopping_cart</mat-icon>
+                                {{ ((trip.totalSlots || 0) - (trip.bookedSlots || 0)) > 0 ? 'Book Now' : 'Sold Out' }}
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
                 <!-- Itinerary Timeline -->
                 <div class="itinerary-section">
                     <div class="itinerary-header">
@@ -102,17 +183,28 @@
                     <div class="empty-itinerary" *ngIf="!trip.places || trip.places.length === 0">
                         <mat-icon>map</mat-icon>
                         <h4>No places added yet</h4>
-                        <p *ngIf="isOwner">Start building your itinerary by adding places to visit</p>
+                        <p *ngIf="isOwner">Start building your itinerary by adding places or let AI generate one</p>
                         <p *ngIf="!isOwner">This trip doesn't have any places yet</p>
-                        <button mat-raised-button color="primary" *ngIf="isOwner" (click)="openAddPlaceDialog()">
-                            <mat-icon>add</mat-icon>
-                            Add Your First Place
-                        </button>
+                        <div class="empty-actions" *ngIf="isOwner">
+                            <button mat-raised-button color="primary" (click)="generateAIItinerary()" [disabled]="generatingAI">
+                                <mat-icon>auto_awesome</mat-icon>
+                                Generate with AI
+                            </button>
+                            <button mat-stroked-button color="primary" (click)="openAddPlaceDialog()">
+                                <mat-icon>add</mat-icon>
+                                Add Manually
+                            </button>
+                            <button mat-stroked-button routerLink="/import" [queryParams]="{tripId: trip.tripId}">
+                                <mat-icon>link</mat-icon>
+                                Import from Link
+                            </button>
+                        </div>
                     </div>
 
                     <app-itinerary-timeline *ngIf="trip.places && trip.places.length > 0" [tripPlaces]="trip.places"
-                        [isOwner]="isOwner" [tripStartDate]="trip.startDate" (placeDeleted)="onPlaceDeleted($event)"
-                        (placesReordered)="onPlacesReordered($event)">
+                        [isOwner]="isOwner" [tripStartDate]="trip.startDate" [enableInlineEditing]="isOwner"
+                        (placeDeleted)="onPlaceDeleted($event)" (placesReordered)="onPlacesReordered($event)"
+                        (placeUpdated)="onPlaceUpdated($event)">
                     </app-itinerary-timeline>
                 </div>
 
@@ -171,4 +263,24 @@
             </div>
         </div>
     </div>
+
+    <!-- Fixed Mobile Booking Bar -->
+    <div class="mobile-booking-bar" *ngIf="trip && trip.isBookable">
+        <div class="price-info">
+            <div class="price-amount">{{ trip.currency || '₹' }}{{ trip.pricePerPerson | number }}</div>
+            <div class="price-label">per person</div>
+        </div>
+        <button mat-raised-button color="primary" class="mobile-book-btn" (click)="openBookingDialog()"
+            [disabled]="((trip.totalSlots || 0) - (trip.bookedSlots || 0)) <= 0">
+            {{ ((trip.totalSlots || 0) - (trip.bookedSlots || 0)) > 0 ? 'Book Now' : 'Sold Out' }}
+        </button>
+    </div>
+
+    <!-- AI Trip Chat Panel -->
+    <app-ai-trip-chat *ngIf="trip && isOwner"
+        [trip]="trip"
+        [isOpen]="showAiChat"
+        (close)="showAiChat = false"
+        (itineraryUpdated)="onAiItineraryUpdated($event)">
+    </app-ai-trip-chat>
 </div>

@@ -1,0 +1,465 @@
+<div class="edit-itinerary-container" *ngIf="!isLoading; else loading">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-left">
+            <button mat-icon-button (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <div>
+                <div class="title-row">
+                    <h1>{{ trip?.title || 'Edit Itinerary' }}</h1>
+                    <span class="status-badge" [ngClass]="getStatusClass()">
+                        <mat-icon *ngIf="itineraryStatus === 'finalized'">lock</mat-icon>
+                        {{ getStatusLabel() }}
+                    </span>
+                </div>
+                <p>{{ trip?.startDate | date:'mediumDate' }} - {{ trip?.endDate | date:'mediumDate' }}</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button mat-stroked-button color="primary" (click)="downloadPdf()">
+                <mat-icon>picture_as_pdf</mat-icon>
+                Export PDF
+            </button>
+            <button mat-stroked-button color="primary" (click)="openShareDialog()">
+                <mat-icon>share</mat-icon>
+                Share
+            </button>
+            <button mat-raised-button color="primary" (click)="saveItinerary()" [disabled]="isSaving || itineraryStatus === 'finalized'">
+                <mat-icon *ngIf="!isSaving">save</mat-icon>
+                <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
+                {{ isSaving ? 'Saving...' : 'Save' }}
+            </button>
+            <button mat-raised-button color="accent"
+                *ngIf="itineraryStatus === 'approved'"
+                (click)="finalizeItinerary()">
+                <mat-icon>check_circle</mat-icon>
+                Mark Finalized
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <mat-tab-group [(selectedIndex)]="activeTab" class="editor-tabs">
+        <!-- Basic Info Tab -->
+        <mat-tab label="Basic Info">
+            <div class="tab-content">
+                <mat-card>
+                    <mat-card-content>
+                        <form [formGroup]="tripForm">
+                            <div class="form-row">
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Itinerary Title</mat-label>
+                                    <input matInput formControlName="title">
+                                </mat-form-field>
+                            </div>
+                            <div class="form-row">
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Description</mat-label>
+                                    <textarea matInput formControlName="description" rows="3"></textarea>
+                                </mat-form-field>
+                            </div>
+
+                            <h3 class="section-title">Client Information</h3>
+                            <div class="form-row three-col">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Client Name</mat-label>
+                                    <input matInput formControlName="clientName">
+                                </mat-form-field>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Email</mat-label>
+                                    <input matInput formControlName="clientEmail" type="email">
+                                </mat-form-field>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Phone</mat-label>
+                                    <input matInput formControlName="clientPhone">
+                                </mat-form-field>
+                            </div>
+
+                            <div class="form-row two-col">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Quote Valid Until</mat-label>
+                                    <input matInput [matDatepicker]="validPicker" formControlName="validUntil">
+                                    <mat-datepicker-toggle matIconSuffix [for]="validPicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #validPicker></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+
+                            <h3 class="section-title">Notes & Terms</h3>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Special Notes / Travel Tips</mat-label>
+                                <textarea matInput formControlName="specialNotes" rows="3"></textarea>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Custom Terms</mat-label>
+                                <textarea matInput formControlName="customTerms" rows="3"></textarea>
+                            </mat-form-field>
+                        </form>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </mat-tab>
+
+        <!-- Day-wise Itinerary Tab -->
+        <mat-tab label="Itinerary">
+            <div class="tab-content">
+                <div class="day-group" *ngFor="let dayGroup of dayGroups">
+                    <div class="day-header" (click)="dayGroup.isCollapsed = !dayGroup.isCollapsed">
+                        <div class="day-info">
+                            <span class="day-number">Day {{ dayGroup.dayNumber }}</span>
+                            <span class="day-date">{{ formatDate(dayGroup.date) }}</span>
+                        </div>
+                        <button mat-icon-button>
+                            <mat-icon>{{ dayGroup.isCollapsed ? 'expand_more' : 'expand_less' }}</mat-icon>
+                        </button>
+                    </div>
+
+                    <div class="activities-list" *ngIf="!dayGroup.isCollapsed"
+                        cdkDropList (cdkDropListDropped)="dropActivity($event, dayGroup)">
+                        <div class="activity-card" *ngFor="let place of dayGroup.places" cdkDrag>
+                            <div class="drag-handle" cdkDragHandle>
+                                <mat-icon>drag_indicator</mat-icon>
+                            </div>
+
+                            <!-- View Mode -->
+                            <div class="activity-content" *ngIf="!place.isEditing">
+                                <div class="activity-time">{{ place.startTime || '09:00' }}</div>
+                                <div class="activity-details">
+                                    <div class="activity-title">{{ place.place.name }}</div>
+                                    <div class="activity-desc">{{ place.notes || place.place.description }}</div>
+                                    <div class="activity-meta" *ngIf="place.place.address">
+                                        <mat-icon>place</mat-icon> {{ place.place.address }}
+                                    </div>
+                                </div>
+                                <div class="activity-actions">
+                                    <button mat-icon-button (click)="openReplacePlaceDialog(place)" matTooltip="Replace Place">
+                                        <mat-icon>swap_horiz</mat-icon>
+                                    </button>
+                                    <button mat-icon-button (click)="toggleEditActivity(place)" matTooltip="Edit">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="warn" (click)="deleteActivity(dayGroup, place)" matTooltip="Delete">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Edit Mode -->
+                            <div class="activity-edit" *ngIf="place.isEditing">
+                                <div class="edit-row">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Time</mat-label>
+                                        <input matInput [(ngModel)]="place.startTime" type="time">
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Duration (mins)</mat-label>
+                                        <input matInput [(ngModel)]="place.duration" type="number">
+                                    </mat-form-field>
+                                </div>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Activity Name</mat-label>
+                                    <input matInput [(ngModel)]="place.place.name">
+                                </mat-form-field>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Description</mat-label>
+                                    <textarea matInput [(ngModel)]="place.notes" rows="2"></textarea>
+                                </mat-form-field>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Location/Address</mat-label>
+                                    <input matInput [(ngModel)]="place.place.address">
+                                </mat-form-field>
+                                <div class="edit-actions">
+                                    <button mat-button (click)="toggleEditActivity(place)">Cancel</button>
+                                    <button mat-raised-button color="primary" (click)="saveActivity(place)">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+
+        <!-- Accommodation Tab -->
+        <mat-tab label="Accommodation">
+            <div class="tab-content">
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>Hotels & Stays</mat-card-title>
+                        <button mat-raised-button color="primary" (click)="addAccommodation()">
+                            <mat-icon>add</mat-icon> Add Hotel
+                        </button>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="accommodation-list">
+                            <div class="accommodation-card" *ngFor="let acc of accommodations; let i = index">
+                                <div class="acc-row">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Hotel Name</mat-label>
+                                        <input matInput [(ngModel)]="acc.hotelName">
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline" class="small">
+                                        <mat-label>Stars</mat-label>
+                                        <mat-select [(ngModel)]="acc.starRating">
+                                            <mat-option [value]="1">1 Star</mat-option>
+                                            <mat-option [value]="2">2 Star</mat-option>
+                                            <mat-option [value]="3">3 Star</mat-option>
+                                            <mat-option [value]="4">4 Star</mat-option>
+                                            <mat-option [value]="5">5 Star</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Room Type</mat-label>
+                                        <input matInput [(ngModel)]="acc.roomType">
+                                    </mat-form-field>
+                                </div>
+                                <div class="acc-row">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Check-in</mat-label>
+                                        <input matInput [(ngModel)]="acc.checkIn" type="date">
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Check-out</mat-label>
+                                        <input matInput [(ngModel)]="acc.checkOut" type="date">
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline" class="small">
+                                        <mat-label>Nights</mat-label>
+                                        <input matInput [(ngModel)]="acc.nights" type="number">
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Per Night Cost</mat-label>
+                                        <span matTextPrefix>₹&nbsp;</span>
+                                        <input matInput [(ngModel)]="acc.perNightCost" type="number"
+                                            (ngModelChange)="updateAccommodationTotal(acc)">
+                                    </mat-form-field>
+                                    <div class="total-display">
+                                        Total: {{ formatCurrency(acc.totalCost) }}
+                                    </div>
+                                    <button mat-icon-button color="warn" (click)="removeAccommodation(i)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="empty-message" *ngIf="accommodations.length === 0">
+                                No accommodations added. Click "Add Hotel" to add one.
+                            </p>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </mat-tab>
+
+        <!-- Transport Tab -->
+        <mat-tab label="Transport">
+            <div class="tab-content">
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>Transport Segments</mat-card-title>
+                        <button mat-raised-button color="primary" (click)="addTransport()">
+                            <mat-icon>add</mat-icon> Add Transport
+                        </button>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="transport-list">
+                            <div class="transport-card" *ngFor="let t of transportSegments; let i = index">
+                                <div class="transport-row">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Type</mat-label>
+                                        <mat-select [(ngModel)]="t.type">
+                                            <mat-option value="Flight">Flight</mat-option>
+                                            <mat-option value="Train">Train</mat-option>
+                                            <mat-option value="Bus">Bus</mat-option>
+                                            <mat-option value="Private Car">Private Car</mat-option>
+                                            <mat-option value="Cab">Cab</mat-option>
+                                            <mat-option value="Ferry">Ferry</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline" class="wide">
+                                        <mat-label>Route</mat-label>
+                                        <input matInput [(ngModel)]="t.route" placeholder="Delhi to Jaipur">
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Date</mat-label>
+                                        <input matInput [(ngModel)]="t.date" type="date">
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline" class="small">
+                                        <mat-label>Time</mat-label>
+                                        <input matInput [(ngModel)]="t.time" type="time">
+                                    </mat-form-field>
+                                </div>
+                                <div class="transport-row">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Operator</mat-label>
+                                        <input matInput [(ngModel)]="t.operator">
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Booking Reference</mat-label>
+                                        <input matInput [(ngModel)]="t.bookingReference">
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Cost</mat-label>
+                                        <span matTextPrefix>₹&nbsp;</span>
+                                        <input matInput [(ngModel)]="t.cost" type="number">
+                                    </mat-form-field>
+                                    <button mat-icon-button color="warn" (click)="removeTransport(i)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="empty-message" *ngIf="transportSegments.length === 0">
+                                No transport segments added.
+                            </p>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </mat-tab>
+
+        <!-- Pricing Tab -->
+        <mat-tab label="Pricing">
+            <div class="tab-content">
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>Pricing Breakdown</mat-card-title>
+                        <button mat-raised-button color="primary" (click)="addPricingItem()">
+                            <mat-icon>add</mat-icon> Add Item
+                        </button>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <table class="pricing-table" *ngIf="pricingItems.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Description</th>
+                                    <th>Qty</th>
+                                    <th>Unit Price</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of pricingItems; let i = index">
+                                    <td>
+                                        <input [(ngModel)]="item.item" placeholder="Category">
+                                    </td>
+                                    <td>
+                                        <input [(ngModel)]="item.description" placeholder="Description">
+                                    </td>
+                                    <td>
+                                        <input [(ngModel)]="item.quantity" type="number" class="narrow"
+                                            (ngModelChange)="updatePricingItemTotal(item)">
+                                    </td>
+                                    <td>
+                                        <input [(ngModel)]="item.unitPrice" type="number"
+                                            (ngModelChange)="updatePricingItemTotal(item)">
+                                    </td>
+                                    <td class="amount">{{ formatCurrency(item.total) }}</td>
+                                    <td>
+                                        <button mat-icon-button color="warn" (click)="removePricingItem(i)">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="label">Subtotal</td>
+                                    <td class="amount">{{ formatCurrency(getTotalCost()) }}</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="label">GST (18%)</td>
+                                    <td class="amount">{{ formatCurrency(getTaxAmount()) }}</td>
+                                    <td></td>
+                                </tr>
+                                <tr class="grand-total">
+                                    <td colspan="4" class="label">Grand Total</td>
+                                    <td class="amount">{{ formatCurrency(getGrandTotal()) }}</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <p class="empty-message" *ngIf="pricingItems.length === 0">
+                            No pricing items added. Click "Add Item" to start.
+                        </p>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </mat-tab>
+
+        <!-- Inclusions/Exclusions Tab -->
+        <mat-tab label="Inclusions">
+            <div class="tab-content">
+                <div class="two-columns">
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>
+                                <mat-icon class="icon-success">check_circle</mat-icon>
+                                Inclusions
+                            </mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="add-item">
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Add Inclusion</mat-label>
+                                    <input matInput [(ngModel)]="newInclusion"
+                                        (keyup.enter)="addInclusion()"
+                                        placeholder="e.g., Daily breakfast">
+                                    <button mat-icon-button matSuffix (click)="addInclusion()">
+                                        <mat-icon>add</mat-icon>
+                                    </button>
+                                </mat-form-field>
+                            </div>
+                            <ul class="item-list">
+                                <li *ngFor="let item of inclusions; let i = index">
+                                    <mat-icon class="icon-success">check</mat-icon>
+                                    <span>{{ item }}</span>
+                                    <button mat-icon-button (click)="removeInclusion(i)">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </li>
+                            </ul>
+                        </mat-card-content>
+                    </mat-card>
+
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>
+                                <mat-icon class="icon-error">cancel</mat-icon>
+                                Exclusions
+                            </mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="add-item">
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Add Exclusion</mat-label>
+                                    <input matInput [(ngModel)]="newExclusion"
+                                        (keyup.enter)="addExclusion()"
+                                        placeholder="e.g., Personal expenses">
+                                    <button mat-icon-button matSuffix (click)="addExclusion()">
+                                        <mat-icon>add</mat-icon>
+                                    </button>
+                                </mat-form-field>
+                            </div>
+                            <ul class="item-list">
+                                <li *ngFor="let item of exclusions; let i = index">
+                                    <mat-icon class="icon-error">close</mat-icon>
+                                    <span>{{ item }}</span>
+                                    <button mat-icon-button (click)="removeExclusion(i)">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </li>
+                            </ul>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>
+
+<ng-template #loading>
+    <div class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Loading itinerary...</p>
+    </div>
+</ng-template>

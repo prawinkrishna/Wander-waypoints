@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/service/auth.service';
 
 @Component({
@@ -27,11 +27,21 @@ export class AuthPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.initForms();
+    this.checkQueryParams();
+  }
+
+  private checkQueryParams() {
+    this.route.queryParams.subscribe(params => {
+      if (params['mode'] === 'register') {
+        this.selectedTab = 1;
+      }
+    });
   }
 
   initForms() {
@@ -71,18 +81,17 @@ export class AuthPage implements OnInit {
     const credentials = this.loginForm.value;
 
     this.authService.login(credentials).subscribe({
-      next: (response) => {
-        this.successMessage = 'Login successful! Redirecting...';
+      next: () => {
+        this.loading = false;
+        this.successMessage = 'Welcome back! Redirecting...';
+        const route = this.authService.getDefaultRoute();
         setTimeout(() => {
-          this.router.navigate(['/home']);
-        }, 1000);
+          this.router.navigate([route]);
+        }, 800);
       },
       error: (error) => {
         this.loading = false;
-        this.errorMessage = error.error?.message || 'Login failed. Please check your credentials.';
-      },
-      complete: () => {
-        this.loading = false;
+        this.errorMessage = error.error?.message || 'Invalid email or password. Please try again.';
       }
     });
   }
@@ -100,43 +109,44 @@ export class AuthPage implements OnInit {
     const { confirmPassword, ...registerData } = this.registerForm.value;
 
     this.authService.register(registerData).subscribe({
-      next: (response) => {
-        this.successMessage = 'Registration successful! Redirecting...';
+      next: () => {
+        this.loading = false;
+        this.successMessage = 'Account created! Check your email to verify.';
         setTimeout(() => {
-          this.router.navigate(['/home']);
-        }, 1000);
+          this.router.navigate(['/auth/verify-email'], {
+            queryParams: { email: registerData.email }
+          });
+        }, 1200);
       },
       error: (error) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Registration failed. Please try again.';
-      },
-      complete: () => {
-        this.loading = false;
       }
     });
   }
 
-  onGuestLogin() {
-    this.loading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    this.authService.anonymousLogin().subscribe({
-      next: (response) => {
-        this.successMessage = 'Continuing as guest...';
-        setTimeout(() => {
-          this.router.navigate(['/home']);
-        }, 500);
-      },
-      error: (error) => {
-        this.loading = false;
-        this.errorMessage = error.error?.message || 'Failed to continue as guest. Please try again.';
-      },
-      complete: () => {
-        this.loading = false;
-      }
-    });
-  }
+  // PHASE 2: Restore guest login when social features are enabled
+  // onGuestLogin() {
+  //   this.loading = true;
+  //   this.errorMessage = '';
+  //   this.successMessage = '';
+  //
+  //   this.authService.anonymousLogin().subscribe({
+  //     next: (response) => {
+  //       this.successMessage = 'Continuing as guest...';
+  //       setTimeout(() => {
+  //         this.router.navigate(['/studio/dashboard']);
+  //       }, 500);
+  //     },
+  //     error: (error) => {
+  //       this.loading = false;
+  //       this.errorMessage = error.error?.message || 'Failed to continue as guest. Please try again.';
+  //     },
+  //     complete: () => {
+  //       this.loading = false;
+  //     }
+  //   });
+  // }
 
   markFormGroupTouched(formGroup: FormGroup) {
     Object.keys(formGroup.controls).forEach(key => {

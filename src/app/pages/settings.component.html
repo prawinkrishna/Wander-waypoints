@@ -39,43 +39,13 @@
                     <button mat-stroked-button routerLink="/profile/edit">Edit Profile</button>
                 </div>
 
-                <!-- Change Password -->
-                <div class="settings-card">
-                    <h3>Change Password</h3>
-                    <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
-                        <div class="input-group">
-                            <label>Current Password</label>
-                            <div class="password-input">
-                                <input [type]="showCurrentPassword ? 'text' : 'password'"
-                                    formControlName="currentPassword">
-                                <button type="button" mat-icon-button
-                                    (click)="showCurrentPassword = !showCurrentPassword">
-                                    <mat-icon>{{ showCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="input-group">
-                            <label>New Password</label>
-                            <div class="password-input">
-                                <input [type]="showNewPassword ? 'text' : 'password'" formControlName="newPassword">
-                                <button type="button" mat-icon-button (click)="showNewPassword = !showNewPassword">
-                                    <mat-icon>{{ showNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="input-group">
-                            <label>Confirm New Password</label>
-                            <input type="password" formControlName="confirmPassword">
-                            <span class="error" *ngIf="passwordForm.hasError('passwordMismatch')">Passwords don't
-                                match</span>
-                        </div>
-
-                        <button type="submit" class="save-btn" [disabled]="passwordForm.invalid || saving">
-                            {{ saving ? 'Saving...' : 'Update Password' }}
-                        </button>
-                    </form>
+                <!-- Become a Travel Agent -->
+                <div class="settings-card agent-upgrade" *ngIf="isConsumerUser">
+                    <h3>Become a Travel Agent</h3>
+                    <p>Unlock Trekio Studio to create AI-powered itineraries, export professional PDFs, and manage your travel business.</p>
+                    <button class="upgrade-btn" (click)="upgradeToAgent()" [disabled]="upgradingToAgent">
+                        {{ upgradingToAgent ? 'Upgrading...' : 'Upgrade to Agent Account' }}
+                    </button>
                 </div>
 
                 <!-- Delete Account -->
@@ -148,49 +118,51 @@
                     <div class="privacy-item">
                         <div class="privacy-info">
                             <span class="privacy-label">Public Profile</span>
-                            <span class="privacy-desc">Anyone can see your trips and follow you without approval</span>
+                            <span class="privacy-desc">Allow anyone to see your profile and trips</span>
                         </div>
-                        <mat-slide-toggle [checked]="user?.isPublicProfile !== false" color="primary">
+                        <mat-slide-toggle [checked]="privacySettings.isPublicProfile"
+                            (change)="onTogglePrivacy('isPublicProfile')" color="primary">
                         </mat-slide-toggle>
                     </div>
-
                     <div class="privacy-item">
                         <div class="privacy-info">
-                            <span class="privacy-label">Show Location</span>
-                            <span class="privacy-desc">Display your current location to friends</span>
+                            <span class="privacy-label">Default Trip Visibility</span>
+                            <span class="privacy-desc">Make new trips public by default</span>
                         </div>
-                        <mat-slide-toggle checked color="primary"></mat-slide-toggle>
+                        <mat-slide-toggle [checked]="privacySettings.defaultTripPublic"
+                            (change)="onTogglePrivacy('defaultTripPublic')" color="primary">
+                        </mat-slide-toggle>
                     </div>
-
                     <div class="privacy-item">
                         <div class="privacy-info">
-                            <span class="privacy-label">Activity Status</span>
-                            <span class="privacy-desc">Show when you're active on Wander</span>
+                            <span class="privacy-label">Show on Map</span>
+                            <span class="privacy-desc">Let friends see your location on the Friend Footprints map</span>
                         </div>
-                        <mat-slide-toggle checked color="primary"></mat-slide-toggle>
+                        <mat-slide-toggle [checked]="privacySettings.showOnMap"
+                            (change)="onTogglePrivacy('showOnMap')" color="primary">
+                        </mat-slide-toggle>
                     </div>
                 </div>
             </div>
 
             <!-- About Section -->
             <div class="section" *ngIf="activeSection === 'about'">
-                <h2>About Wander</h2>
+                <h2>About Trekio</h2>
 
                 <div class="settings-card about-card">
                     <div class="app-info">
                         <div class="app-logo">🌍</div>
-                        <h3>Wander</h3>
+                        <h3>Trekio</h3>
                         <p class="version">Version 1.0.0</p>
                     </div>
 
                     <div class="links">
-                        <a href="#">Terms of Service</a>
-                        <a href="#">Privacy Policy</a>
-                        <a href="#">Help Center</a>
-                        <a href="#">Contact Us</a>
+                        <a routerLink="/terms">Terms of Service</a>
+                        <a routerLink="/privacy">Privacy Policy</a>
+                        <a routerLink="/contact">Contact Us</a>
                     </div>
 
-                    <p class="copyright">© 2026 Wander. All rights reserved.</p>
+                    <p class="copyright">© 2026 Trekio. All rights reserved.</p>
                 </div>
             </div>
 

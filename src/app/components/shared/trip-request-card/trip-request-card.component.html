@@ -1,0 +1,36 @@
+<mat-card class="request-card" (click)="onClick()">
+    <div class="card-header">
+        <h3 class="title">{{ request.title }}</h3>
+        <span class="status-badge" [ngClass]="getStatusClass(request.status)">
+            {{ request.status | titlecase }}
+        </span>
+    </div>
+
+    <div class="card-body">
+        <div class="meta-row">
+            <span class="meta-item">
+                <mat-icon>place</mat-icon>
+                {{ request.destination }}
+            </span>
+            <span class="meta-item">
+                <mat-icon>date_range</mat-icon>
+                {{ request.startDate | date:'mediumDate' }} - {{ request.endDate | date:'mediumDate' }}
+            </span>
+        </div>
+        <div class="meta-row">
+            <span class="meta-item">
+                <mat-icon>people</mat-icon>
+                {{ request.numberOfTravelers }} traveler{{ request.numberOfTravelers > 1 ? 's' : '' }}
+            </span>
+            <span class="trip-type-badge">{{ getTripTypeLabel(request.tripType) }}</span>
+        </div>
+    </div>
+
+    <div class="card-footer">
+        <span class="budget">{{ formatBudget(request.budgetMin, request.budgetMax) }}</span>
+        <span class="bid-count">
+            <mat-icon>gavel</mat-icon>
+            {{ request.bidCount || 0 }} bids
+        </span>
+    </div>
+</mat-card>

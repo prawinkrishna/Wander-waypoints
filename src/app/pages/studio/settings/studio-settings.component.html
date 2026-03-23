@@ -1,0 +1,220 @@
+<div class="settings-container" *ngIf="!isLoading; else loading">
+    <div class="page-header">
+        <h1>Agency Settings</h1>
+        <p>Configure your agency profile and default terms for all itineraries</p>
+    </div>
+
+    <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+        <!-- Logo & Basic Info -->
+        <mat-card class="settings-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>business</mat-icon>
+                    Agency Profile
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="logo-section">
+                    <div class="logo-preview" [class.has-logo]="logoPreview">
+                        <img *ngIf="logoPreview" [src]="logoPreview" alt="Agency Logo">
+                        <mat-icon *ngIf="!logoPreview">add_photo_alternate</mat-icon>
+                    </div>
+                    <div class="logo-actions">
+                        <input type="file" #logoInput accept="image/*" (change)="onLogoSelected($event)" hidden>
+                        <button type="button" mat-stroked-button (click)="logoInput.click()">
+                            <mat-icon>upload</mat-icon>
+                            {{ logoPreview ? 'Change Logo' : 'Upload Logo' }}
+                        </button>
+                        <button type="button" mat-button color="warn" *ngIf="logoPreview" (click)="removeLogo()">
+                            Remove
+                        </button>
+                        <p class="hint">Recommended: 200x80px, PNG or JPG, max 2MB</p>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Agency Name</mat-label>
+                        <input matInput formControlName="name" placeholder="Your Travel Agency">
+                        <mat-error *ngIf="settingsForm.get('name')?.hasError('required')">
+                            Agency name is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Tagline</mat-label>
+                        <input matInput formControlName="tagline" placeholder="Creating memories, one trip at a time">
+                    </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>About Your Agency</mat-label>
+                        <textarea matInput formControlName="description" rows="3"
+                            placeholder="Brief description of your agency..."></textarea>
+                    </mat-form-field>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Contact Information -->
+        <mat-card class="settings-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>contact_phone</mat-icon>
+                    Contact Information
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="form-row two-col">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Email</mat-label>
+                        <input matInput formControlName="contactEmail" type="email">
+                        <mat-icon matSuffix>email</mat-icon>
+                        <mat-error *ngIf="settingsForm.get('contactEmail')?.hasError('required')">
+                            Email is required
+                        </mat-error>
+                        <mat-error *ngIf="settingsForm.get('contactEmail')?.hasError('email')">
+                            Enter a valid email
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Phone</mat-label>
+                        <input matInput formControlName="contactPhone">
+                        <mat-icon matSuffix>phone</mat-icon>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-row two-col">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Website</mat-label>
+                        <input matInput formControlName="websiteUrl" placeholder="https://youragency.com">
+                        <mat-icon matSuffix>language</mat-icon>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>GST Number</mat-label>
+                        <input matInput formControlName="gstNumber" placeholder="22AAAAA0000A1Z5">
+                    </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Office Address</mat-label>
+                        <textarea matInput formControlName="address" rows="2"
+                            placeholder="123, Main Street, City, State - PIN"></textarea>
+                        <mat-icon matSuffix>location_on</mat-icon>
+                    </mat-form-field>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Bank Details -->
+        <mat-card class="settings-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>account_balance</mat-icon>
+                    Bank Details (for PDF)
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="form-row two-col">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Account Holder Name</mat-label>
+                        <input matInput formControlName="accountName">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Account Number</mat-label>
+                        <input matInput formControlName="accountNumber">
+                    </mat-form-field>
+                </div>
+
+                <div class="form-row three-col">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Bank Name</mat-label>
+                        <input matInput formControlName="bankName">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>IFSC Code</mat-label>
+                        <input matInput formControlName="ifscCode">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>UPI ID</mat-label>
+                        <input matInput formControlName="upiId" placeholder="youragency@upi">
+                    </mat-form-field>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Default Terms -->
+        <mat-card class="settings-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>description</mat-icon>
+                    Default Terms & Conditions
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p class="section-hint">
+                    These will be automatically added to all new itineraries. You can customize them per itinerary.
+                </p>
+
+                <div class="terms-section">
+                    <div class="terms-header">
+                        <h4>Terms & Conditions</h4>
+                        <button type="button" mat-button color="primary" (click)="setDefaultTerms()">
+                            Use Template
+                        </button>
+                    </div>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <textarea matInput formControlName="termsAndConditions" rows="6"
+                            placeholder="Enter your standard terms and conditions..."></textarea>
+                    </mat-form-field>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-header">
+                        <h4>Cancellation Policy</h4>
+                        <button type="button" mat-button color="primary" (click)="setDefaultCancellation()">
+                            Use Template
+                        </button>
+                    </div>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <textarea matInput formControlName="cancellationPolicy" rows="6"
+                            placeholder="Enter your cancellation policy..."></textarea>
+                    </mat-form-field>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-header">
+                        <h4>Payment Terms</h4>
+                        <button type="button" mat-button color="primary" (click)="setDefaultPayment()">
+                            Use Template
+                        </button>
+                    </div>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <textarea matInput formControlName="paymentTerms" rows="6"
+                            placeholder="Enter your payment terms..."></textarea>
+                    </mat-form-field>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Save Button -->
+        <div class="actions">
+            <button mat-raised-button color="primary" type="submit" [disabled]="isSaving || settingsForm.invalid">
+                <mat-icon *ngIf="!isSaving">save</mat-icon>
+                <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
+                {{ isSaving ? 'Saving...' : 'Save Settings' }}
+            </button>
+        </div>
+    </form>
+</div>
+
+<ng-template #loading>
+    <div class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Loading settings...</p>
+    </div>
+</ng-template>

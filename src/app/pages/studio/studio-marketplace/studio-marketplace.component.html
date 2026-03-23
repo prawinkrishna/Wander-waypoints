@@ -1,0 +1,89 @@
+<div class="marketplace-container">
+    <div class="page-header">
+        <h1 class="page-title">Browse Trip Requests</h1>
+        <p class="page-subtitle">Find trip requests from travelers and submit your best proposals</p>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <mat-form-field appearance="outline" class="filter-field destination-field">
+            <mat-label>Destination</mat-label>
+            <input matInput
+                   placeholder="e.g. Bali, Paris..."
+                   [(ngModel)]="destinationFilter"
+                   (keyup.enter)="onApplyFilters()" />
+            <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field type-field">
+            <mat-label>Trip Type</mat-label>
+            <mat-select [(ngModel)]="tripTypeFilter">
+                <mat-option *ngFor="let type of tripTypes" [value]="type.value">
+                    {{ type.label }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <div class="filter-actions">
+            <button mat-flat-button color="primary" (click)="onApplyFilters()">
+                <mat-icon>filter_list</mat-icon>
+                Apply
+            </button>
+            <button mat-stroked-button *ngIf="hasFilters" (click)="onClearFilters()">
+                <mat-icon>clear</mat-icon>
+                Clear
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-state">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading trip requests...</p>
+    </div>
+
+    <!-- Results -->
+    <ng-container *ngIf="!isLoading">
+        <!-- Results Count -->
+        <div class="results-header" *ngIf="requests.length > 0">
+            <span class="results-count">{{ totalRequests }} request{{ totalRequests !== 1 ? 's' : '' }} found</span>
+        </div>
+
+        <!-- Request Grid -->
+        <div class="requests-grid" *ngIf="requests.length > 0">
+            <app-trip-request-card
+                *ngFor="let request of requests"
+                [request]="request"
+                (viewDetails)="onViewRequest($event)">
+            </app-trip-request-card>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" *ngIf="totalPages > 1">
+            <button mat-icon-button
+                    [disabled]="page <= 1"
+                    (click)="onPageChange(page - 1)"
+                    matTooltip="Previous page">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+            <span class="page-info">Page {{ page }} of {{ totalPages }}</span>
+            <button mat-icon-button
+                    [disabled]="page >= totalPages"
+                    (click)="onPageChange(page + 1)"
+                    matTooltip="Next page">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="requests.length === 0">
+            <mat-icon class="empty-icon">travel_explore</mat-icon>
+            <h3>No trip requests found</h3>
+            <p *ngIf="hasFilters">Try adjusting your filters to see more results.</p>
+            <p *ngIf="!hasFilters">There are no open trip requests at the moment. Check back soon!</p>
+            <button mat-stroked-button *ngIf="hasFilters" (click)="onClearFilters()">
+                Clear Filters
+            </button>
+        </div>
+    </ng-container>
+</div>

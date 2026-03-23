@@ -3,15 +3,26 @@ import { RouterModule, Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { authenticatedUserGuard } from './core/guards/authenticated-user.guard';
 import { guestOnlyGuard } from './core/guards/guest-only.guard';
+import { agencyGuard } from './core/guards/agency.guard';
 import { UserProfileComponent } from './pages/user-profile/user-profile.component';
 import { EditProfileComponent } from './pages/edit-profile.component';
 import { SettingsComponent } from './pages/settings.component';
-import { CreateTripComponent } from './pages/create-trip.component';
+import { CreateTripComponent } from './pages/create-trip/create-trip.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { LegalComponent } from './pages/legal/legal.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  // Default to Welcome page for unauthenticated users
+  { path: '', redirectTo: '/welcome', pathMatch: 'full' },
 
-  // Auth routes - redirect authenticated users to home
+  // Welcome page - public landing page
+  {
+    path: 'welcome',
+    loadChildren: () => import('./pages/welcome/welcome.module').then(m => m.WelcomeModule),
+    canActivate: [guestOnlyGuard]
+  },
+
+  // Auth routes - redirect authenticated users based on role
   {
     path: 'login',
     loadChildren: () => import('./pages/auth/auth.module').then(m => m.AuthModule),
@@ -21,6 +32,19 @@ const routes: Routes = [
     path: 'auth',
     redirectTo: '/login',
     pathMatch: 'full'
+  },
+
+  // Shared itinerary - completely public, no auth (client-facing view)
+  {
+    path: 'shared',
+    loadChildren: () => import('./pages/shared-itinerary/shared-itinerary.module').then(m => m.SharedItineraryModule)
+  },
+
+  // Studio - agent workspace (requires agency)
+  {
+    path: 'studio',
+    loadChildren: () => import('./pages/studio/studio.module').then(m => m.StudioModule),
+    canActivate: [agencyGuard]
   },
 
   // Public routes - guests and authenticated users allowed
@@ -46,24 +70,25 @@ const routes: Routes = [
   },
   {
     path: 'ai-planner',
-    loadChildren: () => import('./features/ai-planner/ai-planner.module').then(m => m.AiPlannerModule),
-    canActivate: [authGuard]
+    redirectTo: 'create-trip',
+    pathMatch: 'full'
+  },
+
+  // Protected routes - authenticated users only (no guests)
+  // profile/edit MUST come before profile/:id to avoid "edit" matching :id
+  {
+    path: 'profile/edit',
+    component: EditProfileComponent,
+    canActivate: [authenticatedUserGuard]
   },
   {
     path: 'profile/:id',
     component: UserProfileComponent,
-    canActivate: [authGuard] // Allow guests to view other profiles
+    canActivate: [authGuard]
   },
-
-  // Protected routes - authenticated users only (no guests)
   {
     path: 'profile',
     component: UserProfileComponent,
-    canActivate: [authenticatedUserGuard]
-  },
-  {
-    path: 'profile/edit',
-    component: EditProfileComponent,
     canActivate: [authenticatedUserGuard]
   },
   {
@@ -86,9 +111,25 @@ const routes: Routes = [
     component: CreateTripComponent,
     canActivate: [authenticatedUserGuard]
   },
+  {
+    path: 'import',
+    loadChildren: () => import('./pages/import/import.module').then(m => m.ImportModule),
+    canActivate: [authenticatedUserGuard]
+  },
 
-  // Wildcard - redirect unknown routes to home
-  { path: '**', redirectTo: '/home' }
+  // Marketplace - public traveler-facing marketplace
+  {
+    path: 'marketplace',
+    loadChildren: () => import('./pages/marketplace/marketplace.module').then(m => m.MarketplaceModule)
+  },
+
+  // Legal pages - public
+  { path: 'privacy', component: LegalComponent, data: { page: 'privacy' } },
+  { path: 'terms', component: LegalComponent, data: { page: 'terms' } },
+  { path: 'contact', component: LegalComponent, data: { page: 'contact' } },
+
+  // 404 - catch all unknown routes
+  { path: '**', component: NotFoundComponent }
 ];
 
 @NgModule({
