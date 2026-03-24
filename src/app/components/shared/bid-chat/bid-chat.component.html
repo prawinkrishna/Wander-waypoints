@@ -1,0 +1,43 @@
+<div class="chat-container">
+    <div class="messages-container" #messageContainer>
+        <div *ngIf="loading" class="loading-state">
+            <mat-spinner diameter="32"></mat-spinner>
+            <span>Loading messages...</span>
+        </div>
+
+        <div *ngIf="!loading && messages.length === 0" class="empty-state">
+            <mat-icon>chat_bubble_outline</mat-icon>
+            <p>No messages yet. Start the conversation!</p>
+        </div>
+
+        <div *ngFor="let message of messages; trackBy: trackByMessageId"
+             class="message-wrapper"
+             [class.own-message]="isCurrentUser(message)"
+             [class.other-message]="!isCurrentUser(message)">
+            <div class="message-bubble">
+                <span class="sender-name" *ngIf="!isCurrentUser(message)">
+                    {{ message.sender?.username || 'User' }}
+                </span>
+                <p class="message-content">{{ message.content }}</p>
+                <span class="message-time">{{ message.createdAt | date:'shortTime' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-area">
+        <mat-form-field appearance="outline" class="message-input">
+            <input matInput
+                   placeholder="Type a message..."
+                   [(ngModel)]="newMessage"
+                   (keydown)="onKeyDown($event)"
+                   [disabled]="sending" />
+        </mat-form-field>
+        <button mat-fab
+                color="primary"
+                class="send-btn"
+                [disabled]="!newMessage.trim() || sending"
+                (click)="sendMessage()">
+            <mat-icon>send</mat-icon>
+        </button>
+    </div>
+</div>

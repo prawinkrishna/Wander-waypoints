@@ -1,0 +1,184 @@
+<app-navbar></app-navbar>
+<div class="settings-page">
+    <!-- Header -->
+    <div class="header">
+        <h1>Settings</h1>
+    </div>
+
+    <div class="settings-container" *ngIf="!loading">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <button *ngFor="let section of sections" class="nav-item" [class.active]="activeSection === section.key"
+                (click)="setActiveSection(section.key)">
+                <mat-icon>{{ section.icon }}</mat-icon>
+                <span>{{ section.label }}</span>
+            </button>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" (click)="onLogout()">
+                    <mat-icon>logout</mat-icon>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Account Section -->
+            <div class="section" *ngIf="activeSection === 'account'">
+                <h2>Account Settings</h2>
+
+                <!-- User Info Card -->
+                <div class="user-card">
+                    <img [src]="user?.profileImage || 'https://ui-avatars.com/api/?name=' + user?.username"
+                        class="avatar">
+                    <div class="user-info">
+                        <h3>{{ user?.username }}</h3>
+                        <p>{{ user?.email }}</p>
+                    </div>
+                    <button mat-stroked-button routerLink="/profile/edit">Edit Profile</button>
+                </div>
+
+                <!-- Become a Travel Agent -->
+                <div class="settings-card agent-upgrade" *ngIf="isConsumerUser">
+                    <h3>Become a Travel Agent</h3>
+                    <p>Unlock Trekio Studio to create AI-powered itineraries, export professional PDFs, and manage your travel business.</p>
+                    <button class="upgrade-btn" (click)="upgradeToAgent()" [disabled]="upgradingToAgent">
+                        {{ upgradingToAgent ? 'Upgrading...' : 'Upgrade to Agent Account' }}
+                    </button>
+                </div>
+
+                <!-- Delete Account -->
+                <div class="settings-card danger-zone">
+                    <h3>Danger Zone</h3>
+                    <p>Once you delete your account, there is no going back. Please be certain.</p>
+                    <button class="delete-btn" (click)="onDeleteAccount()">Delete Account</button>
+                </div>
+            </div>
+
+            <!-- Follow Requests Section -->
+            <div class="section" *ngIf="activeSection === 'requests'">
+                <h2>Follow Requests</h2>
+
+                <div class="settings-card" *ngIf="loadingRequests">
+                    <div class="loading-requests">
+                        <mat-spinner diameter="30"></mat-spinner>
+                    </div>
+                </div>
+
+                <div class="settings-card" *ngIf="!loadingRequests && pendingRequests.length === 0">
+                    <div class="empty-requests">
+                        <mat-icon>person_add_disabled</mat-icon>
+                        <p>No pending follow requests</p>
+                    </div>
+                </div>
+
+                <div class="settings-card" *ngIf="!loadingRequests && pendingRequests.length > 0">
+                    <div class="request-item" *ngFor="let request of pendingRequests">
+                        <img [src]="request.profileImage || 'https://ui-avatars.com/api/?name=' + request.username"
+                            class="request-avatar">
+                        <div class="request-info">
+                            <span class="request-username">{{ request.username }}</span>
+                            <span class="request-date">Requested to follow you</span>
+                        </div>
+                        <div class="request-actions">
+                            <button class="accept-btn" (click)="acceptRequest(request.id)">
+                                <mat-icon>check</mat-icon>
+                            </button>
+                            <button class="reject-btn" (click)="rejectRequest(request.id)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Section -->
+            <div class="section" *ngIf="activeSection === 'notifications'">
+                <h2>Notification Preferences</h2>
+
+                <div class="settings-card">
+                    <div class="notification-item" *ngFor="let setting of notificationSettings">
+                        <div class="notification-info">
+                            <span class="notification-label">{{ setting.label }}</span>
+                            <span class="notification-desc">{{ setting.description }}</span>
+                        </div>
+                        <mat-slide-toggle [checked]="setting.enabled" (change)="onToggleNotification(setting)"
+                            color="primary">
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Section -->
+            <div class="section" *ngIf="activeSection === 'privacy'">
+                <h2>Privacy Settings</h2>
+
+                <div class="settings-card">
+                    <div class="privacy-item">
+                        <div class="privacy-info">
+                            <span class="privacy-label">Public Profile</span>
+                            <span class="privacy-desc">Allow anyone to see your profile and trips</span>
+                        </div>
+                        <mat-slide-toggle [checked]="privacySettings.isPublicProfile"
+                            (change)="onTogglePrivacy('isPublicProfile')" color="primary">
+                        </mat-slide-toggle>
+                    </div>
+                    <div class="privacy-item">
+                        <div class="privacy-info">
+                            <span class="privacy-label">Default Trip Visibility</span>
+                            <span class="privacy-desc">Make new trips public by default</span>
+                        </div>
+                        <mat-slide-toggle [checked]="privacySettings.defaultTripPublic"
+                            (change)="onTogglePrivacy('defaultTripPublic')" color="primary">
+                        </mat-slide-toggle>
+                    </div>
+                    <div class="privacy-item">
+                        <div class="privacy-info">
+                            <span class="privacy-label">Show on Map</span>
+                            <span class="privacy-desc">Let friends see your location on the Friend Footprints map</span>
+                        </div>
+                        <mat-slide-toggle [checked]="privacySettings.showOnMap"
+                            (change)="onTogglePrivacy('showOnMap')" color="primary">
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Section -->
+            <div class="section" *ngIf="activeSection === 'about'">
+                <h2>About Trekio</h2>
+
+                <div class="settings-card about-card">
+                    <div class="app-info">
+                        <div class="app-logo">🌍</div>
+                        <h3>Trekio</h3>
+                        <p class="version">Version 1.0.0</p>
+                    </div>
+
+                    <div class="links">
+                        <a routerLink="/terms">Terms of Service</a>
+                        <a routerLink="/privacy">Privacy Policy</a>
+                        <a routerLink="/contact">Contact Us</a>
+                    </div>
+
+                    <p class="copyright">© 2026 Trekio. All rights reserved.</p>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="success-message" *ngIf="successMessage">
+                <mat-icon>check_circle</mat-icon>
+                {{ successMessage }}
+            </div>
+            <div class="error-message" *ngIf="errorMessage">
+                <mat-icon>error</mat-icon>
+                {{ errorMessage }}
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+</div>

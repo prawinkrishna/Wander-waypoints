@@ -1,0 +1,157 @@
+<div class="create-request-page">
+    <!-- Page Header -->
+    <div class="page-header">
+        <button mat-icon-button class="back-btn" routerLink="/marketplace">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-content">
+            <h1 class="page-title">Post a Trip Request</h1>
+            <p class="page-subtitle">Tell travel agents about your dream trip and receive customized proposals</p>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <mat-card class="form-card">
+        <form [formGroup]="requestForm" (ngSubmit)="onSubmit()">
+            <!-- Trip Title -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Trip Title</mat-label>
+                <input matInput
+                       formControlName="title"
+                       placeholder="e.g., Romantic Getaway to Bali" />
+                <mat-error *ngIf="requestForm.get('title')?.hasError('required')">
+                    Title is required
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Destination -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Destination</mat-label>
+                <mat-icon matPrefix>place</mat-icon>
+                <input matInput
+                       formControlName="destination"
+                       placeholder="e.g., Bali, Indonesia" />
+                <mat-error *ngIf="requestForm.get('destination')?.hasError('required')">
+                    Destination is required
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Description -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Description</mat-label>
+                <textarea matInput
+                          formControlName="description"
+                          rows="4"
+                          placeholder="Describe your ideal trip - what you'd like to see, do, and experience..."></textarea>
+                <mat-error *ngIf="requestForm.get('description')?.hasError('required')">
+                    Description is required
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Date Fields -->
+            <div class="date-row">
+                <mat-form-field appearance="outline" class="date-field">
+                    <mat-label>Start Date</mat-label>
+                    <input matInput
+                           [matDatepicker]="startPicker"
+                           formControlName="startDate"
+                           [min]="minDate"
+                           placeholder="Pick start date" />
+                    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startPicker></mat-datepicker>
+                    <mat-error *ngIf="requestForm.get('startDate')?.hasError('required')">
+                        Start date is required
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="date-field">
+                    <mat-label>End Date</mat-label>
+                    <input matInput
+                           [matDatepicker]="endPicker"
+                           formControlName="endDate"
+                           [min]="startDateValue || minDate"
+                           placeholder="Pick end date" />
+                    <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #endPicker></mat-datepicker>
+                    <mat-error *ngIf="requestForm.get('endDate')?.hasError('required')">
+                        End date is required
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- Trip Type & Travelers -->
+            <div class="inline-row">
+                <mat-form-field appearance="outline" class="half-field">
+                    <mat-label>Trip Type</mat-label>
+                    <mat-select formControlName="tripType">
+                        <mat-option *ngFor="let type of tripTypes" [value]="type.value">
+                            {{ type.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-field">
+                    <mat-label>Number of Travelers</mat-label>
+                    <mat-icon matPrefix>people</mat-icon>
+                    <input matInput
+                           type="number"
+                           formControlName="numberOfTravelers"
+                           min="1" />
+                    <mat-error *ngIf="requestForm.get('numberOfTravelers')?.hasError('min')">
+                        At least 1 traveler required
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- Budget Fields -->
+            <div class="section-label">
+                <mat-icon>account_balance_wallet</mat-icon>
+                <span>Budget Range (optional, INR)</span>
+            </div>
+            <div class="inline-row">
+                <mat-form-field appearance="outline" class="half-field">
+                    <mat-label>Minimum Budget</mat-label>
+                    <span matPrefix>&#8377;&nbsp;</span>
+                    <input matInput
+                           type="number"
+                           formControlName="budgetMin"
+                           placeholder="e.g., 50000" />
+                    <mat-error *ngIf="requestForm.get('budgetMin')?.hasError('min')">
+                        Budget cannot be negative
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-field">
+                    <mat-label>Maximum Budget</mat-label>
+                    <span matPrefix>&#8377;&nbsp;</span>
+                    <input matInput
+                           type="number"
+                           formControlName="budgetMax"
+                           placeholder="e.g., 150000" />
+                    <mat-error *ngIf="requestForm.get('budgetMax')?.hasError('min')">
+                        Budget cannot be negative
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- Actions -->
+            <div class="form-actions">
+                <button mat-button
+                        type="button"
+                        class="cancel-btn"
+                        (click)="onCancel()">
+                    Cancel
+                </button>
+                <button mat-flat-button
+                        color="primary"
+                        type="submit"
+                        class="submit-btn"
+                        [disabled]="isSubmitting">
+                    <mat-spinner *ngIf="isSubmitting" diameter="20" class="btn-spinner"></mat-spinner>
+                    <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+                    {{ isSubmitting ? 'Posting...' : 'Post Request' }}
+                </button>
+            </div>
+        </form>
+    </mat-card>
+</div>

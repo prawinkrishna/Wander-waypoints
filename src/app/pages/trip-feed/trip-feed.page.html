@@ -11,16 +11,14 @@
 
     <!-- Search and Filters -->
     <div class="filters-section">
-        <mat-form-field appearance="outline" class="search-field">
-            <mat-label>Search trips</mat-label>
+        <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
             <input matInput [(ngModel)]="searchQuery" (ngModelChange)="onSearch()"
                 placeholder="Search by title, description, or creator...">
             <mat-icon matPrefix>search</mat-icon>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="sort-field">
-            <mat-label>Sort by</mat-label>
-            <mat-select [(ngModel)]="selectedSort" (selectionChange)="onSortChange()">
+        <mat-form-field appearance="outline" class="sort-field" subscriptSizing="dynamic">
+            <mat-select [(ngModel)]="selectedSort" (selectionChange)="onSortChange()" placeholder="Sort by">
                 <mat-option *ngFor="let option of sortOptions" [value]="option.value">
                     {{ option.label }}
                 </mat-option>
@@ -28,14 +26,20 @@
         </mat-form-field>
     </div>
 
-    <!-- Loading State -->
-    <div class="loading-container" *ngIf="isLoading">
-        <mat-spinner diameter="50"></mat-spinner>
-        <p>Loading trips...</p>
+    <!-- Loading State - Skeleton Loaders -->
+    <div class="trips-grid" *ngIf="isLoading" aria-busy="true" aria-label="Loading trips">
+        <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5,6]">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-body">
+                <div class="skeleton-title"></div>
+                <div class="skeleton-text"></div>
+                <div class="skeleton-text-short"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Error State -->
-    <div class="error-container" *ngIf="error && !isLoading">
+    <div class="error-container" *ngIf="error && !isLoading" role="alert">
         <mat-icon>error_outline</mat-icon>
         <h2>Failed to Load Trips</h2>
         <p>{{ error }}</p>
@@ -43,7 +47,7 @@
     </div>
 
     <!-- Trip Grid -->
-    <div class="trips-grid" *ngIf="!isLoading && !error">
+    <div class="trips-grid animate-cards" *ngIf="!isLoading && !error">
         <!-- Empty State -->
         <div class="empty-state" *ngIf="filteredTrips.length === 0">
             <mat-icon>explore_off</mat-icon>
@@ -53,7 +57,7 @@
         </div>
 
         <!-- Trip Cards -->
-        <mat-card *ngFor="let trip of filteredTrips" class="trip-card" (click)="onTripClick(trip.tripId)">
+        <mat-card *ngFor="let trip of filteredTrips; trackBy: trackByTripId" class="trip-card" (click)="onTripClick(trip.tripId)">
             <div class="card-header">
                 <div class="trip-dates">
                     <mat-icon>calendar_today</mat-icon>

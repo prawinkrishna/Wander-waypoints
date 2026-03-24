@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class HttpService {
-  private baseUrl = 'http://localhost:3000'; // Replace with your API base URL
+  private baseUrl = ''; // Configured via environment — inject or override as needed
 
   constructor(private http: HttpClient) {}
 

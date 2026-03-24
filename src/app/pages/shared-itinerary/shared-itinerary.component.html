@@ -1,0 +1,391 @@
+<!-- Password Gate -->
+<div class="password-gate" *ngIf="requiresPassword && !isLoading">
+    <div class="password-card">
+        <mat-icon class="lock-icon">lock</mat-icon>
+        <h2>Password Required</h2>
+        <p>This itinerary is password protected. Please enter the password to view.</p>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" [(ngModel)]="passwordInput"
+                   (keyup.enter)="verifyPassword()" placeholder="Enter password">
+        </mat-form-field>
+        <p class="password-error" *ngIf="passwordError">{{ passwordError }}</p>
+        <button mat-raised-button color="primary" (click)="verifyPassword()"
+                [disabled]="!passwordInput || isVerifying">
+            <mat-spinner *ngIf="isVerifying" diameter="20"></mat-spinner>
+            <span *ngIf="!isVerifying">View Itinerary</span>
+        </button>
+    </div>
+</div>
+
+<div class="shared-itinerary-page" *ngIf="!isLoading && !error && !requiresPassword && itinerary">
+    <!-- Agency Header -->
+    <header class="agency-header" *ngIf="itinerary.agency">
+        <div class="agency-branding">
+            <img *ngIf="itinerary.agency.logoUrl" [src]="itinerary.agency.logoUrl" alt="Agency Logo" class="agency-logo">
+            <div class="agency-info">
+                <h2 class="agency-name">{{ itinerary.agency.name }}</h2>
+                <p class="agency-tagline" *ngIf="itinerary.agency.tagline">{{ itinerary.agency.tagline }}</p>
+            </div>
+        </div>
+        <div class="agency-contact">
+            <span *ngIf="itinerary.agency.contactEmail">
+                <mat-icon>email</mat-icon> {{ itinerary.agency.contactEmail }}
+            </span>
+            <span *ngIf="itinerary.agency.contactPhone">
+                <mat-icon>phone</mat-icon> {{ itinerary.agency.contactPhone }}
+            </span>
+        </div>
+    </header>
+
+    <!-- Itinerary Header -->
+    <div class="itinerary-header">
+        <div class="header-content">
+            <div class="header-text">
+                <span class="status-badge" [ngClass]="getStatusClass()">{{ getStatusLabel() }}</span>
+                <h1>{{ itinerary.title }}</h1>
+                <p class="dates">{{ formatDate(itinerary.startDate) }} - {{ formatDate(itinerary.endDate) }}</p>
+                <p class="client-name" *ngIf="itinerary.clientName">Prepared for: {{ itinerary.clientName }}</p>
+            </div>
+            <div class="header-image" *ngIf="itinerary.coverImage">
+                <img [src]="itinerary.coverImage" alt="Trip cover">
+            </div>
+        </div>
+        <p class="description" *ngIf="itinerary.description">{{ itinerary.description }}</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-sections">
+        <!-- Day-wise Itinerary -->
+        <section class="section itinerary-section">
+            <h2 class="section-title">
+                <mat-icon>event</mat-icon>
+                Day-wise Itinerary
+            </h2>
+
+            <div class="day-group" *ngFor="let dayGroup of dayGroups; trackBy: trackByDayNumber">
+                <div class="day-header">
+                    <span class="day-badge">Day {{ dayGroup.dayNumber }}</span>
+                    <span class="day-date">{{ formatDate(dayGroup.date) }}</span>
+                </div>
+
+                <div class="activities-list">
+                    <div class="activity-card" *ngFor="let place of dayGroup.places; trackBy: trackByPlaceId"
+                         [class.approved]="place.approved === true"
+                         [class.rejected]="place.approved === false">
+
+                        <!-- View Mode -->
+                        <div class="activity-content" *ngIf="!place.isEditing">
+                            <div class="activity-time">{{ place.startTime || '09:00' }}</div>
+                            <div class="activity-details">
+                                <div class="activity-title">{{ place.place?.name }}</div>
+                                <div class="activity-desc">{{ place.notes || place.place?.description }}</div>
+                                <div class="activity-meta" *ngIf="place.place?.address">
+                                    <mat-icon>place</mat-icon> {{ place.place?.address }}
+                                </div>
+
+                                <!-- Client Notes (notes_only mode) -->
+                                <div class="client-notes" *ngIf="canAddNotes() && !isFinalized()">
+                                    <mat-form-field appearance="outline" class="full-width">
+                                        <mat-label>Your notes/feedback</mat-label>
+                                        <textarea matInput [(ngModel)]="place.clientNotes" rows="2"
+                                                  placeholder="Add your notes or feedback..."></textarea>
+                                    </mat-form-field>
+                                    <button mat-stroked-button color="primary" (click)="saveActivityNotes(place)" [disabled]="isSaving">
+                                        <mat-icon>save</mat-icon> Save Notes
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Approve/Reject buttons -->
+                            <div class="activity-actions" *ngIf="canApproveReject() && !isFinalized()">
+                                <button mat-icon-button color="primary" (click)="approveActivity(place)"
+                                        [class.active]="place.approved === true" matTooltip="Approve">
+                                    <mat-icon>thumb_up</mat-icon>
+                                </button>
+                                <button mat-icon-button color="warn" (click)="rejectActivity(place)"
+                                        [class.active]="place.approved === false" matTooltip="Request Change">
+                                    <mat-icon>thumb_down</mat-icon>
+                                </button>
+                                <button mat-icon-button *ngIf="canFullEdit()" (click)="toggleEditActivity(place)" matTooltip="Edit">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Edit Mode (full_edit only) -->
+                        <div class="activity-edit" *ngIf="place.isEditing && canFullEdit()">
+                            <div class="edit-row">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Time</mat-label>
+                                    <input matInput [(ngModel)]="place.startTime" type="time">
+                                </mat-form-field>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Duration (mins)</mat-label>
+                                    <input matInput [(ngModel)]="place.duration" type="number">
+                                </mat-form-field>
+                            </div>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Activity Name</mat-label>
+                                <input matInput [(ngModel)]="place.place.name">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Description</mat-label>
+                                <textarea matInput [(ngModel)]="place.notes" rows="2"></textarea>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Location/Address</mat-label>
+                                <input matInput [(ngModel)]="place.place.address">
+                            </mat-form-field>
+                            <div class="edit-actions">
+                                <button mat-button (click)="toggleEditActivity(place)">Cancel</button>
+                                <button mat-raised-button color="primary" (click)="saveActivityChanges(place)" [disabled]="isSaving">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Accommodations -->
+        <section class="section" *ngIf="itinerary.accommodations && itinerary.accommodations.length > 0">
+            <h2 class="section-title">
+                <mat-icon>hotel</mat-icon>
+                Accommodations
+            </h2>
+            <div class="accommodation-cards">
+                <div class="accommodation-card" *ngFor="let acc of itinerary.accommodations; trackBy: trackByIndex">
+                    <div class="hotel-info">
+                        <h3>{{ acc.hotelName }}</h3>
+                        <div class="stars" *ngIf="acc.starRating">
+                            <mat-icon *ngFor="let star of getStarArray(acc.starRating)">star</mat-icon>
+                        </div>
+                        <p class="room-type" *ngIf="acc.roomType">{{ acc.roomType }}</p>
+                    </div>
+                    <div class="stay-details">
+                        <div class="detail">
+                            <span class="label">Check-in</span>
+                            <span class="value">{{ acc.checkIn | date:'mediumDate' }}</span>
+                        </div>
+                        <div class="detail">
+                            <span class="label">Check-out</span>
+                            <span class="value">{{ acc.checkOut | date:'mediumDate' }}</span>
+                        </div>
+                        <div class="detail">
+                            <span class="label">Nights</span>
+                            <span class="value">{{ acc.nights }}</span>
+                        </div>
+                    </div>
+                    <div class="cost" *ngIf="acc.totalCost">
+                        {{ formatCurrency(acc.totalCost) }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transport -->
+        <section class="section" *ngIf="itinerary.transportSegments && itinerary.transportSegments.length > 0">
+            <h2 class="section-title">
+                <mat-icon>commute</mat-icon>
+                Transport
+            </h2>
+            <div class="transport-list">
+                <div class="transport-card" *ngFor="let t of itinerary.transportSegments; trackBy: trackByIndex">
+                    <mat-icon class="transport-icon">{{ getTransportIcon(t.type) }}</mat-icon>
+                    <div class="transport-details">
+                        <div class="transport-type">{{ t.type }}</div>
+                        <div class="transport-route">{{ t.route }}</div>
+                        <div class="transport-meta">
+                            <span *ngIf="t.date">{{ t.date | date:'mediumDate' }}</span>
+                            <span *ngIf="t.time">at {{ t.time }}</span>
+                            <span *ngIf="t.operator">via {{ t.operator }}</span>
+                        </div>
+                    </div>
+                    <div class="transport-cost" *ngIf="t.cost">
+                        {{ formatCurrency(t.cost) }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="section" *ngIf="itinerary.pricingBreakdown && itinerary.pricingBreakdown.length > 0">
+            <h2 class="section-title">
+                <mat-icon>receipt_long</mat-icon>
+                Pricing
+            </h2>
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th class="right">Qty</th>
+                        <th class="right">Unit Price</th>
+                        <th class="right">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of itinerary.pricingBreakdown; trackBy: trackByIndex">
+                        <td>{{ item.item }}</td>
+                        <td>{{ item.description }}</td>
+                        <td class="right">{{ item.quantity }}</td>
+                        <td class="right">{{ formatCurrency(item.unitPrice) }}</td>
+                        <td class="right">{{ formatCurrency(item.total) }}</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="label">Subtotal</td>
+                        <td class="right">{{ formatCurrency(itinerary.totalCost) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="label">Tax (GST)</td>
+                        <td class="right">{{ formatCurrency(itinerary.taxAmount) }}</td>
+                    </tr>
+                    <tr class="grand-total">
+                        <td colspan="4" class="label">Grand Total</td>
+                        <td class="right">{{ formatCurrency(itinerary.grandTotal) }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </section>
+
+        <!-- Inclusions/Exclusions -->
+        <section class="section inclusions-section" *ngIf="(itinerary.inclusions && itinerary.inclusions.length > 0) || (itinerary.exclusions && itinerary.exclusions.length > 0)">
+            <div class="two-columns">
+                <div class="column" *ngIf="itinerary.inclusions && itinerary.inclusions.length > 0">
+                    <h3 class="sub-title">
+                        <mat-icon class="icon-success">check_circle</mat-icon>
+                        Inclusions
+                    </h3>
+                    <ul class="item-list">
+                        <li *ngFor="let item of itinerary.inclusions">
+                            <mat-icon class="icon-success">check</mat-icon>
+                            {{ item }}
+                        </li>
+                    </ul>
+                </div>
+                <div class="column" *ngIf="itinerary.exclusions && itinerary.exclusions.length > 0">
+                    <h3 class="sub-title">
+                        <mat-icon class="icon-error">cancel</mat-icon>
+                        Exclusions
+                    </h3>
+                    <ul class="item-list">
+                        <li *ngFor="let item of itinerary.exclusions">
+                            <mat-icon class="icon-error">close</mat-icon>
+                            {{ item }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notes & Terms -->
+        <section class="section" *ngIf="itinerary.specialNotes || itinerary.customTerms || itinerary.agency?.termsAndConditions">
+            <h2 class="section-title">
+                <mat-icon>info</mat-icon>
+                Important Information
+            </h2>
+            <div class="info-block" *ngIf="itinerary.specialNotes">
+                <h4>Travel Tips & Notes</h4>
+                <p>{{ itinerary.specialNotes }}</p>
+            </div>
+            <div class="info-block" *ngIf="itinerary.customTerms">
+                <h4>Special Terms</h4>
+                <p>{{ itinerary.customTerms }}</p>
+            </div>
+            <ng-container *ngIf="itinerary.agency">
+                <div class="info-block" *ngIf="itinerary.agency.termsAndConditions">
+                    <h4>Terms & Conditions</h4>
+                    <p>{{ itinerary.agency.termsAndConditions }}</p>
+                </div>
+                <div class="info-block" *ngIf="itinerary.agency.cancellationPolicy">
+                    <h4>Cancellation Policy</h4>
+                    <p>{{ itinerary.agency.cancellationPolicy }}</p>
+                </div>
+                <div class="info-block" *ngIf="itinerary.agency.paymentTerms">
+                    <h4>Payment Terms</h4>
+                    <p>{{ itinerary.agency.paymentTerms }}</p>
+                </div>
+            </ng-container>
+        </section>
+
+        <!-- Status History -->
+        <section class="section" *ngIf="itinerary.statusHistory && itinerary.statusHistory.length > 0">
+            <h2 class="section-title clickable" (click)="toggleHistory()">
+                <mat-icon>history</mat-icon>
+                History
+                <mat-icon class="expand-icon">{{ showHistory ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </h2>
+            <div class="history-timeline" *ngIf="showHistory">
+                <div class="history-item" *ngFor="let entry of itinerary.statusHistory; trackBy: trackByIndex">
+                    <div class="history-dot">
+                        <mat-icon>{{ getHistoryStatusIcon(entry.status) }}</mat-icon>
+                    </div>
+                    <div class="history-content">
+                        <div class="history-status">{{ getHistoryStatusLabel(entry.status) }}</div>
+                        <div class="history-meta">
+                            <span class="history-actor">{{ entry.actor === 'agent' ? 'Agency' : 'Client' }}</span>
+                            <span class="history-time">{{ formatDateTime(entry.timestamp) }}</span>
+                        </div>
+                        <div class="history-message" *ngIf="entry.message">{{ entry.message }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer Actions -->
+    <footer class="actions-footer" *ngIf="canTakeStatusAction()">
+        <div class="footer-content">
+            <p class="footer-text">Review this itinerary and let us know your decision</p>
+            <div class="footer-actions">
+                <button mat-stroked-button color="warn" (click)="requestChanges()" [disabled]="isSaving">
+                    <mat-icon>edit_note</mat-icon>
+                    Request Changes
+                </button>
+                <button mat-raised-button color="primary" (click)="approveItinerary()" [disabled]="isSaving">
+                    <mat-icon>check_circle</mat-icon>
+                    Approve Itinerary
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Status Banner for already actioned -->
+    <div class="status-banner" *ngIf="!canTakeStatusAction()" [ngClass]="getStatusClass()">
+        <mat-icon *ngIf="itinerary.itineraryStatus === 'changes_requested'">edit_note</mat-icon>
+        <mat-icon *ngIf="itinerary.itineraryStatus === 'approved'">check_circle</mat-icon>
+        <mat-icon *ngIf="itinerary.itineraryStatus === 'finalized'">lock</mat-icon>
+        <span *ngIf="itinerary.itineraryStatus === 'changes_requested'">You have requested changes. The agency will contact you soon.</span>
+        <span *ngIf="itinerary.itineraryStatus === 'approved'">You have approved this itinerary. The agency will finalize your booking.</span>
+        <span *ngIf="itinerary.itineraryStatus === 'finalized'">This itinerary has been confirmed and finalized.</span>
+    </div>
+
+    <!-- Valid Until -->
+    <div class="validity-notice" *ngIf="itinerary.validUntil">
+        <mat-icon>schedule</mat-icon>
+        This quote is valid until {{ itinerary.validUntil | date:'mediumDate' }}
+    </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+    <p>Loading itinerary...</p>
+</div>
+
+<!-- Error State -->
+<div class="error-container" *ngIf="error">
+    <mat-icon *ngIf="errorType === 'expired'">timer_off</mat-icon>
+    <mat-icon *ngIf="errorType !== 'expired'">error_outline</mat-icon>
+    <h2 *ngIf="errorType === 'expired'">Link Expired</h2>
+    <h2 *ngIf="errorType !== 'expired'">Oops!</h2>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="retryLoad()" *ngIf="errorType === 'generic'">
+        <mat-icon>refresh</mat-icon>
+        Retry
+    </button>
+</div>

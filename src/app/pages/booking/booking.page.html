@@ -1,2 +1,171 @@
-<h1>Booking</h1>
-<!-- Booking summary & status content goes here -->
+<app-navbar></app-navbar>
+<div class="booking-page">
+    <div class="page-header">
+        <h1>My Bookings</h1>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-container" *ngIf="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div class="booking-content" *ngIf="!loading">
+        <mat-tab-group [(selectedIndex)]="activeTab" animationDuration="200ms">
+            <!-- Upcoming Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>event_available</mat-icon>
+                    <span>Upcoming</span>
+                    <span class="tab-count" *ngIf="upcomingBookings.length">{{ upcomingBookings.length }}</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <div class="empty-state" *ngIf="upcomingBookings.length === 0">
+                        <mat-icon class="empty-icon">luggage</mat-icon>
+                        <h3>No upcoming bookings</h3>
+                        <p>Browse trips and book your next adventure!</p>
+                        <button mat-raised-button color="primary" routerLink="/trip-feed">
+                            <mat-icon>explore</mat-icon>
+                            Browse Trips
+                        </button>
+                    </div>
+
+                    <div class="booking-list">
+                        <mat-card class="booking-card" *ngFor="let booking of upcomingBookings">
+                            <mat-card-content>
+                                <div class="booking-info">
+                                    <h3 class="booking-title">{{ booking.trip?.title || 'Trip Booking' }}</h3>
+                                    <div class="booking-meta">
+                                        <span class="meta-item">
+                                            <mat-icon>event</mat-icon>
+                                            {{ formatDate(booking.travelDate) }}
+                                        </span>
+                                        <span class="meta-item">
+                                            <mat-icon>group</mat-icon>
+                                            {{ booking.numberOfTravelers }} traveler{{ booking.numberOfTravelers > 1 ? 's' : '' }}
+                                        </span>
+                                        <span class="meta-item">
+                                            <mat-icon>payments</mat-icon>
+                                            {{ formatCurrency(booking.totalAmount, booking.currency) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="booking-actions">
+                                    <span class="status-chip" [ngClass]="getStatusClass(booking.status)">
+                                        {{ booking.status }}
+                                    </span>
+                                    <div class="action-buttons">
+                                        <button mat-stroked-button (click)="viewTrip(booking.tripId)">
+                                            View Trip
+                                        </button>
+                                        <button mat-stroked-button color="warn" (click)="cancelBooking(booking)"
+                                            *ngIf="booking.status === 'pending'">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Past Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>history</mat-icon>
+                    <span>Past</span>
+                    <span class="tab-count" *ngIf="pastBookings.length">{{ pastBookings.length }}</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <div class="empty-state" *ngIf="pastBookings.length === 0">
+                        <mat-icon class="empty-icon">flight_land</mat-icon>
+                        <h3>No past bookings</h3>
+                        <p>Your completed trips will appear here.</p>
+                    </div>
+
+                    <div class="booking-list">
+                        <mat-card class="booking-card" *ngFor="let booking of pastBookings">
+                            <mat-card-content>
+                                <div class="booking-info">
+                                    <h3 class="booking-title">{{ booking.trip?.title || 'Trip Booking' }}</h3>
+                                    <div class="booking-meta">
+                                        <span class="meta-item">
+                                            <mat-icon>event</mat-icon>
+                                            {{ formatDate(booking.travelDate) }}
+                                        </span>
+                                        <span class="meta-item">
+                                            <mat-icon>group</mat-icon>
+                                            {{ booking.numberOfTravelers }} traveler{{ booking.numberOfTravelers > 1 ? 's' : '' }}
+                                        </span>
+                                        <span class="meta-item">
+                                            <mat-icon>payments</mat-icon>
+                                            {{ formatCurrency(booking.totalAmount, booking.currency) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="booking-actions">
+                                    <span class="status-chip status-completed">completed</span>
+                                    <button mat-stroked-button (click)="viewTrip(booking.tripId)">
+                                        View Trip
+                                    </button>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Cancelled Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>cancel</mat-icon>
+                    <span>Cancelled</span>
+                    <span class="tab-count" *ngIf="cancelledBookings.length">{{ cancelledBookings.length }}</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <div class="empty-state" *ngIf="cancelledBookings.length === 0">
+                        <mat-icon class="empty-icon">check_circle</mat-icon>
+                        <h3>No cancelled bookings</h3>
+                        <p>You haven't cancelled any bookings.</p>
+                    </div>
+
+                    <div class="booking-list">
+                        <mat-card class="booking-card" *ngFor="let booking of cancelledBookings">
+                            <mat-card-content>
+                                <div class="booking-info">
+                                    <h3 class="booking-title">{{ booking.trip?.title || 'Trip Booking' }}</h3>
+                                    <div class="booking-meta">
+                                        <span class="meta-item">
+                                            <mat-icon>event</mat-icon>
+                                            {{ formatDate(booking.travelDate) }}
+                                        </span>
+                                        <span class="meta-item">
+                                            <mat-icon>group</mat-icon>
+                                            {{ booking.numberOfTravelers }} traveler{{ booking.numberOfTravelers > 1 ? 's' : '' }}
+                                        </span>
+                                        <span class="meta-item">
+                                            <mat-icon>payments</mat-icon>
+                                            {{ formatCurrency(booking.totalAmount, booking.currency) }}
+                                        </span>
+                                    </div>
+                                    <p class="cancellation-reason" *ngIf="booking.cancellationReason">
+                                        Reason: {{ booking.cancellationReason }}
+                                    </p>
+                                </div>
+                                <div class="booking-actions">
+                                    <span class="status-chip status-cancelled">{{ booking.status }}</span>
+                                    <button mat-stroked-button (click)="viewTrip(booking.tripId)">
+                                        View Trip
+                                    </button>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

@@ -1,2 +1,52 @@
-<h1>Dashboard</h1>
-<!-- Map (left 60%) + List view (right 40%) layout goes here -->
+<app-navbar></app-navbar>
+
+<div class="dashboard-container">
+  <!-- Welcome Section -->
+  <header class="dashboard-header">
+    <h1>Welcome back, Traveler!</h1>
+    <p>Here's what's happening with your journeys.</p>
+  </header>
+
+  <!-- Stats Grid -->
+  <section class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon primary">
+        <mat-icon>flight_takeoff</mat-icon>
+      </div>
+      <div class="stat-info">
+        <h3>0</h3>
+        <p>Upcoming Trips</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon secondary">
+        <mat-icon>bookmark</mat-icon>
+      </div>
+      <div class="stat-info">
+        <h3>0</h3>
+        <p>Saved Places</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon accent">
+        <mat-icon>map</mat-icon>
+      </div>
+      <div class="stat-info">
+        <h3>0</h3>
+        <p>Trips Completed</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Activity / Placeholder -->
+  <section class="recent-activity">
+    <h2>Recent Activity</h2>
+    <div class="empty-state">
+      <mat-icon>history</mat-icon>
+      <p>No recent activity. Start planning your next adventure!</p>
+      <button mat-flat-button color="primary" routerLink="/home">Explore Places</button>
+    </div>
+  </section>
+</div>

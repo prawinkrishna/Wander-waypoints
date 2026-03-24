@@ -1,55 +1,283 @@
-<nav class="navbar">
+<!-- Email Verification Banner -->
+<div class="verification-banner" *ngIf="needsEmailVerification">
+  <mat-icon>mail_outline</mat-icon>
+  <span>Please verify your email address.</span>
+  <a routerLink="/auth/verify-email" [queryParams]="{email: currentUser?.email}">Resend verification email</a>
+</div>
+
+<nav class="navbar" [class.has-banner]="needsEmailVerification">
+  <!-- Mobile hamburger button -->
+  <button mat-icon-button class="mobile-menu-btn" (click)="toggleMobileMenu()"
+    [attr.aria-label]="mobileMenuOpen ? 'Close menu' : 'Open menu'" aria-controls="mobile-menu">
+    <mat-icon>{{ mobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+  </button>
+
   <div class="navbar-left">
-    <a routerLink="/home" class="logo-link">
-      <mat-icon class="logo-icon">explore</mat-icon>
-      <span class="site-name">Wander</span>
+    <a [routerLink]="logoRoute" class="logo-link">
+      <img src="images/trekio-pin.png" alt="Trekio" class="logo-pin">
+      <span class="site-name">trek<span class="site-name-io">io</span></span>
     </a>
   </div>
 
-  <div class="navbar-center">
-    <a mat-button routerLink="/home" routerLinkActive="active-link">
-      <mat-icon>home</mat-icon>
-      <span>Home</span>
-    </a>
-    <a mat-button routerLink="/trip-feed" routerLinkActive="active-link">
-      <mat-icon>map</mat-icon>
-      <span>Trips</span>
-    </a>
-    <a mat-button routerLink="/dashboard" routerLinkActive="active-link">
-      <mat-icon>dashboard</mat-icon>
-      <span>Dashboard</span>
-    </a>
+  <div class="navbar-center desktop-only">
+    <!-- Agent navbar -->
+    <ng-container *ngIf="isAgencyUser">
+      <a mat-button routerLink="/studio" routerLinkActive="active-link">
+        <mat-icon>dashboard</mat-icon>
+        <span>Studio</span>
+      </a>
+      <a mat-button routerLink="/home" routerLinkActive="active-link">
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </a>
+      <button mat-flat-button color="primary" class="create-trip-btn" (click)="onCreateTrip()">
+        <mat-icon>add</mat-icon>
+        <span>Create Trip</span>
+      </button>
+    </ng-container>
+
+    <!-- Consumer navbar -->
+    <ng-container *ngIf="isConsumerUser">
+      <a mat-button routerLink="/studio" routerLinkActive="active-link" *ngIf="hasAgency">
+        <mat-icon>dashboard</mat-icon>
+        <span>Studio</span>
+      </a>
+      <a mat-button routerLink="/home" routerLinkActive="active-link">
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </a>
+      <a mat-button routerLink="/trip-feed" routerLinkActive="active-link">
+        <mat-icon>map</mat-icon>
+        <span>Discover</span>
+      </a>
+      <a mat-button routerLink="/import" routerLinkActive="active-link">
+        <mat-icon>link</mat-icon>
+        <span>Import</span>
+      </a>
+      <button mat-flat-button color="primary" class="create-trip-btn" (click)="onCreateTrip()">
+        <mat-icon>add</mat-icon>
+        <span>Create Trip</span>
+      </button>
+    </ng-container>
+
+    <!-- Guest navbar -->
+    <ng-container *ngIf="isGuest">
+      <a mat-button routerLink="/home" routerLinkActive="active-link">
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </a>
+      <a mat-button routerLink="/trip-feed" routerLinkActive="active-link">
+        <mat-icon>map</mat-icon>
+        <span>Discover</span>
+      </a>
+    </ng-container>
   </div>
 
   <div class="navbar-right">
-    <mat-form-field appearance="outline" class="search-bar">
-      <mat-label>Search places...</mat-label>
-      <input matInput type="text" />
+    <!-- Theme toggle -->
+    <button mat-icon-button (click)="themeService.toggleTheme()" class="theme-toggle-btn"
+      [attr.aria-label]="themeService.isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+      <mat-icon>{{ themeService.isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+
+    <!-- Search bar -->
+    <mat-form-field appearance="outline" class="search-bar desktop-only" subscriptSizing="dynamic">
+      <input matInput type="text" placeholder="Search places..." [formControl]="searchControl"
+        [matAutocomplete]="auto" aria-label="Search places" />
       <mat-icon matPrefix>search</mat-icon>
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onOptionSelected($event)"
+        class="search-autocomplete">
+        <mat-option *ngFor="let option of filteredOptions" [value]="option" class="search-option-item">
+          <div class="option-content">
+            <div class="option-title">
+              {{ option.raw?.address?.amenity || option.raw?.address?.shop || option.raw?.address?.tourism ||
+              option.label.split(',')[0] }}
+            </div>
+            <div class="option-subtitle">
+              {{ option.label }}
+            </div>
+          </div>
+        </mat-option>
+      </mat-autocomplete>
     </mat-form-field>
 
-    <button mat-icon-button aria-label="Notifications">
-      <mat-icon [matBadge]="3" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
-    </button>
+    <!-- Guest User: Show Login/Sign Up -->
+    <ng-container *ngIf="isGuest">
+      <button mat-stroked-button class="login-btn desktop-only" (click)="onLogin()">
+        Login
+      </button>
+      <button mat-flat-button color="primary" class="signup-btn desktop-only" routerLink="/login"
+        [queryParams]="{mode: 'register'}">
+        Sign Up
+      </button>
+    </ng-container>
 
-    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="avatar-btn">
-      <mat-icon>account_circle</mat-icon>
-    </button>
+    <!-- Authenticated User: Show profile menu -->
+    <ng-container *ngIf="!isGuest">
+      <div class="notification-wrapper">
+        <button mat-icon-button aria-label="Notifications" (click)="toggleNotificationDropdown()">
+          <mat-icon [matBadge]="unreadCount || null" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
+        </button>
 
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item routerLink="/profile">
-        <mat-icon>person</mat-icon>
-        <span>Profile</span>
+        <!-- Notification Dropdown -->
+        <div class="notification-dropdown" *ngIf="notificationDropdownOpen">
+          <div class="notification-header">
+            <span>Notifications</span>
+            <button mat-button *ngIf="unreadCount > 0" (click)="markAllAsRead()" class="mark-all-btn">Mark all read</button>
+          </div>
+          <div class="notification-list">
+            <div class="notification-item" *ngFor="let n of notifications"
+              [class.unread]="!n.read" (click)="markAsRead(n)">
+              <mat-icon class="notification-icon">{{ getNotificationIcon(n.type) }}</mat-icon>
+              <div class="notification-body">
+                <span class="notification-message">{{ n.message }}</span>
+                <span class="notification-time">{{ n.createdAt | date:'short' }}</span>
+              </div>
+            </div>
+            <div class="notification-empty" *ngIf="notifications.length === 0">
+              <mat-icon>notifications_none</mat-icon>
+              <span>No notifications yet</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="notification-overlay" *ngIf="notificationDropdownOpen" (click)="closeNotificationDropdown()"></div>
+
+      <button mat-icon-button [matMenuTriggerFor]="userMenu" class="avatar-btn" aria-label="User menu">
+        <img *ngIf="currentUser?.profileImage" [src]="currentUser.profileImage" class="user-avatar"
+          alt="Profile picture" (error)="$any($event.target).src='assets/images/avatar-placeholder.svg'">
+        <mat-icon *ngIf="!currentUser?.profileImage">account_circle</mat-icon>
       </button>
-      <button mat-menu-item routerLink="/booking">
-        <mat-icon>book_online</mat-icon>
-        <span>Bookings</span>
-      </button>
-      <mat-divider></mat-divider>
-      <button mat-menu-item (click)="onLogout()">
-        <mat-icon>logout</mat-icon>
-        <span>Logout</span>
-      </button>
-    </mat-menu>
+
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item routerLink="/profile">
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </button>
+        <button mat-menu-item routerLink="/booking">
+          <mat-icon>book_online</mat-icon>
+          <span>Bookings</span>
+        </button>
+        <button mat-menu-item routerLink="/settings">
+          <mat-icon>settings</mat-icon>
+          <span>Settings</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item routerLink="/studio/settings" *ngIf="canAccessStudio">
+          <mat-icon>business</mat-icon>
+          <span>Agency Settings</span>
+        </button>
+        <button mat-menu-item routerLink="/studio" *ngIf="canAccessStudio && !isAgencyUser">
+          <mat-icon>dashboard</mat-icon>
+          <span>Studio</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="onLogout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </ng-container>
   </div>
 </nav>
+
+<!-- Mobile slide-out menu -->
+<div class="mobile-menu-overlay" *ngIf="mobileMenuOpen" (click)="closeMobileMenu()"></div>
+<div class="mobile-menu" [class.open]="mobileMenuOpen" id="mobile-menu" role="navigation" aria-label="Mobile navigation">
+  <div class="mobile-menu-header">
+    <span class="mobile-menu-title">Menu</span>
+    <button mat-icon-button (click)="closeMobileMenu()" aria-label="Close menu">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="mobile-menu-content">
+    <!-- Theme toggle (mobile) -->
+    <button class="mobile-nav-link" (click)="themeService.toggleTheme()"
+      [attr.aria-label]="themeService.isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+      <mat-icon>{{ themeService.isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      <span>{{ themeService.isDark ? 'Light Mode' : 'Dark Mode' }}</span>
+    </button>
+
+    <mat-divider></mat-divider>
+
+    <!-- Mobile search -->
+    <mat-form-field appearance="outline" class="mobile-search" subscriptSizing="dynamic">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput type="text" placeholder="Search places..." [formControl]="searchControl"
+        [matAutocomplete]="autoMobile" />
+      <mat-autocomplete #autoMobile="matAutocomplete" [displayWith]="displayFn"
+        (optionSelected)="onOptionSelected($event); closeMobileMenu()">
+        <mat-option *ngFor="let option of filteredOptions" [value]="option">
+          {{ option.label }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <!-- Studio mobile nav (agency_admin or user with linked agency) -->
+    <ng-container *ngIf="canAccessStudio">
+      <a class="mobile-nav-link" routerLink="/studio" routerLinkActive="active" (click)="closeMobileMenu()">
+        <mat-icon>dashboard</mat-icon>
+        <span>Studio</span>
+      </a>
+    </ng-container>
+
+    <!-- Shared mobile nav links -->
+    <a class="mobile-nav-link" routerLink="/home" routerLinkActive="active" (click)="closeMobileMenu()">
+      <mat-icon>home</mat-icon>
+      <span>Home</span>
+    </a>
+    <a class="mobile-nav-link" routerLink="/trip-feed" routerLinkActive="active" (click)="closeMobileMenu()">
+      <mat-icon>map</mat-icon>
+      <span>Discover</span>
+    </a>
+    <a class="mobile-nav-link" routerLink="/import" routerLinkActive="active" (click)="closeMobileMenu()" *ngIf="!isGuest">
+      <mat-icon>link</mat-icon>
+      <span>Import</span>
+    </a>
+
+    <ng-container *ngIf="!isGuest">
+      <button mat-flat-button color="primary" class="mobile-create-btn" (click)="onCreateTrip()">
+        <mat-icon>add</mat-icon>
+        Create Trip
+      </button>
+    </ng-container>
+
+    <mat-divider></mat-divider>
+
+    <!-- Guest actions -->
+    <ng-container *ngIf="isGuest">
+      <button mat-stroked-button class="mobile-login-btn" (click)="onLogin()">
+        Login
+      </button>
+      <button mat-flat-button color="primary" class="mobile-signup-btn" routerLink="/login"
+        [queryParams]="{mode: 'register'}" (click)="closeMobileMenu()">
+        Sign Up
+      </button>
+    </ng-container>
+
+    <!-- Authenticated user links -->
+    <ng-container *ngIf="!isGuest">
+      <a class="mobile-nav-link" routerLink="/profile" routerLinkActive="active" (click)="closeMobileMenu()">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </a>
+      <a class="mobile-nav-link" routerLink="/booking" routerLinkActive="active" (click)="closeMobileMenu()">
+        <mat-icon>book_online</mat-icon>
+        <span>My Bookings</span>
+      </a>
+      <a class="mobile-nav-link" routerLink="/settings" routerLinkActive="active" (click)="closeMobileMenu()">
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </a>
+      <a class="mobile-nav-link" routerLink="/studio/settings" routerLinkActive="active" (click)="closeMobileMenu()" *ngIf="canAccessStudio">
+        <mat-icon>business</mat-icon>
+        <span>Agency Settings</span>
+      </a>
+      <button mat-button class="mobile-logout-btn" (click)="onLogout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </ng-container>
+  </div>
+</div>

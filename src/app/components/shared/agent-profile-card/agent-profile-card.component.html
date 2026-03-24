@@ -1,0 +1,50 @@
+<mat-card class="agent-card" (click)="onClick()">
+    <div class="card-header">
+        <div class="agent-avatar" *ngIf="agent.logoUrl; else placeholderAvatar">
+            <img [src]="agent.logoUrl" [alt]="agent.name" />
+        </div>
+        <ng-template #placeholderAvatar>
+            <div class="agent-avatar placeholder">
+                <mat-icon>business</mat-icon>
+            </div>
+        </ng-template>
+
+        <div class="agent-info">
+            <div class="name-row">
+                <h4 class="agent-name">{{ agent.name }}</h4>
+                <mat-icon class="verified-icon" *ngIf="agent.isVerified">verified</mat-icon>
+            </div>
+            <div class="rating-row">
+                <span class="stars">
+                    <mat-icon *ngFor="let star of cachedRatingStars; let i = index"
+                              [class.filled]="star === 1"
+                              class="star-icon">
+                        {{ star === 1 ? 'star' : 'star_border' }}
+                    </mat-icon>
+                </span>
+                <span class="rating-text" *ngIf="agent.averageRating">
+                    {{ agent.averageRating | number:'1.1-1' }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="specializations" *ngIf="agent.specializations?.length">
+        <mat-chip-set>
+            <mat-chip *ngFor="let spec of agent.specializations" class="spec-chip" disableRipple>
+                {{ spec }}
+            </mat-chip>
+        </mat-chip-set>
+    </div>
+
+    <div class="card-footer">
+        <div class="stat">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ formattedResponseTime }}</span>
+        </div>
+        <div class="stat">
+            <mat-icon>luggage</mat-icon>
+            <span>{{ agent.completedTrips || 0 }} trips</span>
+        </div>
+    </div>
+</mat-card>

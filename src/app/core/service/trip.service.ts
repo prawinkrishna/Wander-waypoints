@@ -46,4 +46,35 @@ export class TripService {
     commentOnTrip(id: string, comment: string): Observable<any> {
         return this.http.post(`${this.apiUrl}/${id}/comment`, { text: comment });
     }
+
+    deleteTripPlace(tripPlaceId: string): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/place/${tripPlaceId}`);
+    }
+
+    reorderTripPlaces(tripId: string, orderedIds: string[]): Observable<any> {
+        return this.http.patch(`${this.apiUrl}/${tripId}/reorder`, { orderedIds });
+    }
+
+    saveItinerary(tripId: string, itinerary: any[]): Observable<any> {
+        return this.http.post(`${this.apiUrl}/${tripId}/itinerary`, { itinerary });
+    }
+
+    addPlace(tripId: string, placeData: any): Observable<any> {
+        return this.http.post(`${environment.apiUrl}/trip-place`, {
+            tripId,
+            ...placeData
+        });
+    }
+
+    getUserTrips(userId: string): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}?userId=${userId}`);
+    }
+
+    updateTripPlace(tripPlaceId: string, data: any): Observable<any> {
+        return this.http.patch(`${environment.apiUrl}/trip-place/${tripPlaceId}`, data);
+    }
+
+    replaceItinerary(tripId: string, itinerary: any[]): Observable<any> {
+        return this.http.post(`${this.apiUrl}/${tripId}/replace-itinerary`, { itinerary });
+    }
 }

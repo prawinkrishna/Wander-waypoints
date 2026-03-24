@@ -1,0 +1,195 @@
+<app-navbar></app-navbar>
+
+<!-- AI Generation Overlay -->
+<div class="ai-overlay" *ngIf="generatingAI">
+  <div class="ai-overlay-content">
+    <mat-spinner diameter="48"></mat-spinner>
+    <h2>Generating your itinerary...</h2>
+    <p>Our AI is crafting a personalized travel plan for you</p>
+  </div>
+</div>
+
+<div class="create-trip-page" *ngIf="!loadingTrip">
+  <div class="wizard-container">
+    <!-- Progress Bar -->
+    <div class="progress-bar-wrapper">
+      <div class="progress-bar" [style.width.%]="progressPercent"></div>
+    </div>
+
+    <!-- Step Dots -->
+    <div class="step-dots">
+      <button
+        *ngFor="let step of activeSteps; let i = index"
+        class="step-dot"
+        [class.completed]="isStepCompleted(i)"
+        [class.active]="i === currentStepIndex"
+        [class.clickable]="isStepClickable(i)"
+        (click)="goToStep(i)"
+        [disabled]="!isStepClickable(i)"
+        type="button">
+        <mat-icon *ngIf="isStepCompleted(i)">check</mat-icon>
+        <span *ngIf="!isStepCompleted(i)">{{ i + 1 }}</span>
+      </button>
+    </div>
+
+    <!-- Step Counter (mobile) -->
+    <div class="step-counter">
+      Step {{ currentStepIndex + 1 }} of {{ activeSteps.length }}
+    </div>
+
+    <!-- Step Content -->
+    <form [formGroup]="tripForm" (ngSubmit)="onSubmit()">
+      <div class="step-viewport" [@wizardSlide]="currentStepIndex">
+        <div class="step-content" *ngIf="currentStep">
+          <!-- Step Header -->
+          <div class="step-header">
+            <mat-icon class="step-icon">{{ currentStep.icon }}</mat-icon>
+            <h2>{{ currentStep.title }}</h2>
+            <p class="step-subtitle" *ngIf="currentStep.subtitle">{{ currentStep.subtitle }}</p>
+          </div>
+
+          <!-- Dynamic Fields -->
+          <div class="step-fields">
+            <ng-container *ngFor="let field of currentStep.fields">
+
+              <!-- Location Pair -->
+              <div class="location-pair" *ngIf="field.type === 'location-pair'">
+                <mat-form-field appearance="outline" class="pair-field">
+                  <mat-label>Origin</mat-label>
+                  <input matInput formControlName="origin" placeholder="Starting city">
+                  <mat-icon matSuffix>flight_takeoff</mat-icon>
+                  <mat-error *ngIf="f['origin'].hasError('required')">Origin is required</mat-error>
+                </mat-form-field>
+
+                <mat-icon class="pair-arrow">arrow_forward</mat-icon>
+
+                <mat-form-field appearance="outline" class="pair-field">
+                  <mat-label>Destination</mat-label>
+                  <input matInput formControlName="destination" placeholder="Where are you going?">
+                  <mat-icon matSuffix>flight_land</mat-icon>
+                  <mat-error *ngIf="f['destination'].hasError('required')">Destination is required</mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Date Range -->
+              <div class="date-range" *ngIf="field.type === 'date-range'">
+                <mat-form-field appearance="outline" class="date-field">
+                  <mat-label>Start Date</mat-label>
+                  <input matInput [matDatepicker]="startPicker" formControlName="startDate" [min]="minDate">
+                  <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #startPicker></mat-datepicker>
+                  <mat-error>Start date is required</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="date-field">
+                  <mat-label>End Date</mat-label>
+                  <input matInput [matDatepicker]="endPicker" formControlName="endDate" [min]="f['startDate'].value">
+                  <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #endPicker></mat-datepicker>
+                  <mat-error>End date is required</mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Card Select -->
+              <div class="card-select" *ngIf="field.type === 'card-select'">
+                <button
+                  *ngFor="let option of field.options"
+                  type="button"
+                  class="select-card"
+                  [class.selected]="f[field.key].value === option.value"
+                  (click)="selectCardOption(field.key, option.value)">
+                  <mat-icon class="card-icon">{{ option.icon }}</mat-icon>
+                  <span class="card-label">{{ option.label }}</span>
+                  <span class="card-desc">{{ option.description }}</span>
+                </button>
+              </div>
+
+              <!-- Text Input -->
+              <mat-form-field appearance="outline" class="full-width" *ngIf="field.type === 'text'">
+                <mat-label>{{ field.label }}</mat-label>
+                <input matInput [formControlName]="field.key" [placeholder]="field.placeholder || ''">
+                <mat-icon matSuffix *ngIf="field.icon">{{ field.icon }}</mat-icon>
+                <mat-error *ngIf="f[field.key].hasError('required')">{{ field.label }} is required</mat-error>
+                <mat-error *ngIf="f[field.key].hasError('minlength')">Too short</mat-error>
+              </mat-form-field>
+
+              <!-- Textarea -->
+              <mat-form-field appearance="outline" class="full-width" *ngIf="field.type === 'textarea'">
+                <mat-label>{{ field.label }}</mat-label>
+                <textarea matInput [formControlName]="field.key" [placeholder]="field.placeholder || ''" rows="3"></textarea>
+                <mat-hint *ngIf="field.hint">{{ f[field.key].value?.length || 0 }}/500</mat-hint>
+                <mat-error *ngIf="f[field.key].hasError('required')">{{ field.label }} is required</mat-error>
+                <mat-error *ngIf="f[field.key].hasError('minlength')">Too short</mat-error>
+              </mat-form-field>
+
+              <!-- Image URL -->
+              <div class="image-url-field" *ngIf="field.type === 'image-url'">
+                <div class="cover-preview"
+                  [style.backgroundImage]="f['coverImage'].value ? 'url(' + f['coverImage'].value + ')' : 'none'">
+                  <div class="cover-placeholder" *ngIf="!f['coverImage'].value">
+                    <mat-icon>add_photo_alternate</mat-icon>
+                    <span>Add Cover Image</span>
+                  </div>
+                </div>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>{{ field.label }}</mat-label>
+                  <input matInput formControlName="coverImage" [placeholder]="field.placeholder || ''">
+                  <mat-icon matSuffix>image</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <!-- Toggle -->
+              <div class="toggle-field" *ngIf="field.type === 'toggle'">
+                <div class="toggle-info">
+                  <span class="toggle-label">{{ field.label }}</span>
+                  <span class="toggle-desc" *ngIf="field.hint">{{ field.hint }}</span>
+                </div>
+                <mat-slide-toggle [formControlName]="field.key" color="primary"></mat-slide-toggle>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div class="error-message" *ngIf="errorMessage">
+        <mat-icon>error</mat-icon>
+        {{ errorMessage }}
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="wizard-nav">
+        <button type="button" class="nav-btn back-btn" (click)="goBack()" *ngIf="!isFirstStep">
+          <mat-icon>arrow_back</mat-icon>
+          Back
+        </button>
+        <div class="nav-spacer" *ngIf="isFirstStep"></div>
+
+        <button
+          *ngIf="!isLastStep"
+          type="button"
+          class="nav-btn next-btn"
+          (click)="goNext()"
+          [disabled]="!isCurrentStepValid()">
+          Next
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+
+        <button
+          *ngIf="isLastStep"
+          type="submit"
+          class="nav-btn submit-btn"
+          [disabled]="submitting || generatingAI">
+          <mat-spinner diameter="20" *ngIf="submitting"></mat-spinner>
+          <span *ngIf="!submitting">{{ isEditMode ? 'Update Trip' : 'Create Trip' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Loading state for edit mode -->
+<div class="loading-state" *ngIf="loadingTrip">
+  <mat-spinner diameter="40"></mat-spinner>
+  <p>Loading trip details...</p>
+</div>

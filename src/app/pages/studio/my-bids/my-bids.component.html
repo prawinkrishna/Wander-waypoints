@@ -1,0 +1,122 @@
+<div class="my-bids-container">
+    <div class="page-header">
+        <h1 class="page-title">My Bids</h1>
+        <p class="page-subtitle">Track and manage all your bid submissions</p>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-state">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading your bids...</p>
+    </div>
+
+    <ng-container *ngIf="!isLoading">
+        <!-- Summary Cards -->
+        <div class="summary-row">
+            <div class="summary-card pending">
+                <mat-icon>hourglass_top</mat-icon>
+                <div class="summary-info">
+                    <span class="summary-count">{{ pendingBids.length }}</span>
+                    <span class="summary-label">Pending</span>
+                </div>
+            </div>
+            <div class="summary-card accepted">
+                <mat-icon>check_circle</mat-icon>
+                <div class="summary-info">
+                    <span class="summary-count">{{ acceptedBids.length }}</span>
+                    <span class="summary-label">Accepted</span>
+                </div>
+            </div>
+            <div class="summary-card rejected">
+                <mat-icon>cancel</mat-icon>
+                <div class="summary-info">
+                    <span class="summary-count">{{ rejectedBids.length }}</span>
+                    <span class="summary-label">Rejected / Withdrawn</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <mat-tab-group [(selectedIndex)]="selectedTab" class="bids-tabs" animationDuration="200ms">
+            <!-- Pending Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>hourglass_top</mat-icon>
+                    <span class="tab-label">Pending ({{ pendingBids.length }})</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <div class="bids-list" *ngIf="pendingBids.length > 0">
+                        <app-bid-card
+                            *ngFor="let bid of pendingBids"
+                            [bid]="bid"
+                            [showActions]="false"
+                            (viewDetails)="onViewBid($event)">
+                        </app-bid-card>
+                    </div>
+                    <div class="empty-tab" *ngIf="pendingBids.length === 0">
+                        <mat-icon>inbox</mat-icon>
+                        <p>No pending bids. Browse the <a routerLink="/studio/marketplace">marketplace</a> to find trip requests.</p>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Accepted Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>check_circle</mat-icon>
+                    <span class="tab-label">Accepted ({{ acceptedBids.length }})</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <div class="bids-list" *ngIf="acceptedBids.length > 0">
+                        <app-bid-card
+                            *ngFor="let bid of acceptedBids"
+                            [bid]="bid"
+                            [showActions]="false"
+                            (viewDetails)="onViewBid($event)">
+                        </app-bid-card>
+                    </div>
+                    <div class="empty-tab" *ngIf="acceptedBids.length === 0">
+                        <mat-icon>emoji_events</mat-icon>
+                        <p>No accepted bids yet. Keep submitting great proposals!</p>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Rejected / Withdrawn Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>cancel</mat-icon>
+                    <span class="tab-label">Rejected / Withdrawn ({{ rejectedBids.length }})</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <div class="bids-list" *ngIf="rejectedBids.length > 0">
+                        <app-bid-card
+                            *ngFor="let bid of rejectedBids"
+                            [bid]="bid"
+                            [showActions]="false"
+                            (viewDetails)="onViewBid($event)">
+                        </app-bid-card>
+                    </div>
+                    <div class="empty-tab" *ngIf="rejectedBids.length === 0">
+                        <mat-icon>thumb_up</mat-icon>
+                        <p>No rejected or withdrawn bids. Great track record!</p>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+
+        <!-- Global Empty State -->
+        <div class="global-empty" *ngIf="bids.length === 0">
+            <mat-icon class="empty-icon">gavel</mat-icon>
+            <h3>No bids yet</h3>
+            <p>You haven't submitted any bids yet. Head to the marketplace to find trip requests and start bidding.</p>
+            <button mat-flat-button color="primary" routerLink="/studio/marketplace">
+                <mat-icon>storefront</mat-icon>
+                Browse Marketplace
+            </button>
+        </div>
+    </ng-container>
+</div>

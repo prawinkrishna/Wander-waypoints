@@ -1,0 +1,261 @@
+.import-container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 16px;
+  min-height: calc(100vh - 64px);
+}
+
+.import-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+// Header
+.import-header {
+  text-align: center;
+  margin-bottom: 24px;
+
+  .header-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    margin: 0 0 8px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+  }
+}
+
+// URL Input
+.url-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.extract-btn {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+// Supported Platforms
+.supported-platforms {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+
+  .platform {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #888;
+    font-size: 13px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// Loading
+.loading-card {
+  text-align: center;
+  padding: 64px 32px;
+
+  mat-spinner {
+    margin: 0 auto 16px;
+  }
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+  }
+}
+
+// Review
+.review-card {
+  padding: 24px;
+}
+
+.review-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  .review-title {
+    h2 {
+      margin: 0 0 4px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 13px;
+    }
+  }
+}
+
+.select-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.places-list {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.place-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  mat-checkbox {
+    margin-top: 2px;
+  }
+}
+
+.place-info {
+  flex: 1;
+  min-width: 0;
+
+  .place-name {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  mat-chip-set {
+    margin-bottom: 4px;
+  }
+
+  .place-description {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+
+  .place-reason {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 12px;
+    color: #888;
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      color: #ED8936;
+      margin-top: 1px;
+    }
+  }
+}
+
+// Category chips
+::ng-deep .category-food {
+  background-color: #fff3e0 !important;
+  color: #e65100 !important;
+}
+
+::ng-deep .category-activity {
+  background-color: #e3f2fd !important;
+  color: #1565c0 !important;
+}
+
+::ng-deep .category-stay {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+}
+
+::ng-deep .category-other {
+  background-color: #f3e5f5 !important;
+  color: #7b1fa2 !important;
+}
+
+.create-trip-btn {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+// Error
+.error-card {
+  text-align: center;
+  padding: 48px 32px;
+
+  .error-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #F56565;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0 0 24px;
+    color: #666;
+  }
+}
+
+// Mobile
+@media (max-width: 600px) {
+  .import-container {
+    padding: 16px;
+  }
+
+  .import-card {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .supported-platforms {
+    flex-direction: column;
+    align-items: center;
+  }
+}

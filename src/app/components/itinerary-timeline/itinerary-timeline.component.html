@@ -1,66 +1,246 @@
-<div class="itinerary-container">
-    <div *ngFor="let group of groupedPlaces" class="day-group">
-        <div class="day-header">
-            <h3>Day {{ group.dayNumber }}</h3>
-            <span class="day-summary">{{ group.places.length }} Places</span>
+<div class="timeline-container">
+    <!-- Day Sections -->
+    <div *ngFor="let group of groupedPlaces" class="day-section">
+        <!-- Day Header -->
+        <div class="day-header" (click)="toggleDay(group.dayNumber)">
+            <div class="day-info">
+                <span class="day-badge">Day {{ group.dayNumber }}</span>
+                <span class="day-date" *ngIf="tripStartDate">{{ getDayDate(group.dayNumber) }}</span>
+                <span class="place-count">{{ getPlaceCount(group.dayNumber) }} {{ getPlaceCount(group.dayNumber) === 1 ?
+                    'place' : 'places' }}</span>
+            </div>
+            <mat-icon class="collapse-icon" [class.collapsed]="isDayCollapsed(group.dayNumber)">
+                expand_more
+            </mat-icon>
         </div>
 
-        <div class="timeline">
-            <div *ngFor="let item of group.places; let last = last" class="timeline-item">
+        <!-- Timeline Content -->
+        <div class="timeline-content" *ngIf="!isDayCollapsed(group.dayNumber)">
+            <div cdkDropList [cdkDropListData]="group.places" (cdkDropListDropped)="onReorderPlace($any($event), group)"
+                class="places-timeline">
 
-                <!-- Time Column -->
-                <div class="time-col">
-                    <span class="time">{{ item.startTime || '09:00 AM' }}</span> <!-- Placeholder default -->
-                </div>
+                <div *ngFor="let item of group.places; let i = index; let last = last" cdkDrag
+                    [cdkDragDisabled]="!isOwner" class="timeline-item">
 
-                <!-- Timeline Line/Dot -->
-                <div class="line-col">
-                    <div class="dot" [ngClass]="getCategoryIcon(item.place?.category)">
-                        <mat-icon>{{ getCategoryIcon(item.place?.category) }}</mat-icon>
-                    </div>
-                    <div class="line" *ngIf="!last"></div>
-                </div>
-
-                <!-- Content Card -->
-                <div class="content-col">
-                    <mat-card class="place-card">
-                        <div class="card-image" *ngIf="item.place?.image">
-                            <img [src]="item.place.image" [alt]="item.place.name">
+                    <!-- Timeline Connector -->
+                    <div class="timeline-line">
+                        <div class="line-segment top" *ngIf="i > 0"></div>
+                        <div class="timeline-dot" [style.backgroundColor]="getCategoryColor(item.place?.category)">
+                            <mat-icon>{{ getCategoryIcon(item.place?.category) }}</mat-icon>
                         </div>
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h4>{{ item.place?.name }}</h4>
-                                <span class="category-badge">{{ item.place?.category }}</span>
+                        <div class="line-segment bottom" *ngIf="!last"></div>
+                    </div>
+
+                    <!-- Place Card -->
+                    <div class="place-card" (click)="viewPlaceDetails(item)">
+                        <!-- Drag Handle (Owner Only) -->
+                        <div class="drag-handle" *ngIf="isOwner" cdkDragHandle (click)="$event.stopPropagation()">
+                            <mat-icon>drag_indicator</mat-icon>
+                        </div>
+
+                        <!-- Place Image -->
+                        <div class="place-image-wrapper">
+                            <img *ngIf="!isDefaultImage(item)" [src]="getPlaceImage(item)" [alt]="item.place?.name"
+                                class="place-image" (error)="item.place!.image = ''">
+                            <div *ngIf="isDefaultImage(item)" class="placeholder-image">
+                                <mat-icon>{{ getCategoryIcon(item.place?.category) }}</mat-icon>
+                            </div>
+                            <!-- Rating Badge -->
+                            <div class="rating-badge" *ngIf="item.place?.rating">
+                                <mat-icon>star</mat-icon>
+                                <span>{{ item.place.rating }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Place Details - View Mode -->
+                        <div class="place-details" *ngIf="!item.isEditing">
+                            <!-- Category & Time Info -->
+                            <div class="meta-row">
+                                <!-- Start Time -->
+                                <span class="time-badge" *ngIf="item.startTime">
+                                    <mat-icon>schedule</mat-icon>
+                                    {{ item.startTime }}
+                                    <span *ngIf="item.duration"> - {{ getEndTime(item.startTime, item.duration)
+                                        }}</span>
+                                </span>
+                                <!-- Duration -->
+                                <span class="duration-badge" *ngIf="item.duration">
+                                    <mat-icon>timer</mat-icon>
+                                    {{ formatDuration(item.duration) }}
+                                </span>
+                                <!-- Category -->
+                                <span class="category-tag"
+                                    [style.backgroundColor]="getCategoryColor(item.place?.category) + '20'"
+                                    [style.color]="getCategoryColor(item.place?.category)">
+                                    <mat-icon>{{ getCategoryIcon(item.place?.category) }}</mat-icon>
+                                    {{ item.place?.category || 'Place' }}
+                                </span>
+                                <!-- Time Slot -->
+                                <span class="time-slot" *ngIf="item.timeSlot">
+                                    <mat-icon>{{ getTimeSlotIcon(item.timeSlot) }}</mat-icon>
+                                    {{ getTimeSlotLabel(item.timeSlot) }}
+                                </span>
                             </div>
 
-                            <p class="notes" *ngIf="item.notes">{{ item.notes }}</p>
-                            <p class="description" *ngIf="!item.notes">{{ item.place?.description | slice:0:100 }}...
+                            <!-- Place Name -->
+                            <h4 class="place-name">{{ item.place?.name }}</h4>
+
+                            <!-- Address -->
+                            <p class="place-address" *ngIf="item.place?.address">
+                                <mat-icon>location_on</mat-icon>
+                                {{ item.place.address }}
                             </p>
 
-                            <!-- Influencer Badge (Mock) -->
-                            <div class="influencer-badge" *ngIf="item.place?.visitedBy">
-                                <mat-icon>verified</mat-icon>
-                                <span>Visited by {{ item.place.visitedBy }}</span>
+                            <!-- Description (truncated) -->
+                            <p class="place-description" *ngIf="item.place?.description">
+                                {{ item.place.description | slice:0:100 }}{{ (item.place.description?.length || 0) > 100
+                                ? '...' : '' }}
+                            </p>
+
+                            <!-- Notes -->
+                            <div class="notes" *ngIf="item.notes">
+                                <mat-icon>notes</mat-icon>
+                                <span>{{ item.notes }}</span>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="action-buttons">
+                                <button class="action-btn edit" *ngIf="enableInlineEditing && isOwner"
+                                    (click)="startEditing(item); $event.stopPropagation()">
+                                    <mat-icon>edit</mat-icon>
+                                    Edit
+                                </button>
+                                <button class="action-btn directions"
+                                    (click)="openDirections(item); $event.stopPropagation()">
+                                    <mat-icon>directions</mat-icon>
+                                    Directions
+                                </button>
+                                <button class="action-btn book" *ngIf="isBookable(item)"
+                                    (click)="onBookPlace(item); $event.stopPropagation()">
+                                    <mat-icon>book_online</mat-icon>
+                                    Book
+                                </button>
                             </div>
                         </div>
-                    </mat-card>
 
-                    <!-- Travel Stats to Next Place -->
-                    <div class="travel-stats" *ngIf="!last && (item.distanceFromPrev || item.travelTimeFromPrev)">
-                        <mat-icon>directions_car</mat-icon>
-                        <span>{{ item.travelTimeFromPrev || 15 }} min drive</span>
-                        <span class="dot-separator">•</span>
-                        <span>{{ item.distanceFromPrev || 5.2 }} km</span>
+                        <!-- Place Details - Edit Mode -->
+                        <div class="place-details edit-mode" *ngIf="item.isEditing && item.editData" (click)="$event.stopPropagation()">
+                            <div class="edit-row">
+                                <div class="edit-field">
+                                    <label>Activity Name</label>
+                                    <input type="text" [(ngModel)]="item.editData.name"
+                                        (keydown)="onEditFieldKeydown($event, item)"
+                                        placeholder="Activity name">
+                                </div>
+                            </div>
+                            <div class="edit-row two-col">
+                                <div class="edit-field">
+                                    <label>Start Time</label>
+                                    <input type="time" [(ngModel)]="item.editData.startTime"
+                                        (keydown)="onEditFieldKeydown($event, item)">
+                                </div>
+                                <div class="edit-field">
+                                    <label>Duration (mins)</label>
+                                    <input type="number" [(ngModel)]="item.editData.duration"
+                                        (keydown)="onEditFieldKeydown($event, item)"
+                                        placeholder="60">
+                                </div>
+                            </div>
+                            <div class="edit-row">
+                                <div class="edit-field">
+                                    <label>Location/Address</label>
+                                    <input type="text" [(ngModel)]="item.editData.address"
+                                        (keydown)="onEditFieldKeydown($event, item)"
+                                        placeholder="Address">
+                                </div>
+                            </div>
+                            <div class="edit-row">
+                                <div class="edit-field">
+                                    <label>Notes</label>
+                                    <textarea [(ngModel)]="item.editData.notes"
+                                        (keydown)="onEditFieldKeydown($event, item)"
+                                        placeholder="Add notes..."
+                                        rows="2"></textarea>
+                                </div>
+                            </div>
+                            <div class="edit-row two-col">
+                                <div class="edit-field">
+                                    <label>Transport Mode</label>
+                                    <select [(ngModel)]="item.editData!.transportMode">
+                                        <option *ngFor="let mode of transportModes" [value]="mode.value">{{ mode.label }}</option>
+                                    </select>
+                                </div>
+                                <div class="edit-field">
+                                    <label>Travel Time (mins)</label>
+                                    <input type="number" [(ngModel)]="item.editData!.travelTimeFromPrev" placeholder="15">
+                                </div>
+                            </div>
+                            <div class="edit-actions">
+                                <button class="cancel-btn" (click)="cancelEditing(item)">Cancel</button>
+                                <button class="save-btn" (click)="saveEditing(item)">Save</button>
+                            </div>
+                        </div>
+
+                        <!-- Delete Button (Owner Only) -->
+                        <button class="delete-btn" *ngIf="isOwner"
+                            (click)="onDeletePlace(item.tripPlaceId); $event.stopPropagation()">
+                            <mat-icon>close</mat-icon>
+                        </button>
                     </div>
-                    <!-- Fallback Travel Stats (Mock for demo) -->
-                    <div class="travel-stats" *ngIf="!last && !item.distanceFromPrev">
-                        <mat-icon>directions_car</mat-icon>
-                        <span>15 min drive</span>
-                        <span class="dot-separator">•</span>
-                        <span>5.2 km</span>
-                    </div>
+
+                    <!-- Travel Connector -->
+                    <ng-container *ngIf="!last">
+                        <!-- View Mode -->
+                        <div class="travel-connector" [class.editable]="enableInlineEditing && isOwner"
+                            *ngIf="editingConnectorId !== group.places[i + 1]?.tripPlaceId"
+                            (click)="enableInlineEditing && isOwner && startConnectorEditing(group.places[i + 1]); $event.stopPropagation()">
+                            <div class="travel-line"></div>
+                            <div class="travel-info">
+                                <mat-icon>{{ getTransportIcon(group.places[i + 1]?.transportMode || item.transportMode) }}</mat-icon>
+                                <span *ngIf="group.places[i + 1]?.travelTimeFromPrev || item.travelTimeFromPrev">
+                                    {{ formatTravelTime(group.places[i + 1]?.travelTimeFromPrev || item.travelTimeFromPrev) }}
+                                </span>
+                                <span class="separator" *ngIf="(group.places[i + 1]?.travelTimeFromPrev || item.travelTimeFromPrev) && item.distanceFromPrev">•</span>
+                                <span *ngIf="item.distanceFromPrev">{{ formatDistance(item.distanceFromPrev) }}</span>
+                                <mat-icon class="edit-hint" *ngIf="enableInlineEditing && isOwner">edit</mat-icon>
+                            </div>
+                        </div>
+                        <!-- Edit Mode -->
+                        <div class="travel-connector connector-edit"
+                            *ngIf="editingConnectorId === group.places[i + 1]?.tripPlaceId && connectorEditData"
+                            (click)="$event.stopPropagation()">
+                            <div class="transport-chips">
+                                <button *ngFor="let mode of transportModes" class="transport-chip"
+                                    [class.active]="connectorEditData.transportMode === mode.value"
+                                    (click)="connectorEditData.transportMode = mode.value">
+                                    <mat-icon>{{ mode.icon }}</mat-icon>
+                                    <span>{{ mode.label }}</span>
+                                </button>
+                            </div>
+                            <div class="connector-time-input">
+                                <label>Travel Time (mins)</label>
+                                <input type="number" [(ngModel)]="connectorEditData.travelTimeFromPrev" min="1" max="1440">
+                            </div>
+                            <div class="connector-edit-actions">
+                                <button class="cancel-btn" (click)="cancelConnectorEditing()">Cancel</button>
+                                <button class="save-btn" (click)="saveConnectorEditing(group.places[i + 1])">Save</button>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- CDK Drag Placeholder -->
+                    <div class="drag-placeholder" *cdkDragPlaceholder></div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="groupedPlaces.length === 0">
+        <div class="empty-icon">
+            <mat-icon>map</mat-icon>
+        </div>
+        <h3>No Places Yet</h3>
+        <p>Start building your itinerary by adding places to visit</p>
     </div>
 </div>

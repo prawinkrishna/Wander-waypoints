@@ -1,0 +1,120 @@
+<h2 mat-dialog-title>
+    <mat-icon>confirmation_number</mat-icon>
+    Book "{{ data.trip.title }}"
+</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="bookingForm">
+        <!-- Trip Summary -->
+        <div class="trip-summary">
+            <div class="price-info">
+                <span class="label">Price per person:</span>
+                <span class="price">{{ data.trip.currency || 'INR' }} {{ data.trip.pricePerPerson | number }}</span>
+            </div>
+            <div class="slots-info">
+                <mat-icon>event_seat</mat-icon>
+                <span>{{ availableSlots }} slots available</span>
+            </div>
+        </div>
+
+        <!-- Travel Date -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select Travel Date</mat-label>
+            <mat-select formControlName="travelDate" required>
+                <mat-option *ngFor="let date of data.trip.availableDates" [value]="date">
+                    {{ date | date:'fullDate' }}
+                </mat-option>
+                <mat-option *ngIf="!data.trip.availableDates?.length" [value]="null" disabled>
+                    No dates available - contact agency
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="bookingForm.get('travelDate')?.hasError('required')">
+                Please select a travel date
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Number of Travelers -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Number of Travelers</mat-label>
+            <input matInput type="number" formControlName="numberOfTravelers" [min]="data.trip.minGroupSize || 1"
+                [max]="Math.min(data.trip.maxGroupSize || 20, availableSlots)">
+            <mat-hint>
+                <span *ngIf="data.trip.minGroupSize">Min: {{ data.trip.minGroupSize }}</span>
+                <span *ngIf="data.trip.maxGroupSize"> | Max: {{ data.trip.maxGroupSize }}</span>
+            </mat-hint>
+            <mat-error>Please enter a valid number of travelers</mat-error>
+        </mat-form-field>
+
+        <!-- Contact Information -->
+        <h3>Contact Information</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Full Name</mat-label>
+            <input matInput formControlName="contactName" placeholder="Your full name">
+            <mat-error>Name is required</mat-error>
+        </mat-form-field>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="contactEmail" placeholder="your@email.com">
+                <mat-error>Valid email is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Phone</mat-label>
+                <input matInput formControlName="contactPhone" placeholder="10-digit mobile">
+                <mat-error>Valid 10-digit phone required</mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Traveler Details -->
+        <h3>Traveler Details</h3>
+        <div formArrayName="travelerDetails">
+            <div class="traveler-card" *ngFor="let traveler of travelerDetails.controls; let i = index"
+                [formGroupName]="i">
+                <span class="traveler-number">Traveler {{ i + 1 }}</span>
+                <mat-form-field appearance="outline">
+                    <mat-label>Name</mat-label>
+                    <input matInput formControlName="name" placeholder="Full name">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="small">
+                    <mat-label>Age</mat-label>
+                    <input matInput type="number" formControlName="age">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="small">
+                    <mat-label>Gender</mat-label>
+                    <mat-select formControlName="gender">
+                        <mat-option value="male">Male</mat-option>
+                        <mat-option value="female">Female</mat-option>
+                        <mat-option value="other">Other</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- Special Requests -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Special Requests (Optional)</mat-label>
+            <textarea matInput formControlName="specialRequests" rows="2"
+                placeholder="Any dietary requirements, accessibility needs, etc."></textarea>
+        </mat-form-field>
+
+        <!-- Total -->
+        <div class="total-section">
+            <div class="total-row">
+                <span>{{ bookingForm.get('numberOfTravelers')?.value }} traveler(s) × {{ data.trip.currency || 'INR' }}
+                    {{ data.trip.pricePerPerson | number }}</span>
+                <span class="total-amount">{{ data.trip.currency || 'INR' }} {{ totalAmount | number }}</span>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="isSubmitting">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="bookingForm.invalid || isSubmitting">
+        <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
+        <span *ngIf="!isSubmitting">Confirm Booking</span>
+    </button>
+</mat-dialog-actions>

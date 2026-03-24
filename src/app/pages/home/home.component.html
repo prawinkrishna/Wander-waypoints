@@ -1,12 +1,81 @@
 <app-navbar></app-navbar>
-<div class="home-container">
-  <!-- Left Panel -->
-  <div class="list-panel">
-    <app-places-list (placeSelected)="onPlaceSelected($event)" (placesFetched)="onPlacesFetched($event)" [selectedPlaceId]="selectedPlace?.placeId"></app-places-list>
+
+<div class="home-page">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Where to next?</h1>
+
+      <div class="magic-input-container" (click)="openAiPlanner()">
+        <mat-icon class="magic-icon">auto_awesome</mat-icon>
+        <span class="placeholder-text">Plan a weekend in Bali...</span>
+        <span class="shortcut-hint">⌘ K</span>
+      </div>
+    </div>
   </div>
 
-  <!-- Right Panel -->
-  <div class="map-panel">
-    <lib-gps [places]="filteredPlaces" [selectedPlace]="selectedPlace" (markerClicked)="onMarkerClicked($event)"></lib-gps>
+  <!-- Discovery Feed -->
+  <div class="feed-section">
+
+    <!-- Friend Stories / Footprints -->
+    <div class="section-header">
+      <h2>Friend Footprints</h2>
+      <span class="see-all" (click)="scrollToMap()" style="cursor: pointer;">View Map</span>
+    </div>
+
+    <div class="stories-container">
+      <div class="story-circle add-story">
+        <mat-icon>add</mat-icon>
+      </div>
+      <div class="story-circle" *ngFor="let friend of friends; trackBy: trackByFriendId" (click)="viewProfile(friend.id)">
+        <img [src]="friend.avatar" [alt]="friend.name" loading="lazy"
+          (error)="$any($event.target).src='https://ui-avatars.com/api/?name=' + friend.name">
+        <span class="story-name">{{ friend.name }}</span>
+      </div>
+    </div>
+
+    <!-- Trending Trips -->
+    <div class="section-header">
+      <h2>Trending This Week</h2>
+    </div>
+
+    <!-- Skeleton loaders while loading -->
+    <div class="trending-grid" *ngIf="trendingTrips.length === 0" aria-busy="true">
+      <div class="skeleton-card" *ngFor="let i of [1,2,3]">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-body">
+          <div class="skeleton-title"></div>
+          <div class="skeleton-text"></div>
+          <div class="skeleton-text-short"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trending-grid animate-cards" *ngIf="trendingTrips.length > 0">
+      <div class="trip-card" *ngFor="let trip of trendingTrips; trackBy: trackByTripId" (click)="viewTrip(trip.id)">
+        <div class="card-image" [style.backgroundImage]="'url(' + trip.image + ')'">
+          <span class="trip-badge">{{ trip.days }} Days</span>
+        </div>
+        <div class="card-info">
+          <h3>{{ trip.title }}</h3>
+          <div class="author">by {{ trip.author }}</div>
+          <div class="stats">
+            <span><mat-icon>visibility</mat-icon> {{ trip.clones }}</span>
+            <span><mat-icon>star</mat-icon> {{ trip.rating }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map Section Intergration (Optional based on design, but good for context) -->
+    <div class="section-header" style="margin-top: 32px;">
+      <h2>Explore Nearby</h2>
+    </div>
+    <div id="explore-map" style="height: 400px; border-radius: 16px; overflow: hidden; margin-top: 16px;">
+      <lib-gps [places]="filteredPlaces" [selectedPlace]="selectedPlace" [friends]="friends"
+        (markerClicked)="onMarkerClicked($any($event))" (mapMoved)="onMapMoved($any($event))" [searchFn]="mapSearchFn"></lib-gps>
+    </div>
+
   </div>
 </div>

@@ -1,0 +1,69 @@
+<div class="itinerary-list-container">
+    <div class="page-header">
+        <div>
+            <h1>My Itineraries</h1>
+            <p>Manage and export your created itineraries</p>
+        </div>
+        <button mat-raised-button color="primary" (click)="createNew()">
+            <mat-icon>add</mat-icon>
+            Create New
+        </button>
+    </div>
+
+    <div class="content" *ngIf="!isLoading; else loading">
+        <div class="itinerary-grid" *ngIf="itineraries.length > 0; else empty">
+            <mat-card class="itinerary-card" *ngFor="let trip of itineraries" (click)="editItinerary(trip.tripId)">
+                <div class="card-header">
+                    <h3>{{ trip.title }}</h3>
+                    <span class="duration-badge">{{ getDuration(trip) }}</span>
+                </div>
+
+                <div class="card-content">
+                    <div class="info-row">
+                        <mat-icon>calendar_today</mat-icon>
+                        <span>{{ formatDate(trip.startDate) }} - {{ formatDate(trip.endDate) }}</span>
+                    </div>
+                    <div class="info-row" *ngIf="trip.clientName">
+                        <mat-icon>person</mat-icon>
+                        <span>{{ trip.clientName }}</span>
+                    </div>
+                    <div class="info-row" *ngIf="trip.grandTotal">
+                        <mat-icon>currency_rupee</mat-icon>
+                        <span>{{ formatCurrency(trip.grandTotal) }}</span>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <button mat-icon-button matTooltip="Edit" (click)="editItinerary(trip.tripId); $event.stopPropagation()">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Download PDF" (click)="downloadPdf(trip.tripId, $event)">
+                        <mat-icon>picture_as_pdf</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Delete" color="warn" (click)="deleteItinerary(trip.tripId, $event)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </mat-card>
+        </div>
+
+        <ng-template #empty>
+            <div class="empty-state">
+                <mat-icon>description</mat-icon>
+                <h3>No itineraries yet</h3>
+                <p>Create your first itinerary to get started</p>
+                <button mat-raised-button color="primary" (click)="createNew()">
+                    <mat-icon>add</mat-icon>
+                    Create Itinerary
+                </button>
+            </div>
+        </ng-template>
+    </div>
+
+    <ng-template #loading>
+        <div class="loading-container">
+            <mat-spinner></mat-spinner>
+            <p>Loading itineraries...</p>
+        </div>
+    </ng-template>
+</div>

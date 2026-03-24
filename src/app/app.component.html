@@ -1,1 +1,20 @@
-<router-outlet></router-outlet>
+<!-- Skip to main content - Accessibility -->
+<a class="skip-to-main" href="#main-content">Skip to main content</a>
+
+<!-- Top loading bar -->
+<div class="loading-bar" [class.active]="isLoading" role="progressbar" aria-label="Page loading"></div>
+
+<div class="app-container">
+  <div id="main-content" [@routeAnimation]="true">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<!-- Offline detection banner -->
+<div class="offline-banner" *ngIf="isOffline" role="alert">
+  <mat-icon>wifi_off</mat-icon>
+  <span>You're offline. Some features may be unavailable.</span>
+</div>
+
+<!-- Screen reader route announcer -->
+<div id="route-announcer" class="cdk-visually-hidden" aria-live="assertive" aria-atomic="true"></div>

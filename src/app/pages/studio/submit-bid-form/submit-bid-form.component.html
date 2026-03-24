@@ -1,0 +1,70 @@
+<mat-card class="bid-form-card">
+    <h3 class="form-title">{{ isEditing ? 'Update Your Bid' : 'Submit a Bid' }}</h3>
+    <mat-divider></mat-divider>
+
+    <form [formGroup]="bidForm" (ngSubmit)="onSubmit()" class="bid-form">
+        <!-- Proposed Price -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Proposed Price (INR)</mat-label>
+            <input matInput
+                   type="number"
+                   formControlName="proposedPrice"
+                   placeholder="Enter your price" />
+            <mat-icon matPrefix>currency_rupee</mat-icon>
+            <mat-error *ngIf="bidForm.get('proposedPrice')?.hasError('required')">
+                Price is required
+            </mat-error>
+            <mat-error *ngIf="bidForm.get('proposedPrice')?.hasError('min')">
+                Price must be at least 1
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Proposal Description</mat-label>
+            <textarea matInput
+                      formControlName="description"
+                      placeholder="Describe what you're offering, your expertise, inclusions, etc."
+                      rows="5"
+                      cdkTextareaAutosize
+                      cdkAutosizeMinRows="4"
+                      cdkAutosizeMaxRows="10"></textarea>
+            <mat-error *ngIf="bidForm.get('description')?.hasError('required')">
+                Description is required
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Valid Until -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Bid Valid Until (optional)</mat-label>
+            <input matInput
+                   [matDatepicker]="validPicker"
+                   formControlName="validUntil"
+                   [min]="minDate"
+                   placeholder="Choose a date" />
+            <mat-datepicker-toggle matSuffix [for]="validPicker"></mat-datepicker-toggle>
+            <mat-datepicker #validPicker></mat-datepicker>
+            <mat-hint>Leave empty if no expiration</mat-hint>
+        </mat-form-field>
+
+        <!-- Actions -->
+        <div class="form-actions">
+            <button mat-stroked-button
+                    type="button"
+                    (click)="onCancel()"
+                    [disabled]="isSubmitting">
+                Cancel
+            </button>
+            <button mat-flat-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="bidForm.invalid || isSubmitting">
+                <mat-spinner *ngIf="isSubmitting" diameter="20" class="btn-spinner"></mat-spinner>
+                <span *ngIf="!isSubmitting">
+                    <mat-icon>{{ isEditing ? 'edit' : 'send' }}</mat-icon>
+                    {{ isEditing ? 'Update Bid' : 'Submit Bid' }}
+                </span>
+            </button>
+        </div>
+    </form>
+</mat-card>

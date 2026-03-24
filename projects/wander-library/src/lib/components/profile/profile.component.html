@@ -1,71 +1,165 @@
-<div class="profile-page">
-  <div class="profile-container">
-    <!-- Cover and Profile Section -->
-    <div class="cover-section">
-      <img [src]="userProfile.coverImage" alt="Cover" class="cover-image">
+<div class="profile-page" *ngIf="user; else loadingTpl">
+  <!-- Cover Photo Section -->
+  <div class="cover-section">
+    <div class="cover-photo" [style.backgroundImage]="'url(' + (user.coverImage || getDefaultCover()) + ')'">
+      <div class="cover-overlay"></div>
+    </div>
+    <div class="avatar-wrapper">
+      <img [src]="user.profileImage || getDefaultAvatar()" class="avatar" [alt]="user.username">
+      <span class="verified-badge" *ngIf="user.role === 'influencer'">
+        <mat-icon>verified</mat-icon>
+      </span>
+    </div>
+  </div>
 
-      <div class="profile-overlay">
-        <div class="profile-details">
-          <img [src]="userProfile.profileImage" alt="Profile" class="profile-image">
+  <!-- User Info Section -->
+  <div class="user-info">
+    <h1 class="username">{{ user.username }}</h1>
+    <p class="bio">{{ user.bio || 'Explorer at heart 🌍' }}</p>
 
-          <div class="profile-actions">
-            <button class="edit-button" >
-              <i class="edit-icon"></i>
-              Edit Profile
-            </button>
-            <button class="settings-button" >
-              <i class="settings-icon"></i>
-            </button>
-          </div>
+    <div class="member-since">
+      <mat-icon>calendar_today</mat-icon>
+      <span>Explorer since {{ getMemberSince() }}</span>
+    </div>
+
+    <!-- Agency Badges -->
+    <div class="agency-badges" *ngIf="user.agencies?.length">
+      <span class="badge-label">Represents</span>
+      <div class="badges-row">
+        <div class="agency-badge" *ngFor="let agency of user.agencies">
+          <img [src]="agency.logoUrl || 'assets/agency-placeholder.png'" [alt]="agency.name">
+          <span>{{ agency.name }}</span>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- User Info Section -->
-    <div class="user-info">
-      <h1>{{ userProfile.name }}</h1>
-      <p class="username">{{ userProfile.username }}</p>
-      <p class="bio">{{ userProfile.bio }}</p>
-
-      <div class="user-details">
-        <div class="detail">
-          <i class="location-icon"></i>
-          {{ userProfile.location }}
-        </div>
-        <div class="detail">
-          <i class="calendar-icon"></i>
-          Joined {{ userProfile.joinDate }}
-        </div>
-      </div>
-
-      <!-- Profile Stats -->
-      <div class="stats">
-        <div 
-          class="stat" 
-          *ngFor="let stat of profileStats">
-          <span class="stat-value">{{ stat.value }}</span>
-          <span class="stat-label">{{ stat.label }}</span>
-        </div>
+  <!-- Travel Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <mat-icon>public</mat-icon>
+      <div class="stat-content">
+        <span class="stat-value">{{ profileStats.countries }}</span>
+        <span class="stat-label">Countries</span>
       </div>
     </div>
+    <div class="stat-item">
+      <mat-icon>flight_takeoff</mat-icon>
+      <div class="stat-content">
+        <span class="stat-value">{{ profileStats.trips }}</span>
+        <span class="stat-label">Trips</span>
+      </div>
+    </div>
+    <div class="stat-item">
+      <mat-icon>people</mat-icon>
+      <div class="stat-content">
+        <span class="stat-value">{{ profileStats.followers }}</span>
+        <span class="stat-label">Followers</span>
+      </div>
+    </div>
+  </div>
 
-    <!-- Tabs Navigation -->
-    <div class="tabs">
-      <button 
-        *ngFor="let tab of tabs"
-        (click)="setActiveTab(tab)"
-        [class.active]="activeTab === tab"
-        class="tab-button">
-        {{ tab }}
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <!-- Own Profile: Edit Button -->
+    <ng-container *ngIf="isOwnProfile">
+      <button mat-flat-button color="primary" class="edit-btn" (click)="onEditProfile()">
+        <mat-icon>edit</mat-icon>
+        <span>Edit Profile</span>
+      </button>
+    </ng-container>
+
+    <!-- Other Profile: Follow/Message Buttons -->
+    <ng-container *ngIf="!isOwnProfile">
+      <button mat-flat-button color="primary" class="follow-btn" (click)="onFollowClick()"
+        [class.following]="followStatus === 'ACCEPTED'" [class.requested]="followStatus === 'PENDING'">
+        <mat-icon>{{ getFollowButtonIcon() }}</mat-icon>
+        <span>{{ getFollowButtonText() }}</span>
+      </button>
+    </ng-container>
+  </div>
+
+  <!-- Private Account Guard -->
+  <div class="private-guard" *ngIf="!user.isPublicProfile && !isOwnProfile && followStatus !== 'ACCEPTED'">
+    <div class="lock-container">
+      <mat-icon>lock</mat-icon>
+    </div>
+    <h3>This Explorer's Journey is Private</h3>
+    <p>Follow to see their trips and adventures.</p>
+  </div>
+
+  <!-- Content Tabs -->
+  <div class="content-section" *ngIf="user.isPublicProfile || isOwnProfile || followStatus === 'ACCEPTED'">
+    <div class="tabs-header">
+      <button class="tab-btn" [class.active]="activeTab === 'trips'" (click)="setActiveTab('trips')">
+        <mat-icon>map</mat-icon>
+        Trips
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'map'" (click)="setActiveTab('map')">
+        <mat-icon>explore</mat-icon>
+        Map
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'saved'" (click)="setActiveTab('saved')">
+        <mat-icon>bookmark</mat-icon>
+        Saved
       </button>
     </div>
 
-    <!-- Trips Section -->
-    <div class="trips-grid" *ngIf="activeTab === 'Trips'">
-      <lib-trip-card ></lib-trip-card>
-        <!-- *ngFor="let trip of userProfile.recentTrips"
-        [trip]="trip">
-      </lib-trip-card> -->
+    <!-- Trips Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'trips'">
+      <div class="trips-grid" *ngIf="user.trips?.length; else noTrips">
+        <div class="trip-card" *ngFor="let trip of user.trips" (click)="onTripClick(trip.tripId)">
+          <div class="trip-image" [style.backgroundImage]="'url(' + getTripImage(trip) + ')'">
+            <span class="trip-duration">{{ getDuration(trip) }}</span>
+          </div>
+          <div class="trip-details">
+            <h4>{{ trip.title }}</h4>
+            <span class="trip-date">{{ trip.startDate | date:'MMM yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+      <ng-template #noTrips>
+        <div class="empty-state">
+          <mat-icon>flight</mat-icon>
+          <p>No trips yet. Adventures await!</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Map Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'map'">
+      <div class="profile-map-container" *ngIf="mapPlaces.length > 0">
+        <lib-gps [places]="mapPlaces"></lib-gps>
+      </div>
+      <div class="empty-state" *ngIf="mapPlaces.length === 0">
+        <mat-icon>map</mat-icon>
+        <p>No visited places yet. Start traveling to see your map!</p>
+      </div>
+    </div>
+
+    <!-- Saved Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'saved'">
+      <div class="trips-grid" *ngIf="savedTrips.length > 0">
+        <div class="trip-card" *ngFor="let trip of savedTrips" (click)="onTripClick(trip.tripId)">
+          <div class="trip-image" [style.backgroundImage]="'url(' + getTripImage(trip) + ')'">
+            <span class="trip-duration">{{ getDuration(trip) }}</span>
+          </div>
+          <div class="trip-details">
+            <h4>{{ trip.title }}</h4>
+            <span class="trip-date">{{ trip.startDate | date:'MMM yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="savedTrips.length === 0">
+        <mat-icon>bookmark_border</mat-icon>
+        <p>No saved trips yet. Like trips to save them here!</p>
+      </div>
     </div>
   </div>
 </div>
+
+<ng-template #loadingTpl>
+  <div class="loading-state" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+</ng-template>

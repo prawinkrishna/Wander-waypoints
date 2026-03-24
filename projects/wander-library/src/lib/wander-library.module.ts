@@ -7,6 +7,8 @@ import { TripCardComponent } from './components/trip-card/trip-card.component';
 import { ItineraryComponent } from './components/itinerary/itinerary.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { IonicModule } from '@ionic/angular';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
@@ -14,17 +16,19 @@ import { ApiService } from './provider/api.service';
 
 
 @NgModule({
-  declarations: [ProfileComponent,WanderLibraryComponent,TripCardComponent,ItineraryComponent,GpsComponent],
+  declarations: [ProfileComponent, WanderLibraryComponent, TripCardComponent, ItineraryComponent, GpsComponent],
   imports: [
     CommonModule,
     MatCardModule,
     MatIconModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
     IonicModule.forRoot(),
     DragDropModule,
     HttpClientModule
-
   ],
-  exports: [ProfileComponent,WanderLibraryComponent,TripCardComponent,ItineraryComponent,GpsComponent, MatIconModule],
+  exports: [ProfileComponent, WanderLibraryComponent, TripCardComponent, ItineraryComponent, GpsComponent, MatIconModule],
   providers: [ApiService]
 })
 export class WanderLibraryModule { }
+

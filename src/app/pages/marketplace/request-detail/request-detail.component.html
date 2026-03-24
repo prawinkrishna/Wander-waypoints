@@ -1,0 +1,166 @@
+<div class="request-detail-page">
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading request details...</p>
+    </div>
+
+    <ng-container *ngIf="!isLoading && request">
+        <!-- Back Button -->
+        <button mat-button class="back-btn" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            Back to My Requests
+        </button>
+
+        <!-- Request Header Card -->
+        <mat-card class="request-header-card">
+            <div class="header-top">
+                <h1 class="request-title">{{ request.title }}</h1>
+                <span class="status-badge" [ngClass]="getStatusClass(request.status)">
+                    {{ getStatusLabel(request.status) }}
+                </span>
+            </div>
+
+            <p class="request-description">{{ request.description }}</p>
+
+            <div class="details-grid">
+                <div class="detail-item">
+                    <mat-icon>place</mat-icon>
+                    <div class="detail-text">
+                        <span class="detail-label">Destination</span>
+                        <span class="detail-value">{{ request.destination }}</span>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <mat-icon>date_range</mat-icon>
+                    <div class="detail-text">
+                        <span class="detail-label">Travel Dates</span>
+                        <span class="detail-value">
+                            {{ request.startDate | date:'mediumDate' }} - {{ request.endDate | date:'mediumDate' }}
+                            <span class="day-count">({{ getDayCount() }} days)</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <mat-icon>people</mat-icon>
+                    <div class="detail-text">
+                        <span class="detail-label">Travelers</span>
+                        <span class="detail-value">
+                            {{ request.numberOfTravelers }} traveler{{ request.numberOfTravelers > 1 ? 's' : '' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <mat-icon>category</mat-icon>
+                    <div class="detail-text">
+                        <span class="detail-label">Trip Type</span>
+                        <span class="detail-value">{{ getTripTypeLabel(request.tripType) }}</span>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <mat-icon>account_balance_wallet</mat-icon>
+                    <div class="detail-text">
+                        <span class="detail-label">Budget</span>
+                        <span class="detail-value budget-value">
+                            {{ formatBudget(request.budgetMin, request.budgetMax) }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <mat-icon>schedule</mat-icon>
+                    <div class="detail-text">
+                        <span class="detail-label">Posted</span>
+                        <span class="detail-value">{{ request.createdAt | date:'mediumDate' }}</span>
+                    </div>
+                </div>
+            </div>
+        </mat-card>
+
+        <!-- Accepted Bid Highlight -->
+        <div class="accepted-bid-section" *ngIf="getAcceptedBid() as acceptedBid">
+            <h2 class="section-title accepted-title">
+                <mat-icon>check_circle</mat-icon>
+                Accepted Proposal
+            </h2>
+            <app-bid-card
+                [bid]="acceptedBid"
+                [isOwner]="isOwner"
+                [showActions]="false"
+                (viewDetails)="onViewBid($event)">
+            </app-bid-card>
+        </div>
+
+        <!-- Bids Section -->
+        <div class="bids-section">
+            <h2 class="section-title">
+                <mat-icon>gavel</mat-icon>
+                Proposals
+                <span class="count-badge" *ngIf="bids.length > 0">{{ bids.length }}</span>
+            </h2>
+
+            <!-- No Bids -->
+            <div class="empty-bids" *ngIf="bids.length === 0">
+                <mat-icon>inbox</mat-icon>
+                <h3>No proposals yet</h3>
+                <p>Travel agents will review your request and send proposals soon. Check back later!</p>
+            </div>
+
+            <!-- Bid Cards Grid -->
+            <div class="bids-grid" *ngIf="bids.length > 0">
+                <app-bid-card
+                    *ngFor="let bid of bids; trackBy: trackByBidId"
+                    [bid]="bid"
+                    [isOwner]="isOwner"
+                    [showActions]="bid.status === 'pending'"
+                    (accept)="onAcceptBid($event)"
+                    (reject)="onRejectBid($event)"
+                    (viewDetails)="onViewBid($event)">
+                </app-bid-card>
+            </div>
+        </div>
+
+        <!-- Bid Chat Panel -->
+        <div class="chat-section" *ngIf="selectedBid">
+            <div class="chat-header">
+                <h2 class="section-title">
+                    <mat-icon>chat</mat-icon>
+                    Conversation with {{ selectedBid.agency?.name || 'Agent' }}
+                </h2>
+                <button mat-icon-button (click)="closeBidChat()" matTooltip="Close chat">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <app-bid-chat
+                [bidId]="selectedBid.bidId"
+                [currentUserId]="currentUserId">
+            </app-bid-chat>
+        </div>
+    </ng-container>
+
+    <!-- Error State -->
+    <div class="error-state" *ngIf="!isLoading && loadError && !request">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <h3>Failed to load request</h3>
+        <p>Something went wrong. Please try again.</p>
+        <button mat-flat-button color="primary" (click)="loadRequestDetail()">
+            <mat-icon>refresh</mat-icon>
+            Retry
+        </button>
+    </div>
+
+    <!-- Not Found State -->
+    <div class="empty-state" *ngIf="!isLoading && !request && !loadError">
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <h3>Request not found</h3>
+        <p>This trip request may have been removed or you don't have access to it.</p>
+        <button mat-flat-button color="primary" routerLink="/marketplace">
+            <mat-icon>arrow_back</mat-icon>
+            Back to Marketplace
+        </button>
+    </div>
+</div>

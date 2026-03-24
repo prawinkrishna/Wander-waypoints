@@ -1,0 +1,148 @@
+/* =============================================================================
+   TRIP MANAGEMENT PAGE - Electric Horizon Theme
+   ============================================================================= */
+
+.trip-management-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--color-background);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.content-padding {
+  padding: var(--space-4);
+  overflow-y: auto;
+}
+
+.table-container {
+  overflow-x: auto;
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  padding: 0;
+}
+
+.trip-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+
+  th {
+    text-align: left;
+    padding: var(--space-4);
+    color: var(--color-text-secondary);
+    font-size: var(--text-caption);
+    font-weight: var(--font-weight-semibold);
+    border-bottom: 1px solid var(--color-border);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    font-size: var(--text-body-sm);
+    vertical-align: middle;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover {
+    background-color: var(--color-background);
+  }
+
+  .trip-title {
+    font-weight: var(--font-weight-semibold);
+    color: var(--primary);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.status-badge {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-xs);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+  color: white;
+
+  &.success {
+    background-color: var(--color-success);
+  }
+  &.warning {
+    background-color: var(--color-warning);
+  }
+  &.medium {
+    background-color: var(--color-disabled);
+  }
+  &.primary {
+    background-color: var(--primary);
+  }
+}
+
+/* =============================================================================
+   RESPONSIVE
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  .content-padding {
+    padding: var(--space-3);
+  }
+
+  mat-toolbar {
+    padding: 0 var(--space-3);
+
+    h2 {
+      font-size: var(--text-body-lg);
+    }
+
+    button {
+      padding: 0 var(--space-3);
+      
+      span {
+        display: none;
+      }
+    }
+  }
+
+  .table-container {
+    border-radius: var(--radius-xs);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .trip-table {
+    min-width: 550px;
+
+    th, td {
+      padding: var(--space-3);
+      font-size: var(--text-caption);
+    }
+
+    // Hide less important columns on mobile
+    th:nth-child(4),
+    td:nth-child(4) {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .trip-table {
+    min-width: 450px;
+
+    // Hide even more columns on very small screens
+    th:nth-child(3),
+    td:nth-child(3) {
+      display: none;
+    }
+  }
+}

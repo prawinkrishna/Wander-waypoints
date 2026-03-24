@@ -1,0 +1,23 @@
+/* =============================================================================
+   APP COMPONENT ROOT - Trekio Theme
+   ============================================================================= */
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background);
+}
+
+/* CDK Visually Hidden (for screen readers) */
+.cdk-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,145 @@
+<div class="dashboard-container">
+    <!-- Non-Agent Onboarding -->
+    <ng-container *ngIf="!isAgencyUser">
+        <div class="onboarding-section">
+            <div class="onboarding-card">
+                <div class="onboarding-icon">
+                    <mat-icon>business_center</mat-icon>
+                </div>
+                <h2>Become a Travel Agent</h2>
+                <p>Create professional itineraries with AI, export branded PDFs, and manage your travel business — all from Trekio Studio.</p>
+                <div class="onboarding-features">
+                    <div class="onboarding-feature">
+                        <mat-icon>auto_awesome</mat-icon>
+                        <span>AI-powered itinerary generation</span>
+                    </div>
+                    <div class="onboarding-feature">
+                        <mat-icon>picture_as_pdf</mat-icon>
+                        <span>Professional PDF exports</span>
+                    </div>
+                    <div class="onboarding-feature">
+                        <mat-icon>branding_watermark</mat-icon>
+                        <span>Custom agency branding</span>
+                    </div>
+                </div>
+                <div class="onboarding-actions">
+                    <button mat-raised-button color="primary" (click)="navigateToSettings()">
+                        <mat-icon>upgrade</mat-icon>
+                        Become an Agent
+                    </button>
+                    <button mat-stroked-button (click)="browseTrips()">
+                        <mat-icon>explore</mat-icon>
+                        Browse Trips Instead
+                    </button>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Agent Dashboard -->
+    <ng-container *ngIf="isAgencyUser">
+        <!-- Welcome Header -->
+        <div class="dashboard-header">
+            <h1 class="welcome-title">Welcome back, {{ userName }}!</h1>
+            <p class="welcome-subtitle">Here's an overview of your itineraries</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <mat-card class="stat-card">
+                <mat-card-content>
+                    <div class="stat-icon total">
+                        <mat-icon>description</mat-icon>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value">{{ stats.totalItineraries }}</span>
+                        <span class="stat-label">Total Itineraries</span>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="stat-card">
+                <mat-card-content>
+                    <div class="stat-icon month">
+                        <mat-icon>calendar_month</mat-icon>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value">{{ stats.thisMonth }}</span>
+                        <span class="stat-label">This Month</span>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="stat-card">
+                <mat-card-content>
+                    <div class="stat-icon drafts">
+                        <mat-icon>edit_note</mat-icon>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value">{{ stats.drafts }}</span>
+                        <span class="stat-label">Drafts</span>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button mat-raised-button color="primary" class="create-btn" (click)="createNewItinerary()">
+                <mat-icon>add</mat-icon>
+                Create New Itinerary
+            </button>
+        </div>
+
+        <!-- Recent Itineraries -->
+        <div class="recent-section">
+            <div class="section-header">
+                <h2 class="section-title">Recent Itineraries</h2>
+                <button mat-button color="primary" (click)="viewAllItineraries()" *ngIf="recentItineraries.length > 0">
+                    View All
+                    <mat-icon>arrow_forward</mat-icon>
+                </button>
+            </div>
+
+            <div class="loading-container" *ngIf="isLoading">
+                <mat-spinner diameter="40"></mat-spinner>
+            </div>
+
+            <div class="empty-state" *ngIf="!isLoading && recentItineraries.length === 0">
+                <mat-icon class="empty-icon">travel_explore</mat-icon>
+                <h3>No itineraries yet</h3>
+                <p>Create your first itinerary to get started!</p>
+                <button mat-raised-button color="primary" (click)="createNewItinerary()">
+                    <mat-icon>add</mat-icon>
+                    Create Itinerary
+                </button>
+            </div>
+
+            <div class="itineraries-list" *ngIf="!isLoading && recentItineraries.length > 0">
+                <mat-card class="itinerary-card" *ngFor="let itinerary of recentItineraries" (click)="editItinerary(itinerary.tripId)">
+                    <mat-card-content>
+                        <div class="itinerary-info">
+                            <h3 class="itinerary-title">{{ itinerary.title || 'Untitled Itinerary' }}</h3>
+                            <p class="itinerary-meta">
+                                <span class="client-name" *ngIf="itinerary.clientName">
+                                    <mat-icon>person</mat-icon>
+                                    {{ itinerary.clientName }}
+                                </span>
+                                <span class="date">
+                                    <mat-icon>event</mat-icon>
+                                    {{ formatDate(itinerary.createdAt) }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="itinerary-status">
+                            <span class="status-badge" [ngClass]="getStatusClass(itinerary)">
+                                {{ getStatusLabel(itinerary) }}
+                            </span>
+                            <mat-icon class="arrow-icon">chevron_right</mat-icon>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </ng-container>
+</div>

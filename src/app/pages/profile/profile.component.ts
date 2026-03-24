@@ -87,6 +87,6 @@ export class ProfileComponent implements OnInit {
     // Router navigation should be handled by AuthService or component if needed, 
     // but usually AuthService.logout() clears state. 
     // We might want to redirect to /auth here.
-    window.location.href = '/auth';
+    window.location.href = '/login';
   }
 }

@@ -1,0 +1,283 @@
+/* =============================================================================
+   PLACE SEARCH DIALOG - Electric Horizon Theme
+   ============================================================================= */
+
+.place-search-dialog {
+    padding: var(--space-2);
+    min-width: 450px;
+    max-width: 500px;
+
+    h2 {
+        font-size: var(--text-h3);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin: 0 0 var(--space-4);
+    }
+}
+
+.current-place {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-background);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-4);
+
+    .label {
+        font-size: var(--text-caption);
+        color: var(--color-text-tertiary);
+        font-weight: var(--font-weight-medium);
+    }
+
+    .name {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+    }
+
+    .address {
+        font-size: var(--text-body-sm);
+        color: var(--color-text-secondary);
+    }
+}
+
+.mode-toggle {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    padding: var(--space-1);
+    background: var(--color-background);
+    border-radius: var(--radius-md);
+}
+
+.mode-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: var(--text-body-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+
+    &:hover {
+        color: var(--color-text-primary);
+    }
+
+    &.active {
+        background: var(--color-surface);
+        color: var(--primary);
+        box-shadow: var(--shadow-sm);
+
+        mat-icon {
+            color: var(--primary);
+        }
+    }
+}
+
+.full-width {
+    width: 100%;
+}
+
+.search-results {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    margin-top: calc(-1 * var(--space-4));
+    margin-bottom: var(--space-4);
+}
+
+.result-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    width: 100%;
+    border: none;
+    background: var(--color-surface);
+    cursor: pointer;
+    text-align: left;
+    border-bottom: 1px solid var(--color-background);
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &:hover {
+        background: var(--color-background);
+    }
+
+    mat-icon {
+        color: var(--primary);
+        margin-top: 2px;
+    }
+
+    .result-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        overflow: hidden;
+        flex: 1;
+    }
+
+    .result-name {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+    }
+
+    .result-address {
+        font-size: var(--text-caption);
+        color: var(--color-text-tertiary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.url-mode {
+    .parse-btn {
+        width: 100%;
+        margin-top: calc(-1 * var(--space-2));
+        margin-bottom: var(--space-4);
+
+        mat-spinner {
+            display: inline-block;
+        }
+    }
+}
+
+.url-error {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: rgba(245, 101, 101, 0.1);
+    border-radius: var(--radius-sm);
+    color: var(--color-error);
+    font-size: var(--text-body-sm);
+    margin-bottom: var(--space-4);
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.url-hint {
+    padding: var(--space-3);
+    background: var(--color-background);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-4);
+
+    p {
+        font-size: var(--text-caption);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-secondary);
+        margin: 0 0 var(--space-2);
+    }
+
+    ul {
+        margin: 0;
+        padding-left: var(--space-4);
+
+        li {
+            font-size: var(--text-caption);
+            color: var(--color-text-tertiary);
+            font-family: monospace;
+            margin-bottom: var(--space-1);
+        }
+    }
+}
+
+.selected-place {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: rgba(72, 187, 120, 0.1);
+    border: 1px solid rgba(72, 187, 120, 0.3);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-5);
+
+    mat-icon {
+        color: var(--color-success);
+        margin-top: 2px;
+    }
+
+    .place-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+    }
+
+    .name {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-success);
+    }
+
+    .address {
+        font-size: var(--text-body-sm);
+        color: var(--color-text-secondary);
+    }
+
+    .coords {
+        font-size: var(--text-caption);
+        color: var(--color-text-tertiary);
+        font-family: monospace;
+    }
+}
+
+.actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+
+    button {
+        flex: 1;
+        padding: var(--space-3);
+        border-radius: var(--radius-md);
+        font-size: var(--text-body-sm);
+        font-weight: var(--font-weight-semibold);
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    .cancel-btn {
+        background: var(--color-background);
+        color: var(--color-text-secondary);
+
+        &:hover {
+            background: var(--color-border);
+        }
+    }
+
+    .confirm-btn {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+        color: white;
+
+        &:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+        }
+    }
+}

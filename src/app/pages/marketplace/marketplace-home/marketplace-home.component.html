@@ -1,0 +1,100 @@
+<div class="marketplace-home">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">Marketplace</h1>
+            <p class="page-subtitle">Browse trip requests from travelers and find your next adventure</p>
+        </div>
+        <button mat-flat-button color="primary" class="post-btn" routerLink="/marketplace/create-request">
+            <mat-icon>add</mat-icon>
+            Post Trip Request
+        </button>
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="filters-bar">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput
+                   placeholder="Search by destination..."
+                   [(ngModel)]="destinationFilter"
+                   (keyup.enter)="onSearch()" />
+            <button mat-icon-button matSuffix
+                    *ngIf="destinationFilter"
+                    (click)="destinationFilter = ''; onSearch()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="type-filter">
+            <mat-select [(ngModel)]="tripTypeFilter"
+                        (selectionChange)="onSearch()"
+                        placeholder="Trip Type">
+                <mat-option *ngFor="let type of tripTypes" [value]="type.value">
+                    {{ type.label }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <button mat-stroked-button class="search-btn" (click)="onSearch()">
+            <mat-icon>search</mat-icon>
+            Search
+        </button>
+
+        <button mat-button class="clear-btn"
+                *ngIf="destinationFilter || tripTypeFilter"
+                (click)="clearFilters()">
+            <mat-icon>clear_all</mat-icon>
+            Clear
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading trip requests...</p>
+    </div>
+
+    <!-- Results -->
+    <ng-container *ngIf="!isLoading">
+        <!-- Results Count -->
+        <p class="results-count" *ngIf="requests.length > 0">
+            {{ totalRequests }} trip request{{ totalRequests !== 1 ? 's' : '' }} found
+        </p>
+
+        <!-- Request Grid -->
+        <div class="requests-grid" *ngIf="requests.length > 0">
+            <app-trip-request-card
+                *ngFor="let request of requests; trackBy: trackByRequestId"
+                [request]="request"
+                (viewDetails)="onViewRequest($event)">
+            </app-trip-request-card>
+        </div>
+
+        <!-- Pagination -->
+        <mat-paginator *ngIf="totalRequests > limit"
+                       [length]="totalRequests"
+                       [pageSize]="limit"
+                       [pageIndex]="page - 1"
+                       [pageSizeOptions]="[6, 12, 24]"
+                       (page)="onPageChange($event)"
+                       class="paginator">
+        </mat-paginator>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="requests.length === 0">
+            <mat-icon class="empty-icon">explore</mat-icon>
+            <h3>No trip requests found</h3>
+            <p *ngIf="destinationFilter || tripTypeFilter">
+                Try adjusting your filters or search terms.
+            </p>
+            <p *ngIf="!destinationFilter && !tripTypeFilter">
+                Be the first to post a trip request and get proposals from travel agents!
+            </p>
+            <button mat-flat-button color="primary" routerLink="/marketplace/create-request">
+                <mat-icon>add</mat-icon>
+                Post Trip Request
+            </button>
+        </div>
+    </ng-container>
+</div>

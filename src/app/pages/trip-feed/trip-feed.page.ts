@@ -124,4 +124,8 @@ export class TripFeedPage implements OnInit {
     const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     return `${days} day${days > 1 ? 's' : ''}`;
   }
+
+  trackByTripId(index: number, trip: Trip): string {
+    return trip.tripId;
+  }
 }

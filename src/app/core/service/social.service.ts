@@ -11,23 +11,43 @@ export class SocialService {
 
     constructor(private http: HttpClient) { }
 
-    likeEntity(data: { entityId: string, entityType: 'trip' | 'place' | 'post' }): Observable<any> {
-        return this.http.post(`${this.apiUrl}/likes`, data);
+    getFriendFootprints(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/users/footprints`);
     }
 
-    unlikeEntity(id: string): Observable<any> {
-        return this.http.delete(`${this.apiUrl}/likes/${id}`);
+    getTrendingTrips(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/trip/trending`);
     }
 
-    addComment(data: { entityId: string, entityType: 'trip' | 'place' | 'post', text: string }): Observable<any> {
-        return this.http.post(`${this.apiUrl}/comments`, data);
+    getPublicProfile(userId: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/users/${userId}/public-profile`);
     }
 
-    getComments(entityId: string): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/comments/${entityId}`);
+    followUser(userId: string): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/users/${userId}/follow`, {});
     }
 
-    shareEntity(data: { entityId: string, entityType: 'trip' | 'place', sharedWith: string }): Observable<any> {
-        return this.http.post(`${this.apiUrl}/shares`, data);
+    unfollowUser(userId: string): Observable<any> {
+        return this.http.delete<any>(`${this.apiUrl}/users/${userId}/follow`);
+    }
+
+    updateProfile(userId: string, data: any): Observable<any> {
+        return this.http.patch<any>(`${this.apiUrl}/users/${userId}`, data);
+    }
+
+    getFollowStatus(userId: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/users/${userId}/follow-status`);
+    }
+
+    getPendingRequests(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/users/me/pending-requests`);
+    }
+
+    acceptFollowRequest(requestId: string): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/users/requests/${requestId}/accept`, {});
+    }
+
+    rejectFollowRequest(requestId: string): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/users/requests/${requestId}/reject`, {});
     }
 }
