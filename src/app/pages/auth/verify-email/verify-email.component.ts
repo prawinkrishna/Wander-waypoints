@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../../core/service/auth.service';
 
 type VerifyState = 'pending' | 'verifying' | 'success' | 'error';
@@ -9,7 +11,8 @@ type VerifyState = 'pending' | 'verifying' | 'success' | 'error';
   templateUrl: './verify-email.component.html',
   styleUrls: ['./verify-email.component.scss']
 })
-export class VerifyEmailComponent implements OnInit {
+export class VerifyEmailComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   state: VerifyState = 'pending';
   email = '';
   errorMessage = '';
@@ -22,8 +25,13 @@ export class VerifyEmailComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
       const token = params['token'];
       this.email = params['email'] || '';
 

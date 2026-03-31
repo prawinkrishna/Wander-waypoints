@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../core/service/auth.service';
@@ -21,7 +23,8 @@ interface NotificationSetting {
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   activeSection: string = 'account';
   user: any;
   loading = true;
@@ -71,6 +74,11 @@ export class SettingsComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) { }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnInit() {
     this.isConsumerUser = this.authService.isConsumerUser();
@@ -158,7 +166,7 @@ export class SettingsComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe(confirmed => {
+    dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(confirmed => {
       if (confirmed) {
         const userId = this.user?.userId || this.user?.id;
         if (!userId) return;

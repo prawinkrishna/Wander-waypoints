@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../../core/service/auth.service';
 
 @Component({
@@ -8,7 +10,8 @@ import { AuthService } from '../../../core/service/auth.service';
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.scss']
 })
-export class ResetPasswordComponent implements OnInit {
+export class ResetPasswordComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   resetPasswordForm: FormGroup;
   loading = false;
   success = false;
@@ -29,8 +32,13 @@ export class ResetPasswordComponent implements OnInit {
     }, { validators: this.passwordMatchValidator });
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
       this.token = params['token'] || '';
       if (!this.token) {
         this.errorMessage = 'Invalid reset link. Please request a new password reset.';

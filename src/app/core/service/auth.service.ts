@@ -8,8 +8,8 @@ import { environment } from '../../../environments/environment';
 })
 export class AuthService {
     private apiUrl = `${environment.apiUrl}/auth`;
-    private tokenKey = 'wander_token';
-    private userKey = 'wander_user';
+    private tokenKey = 'trekio_token';
+    private userKey = 'trekio_user';
 
     private currentUserSubject = new BehaviorSubject<any>(this.getUserFromStorage());
     public currentUser$ = this.currentUserSubject.asObservable();
@@ -23,8 +23,9 @@ export class AuthService {
     }
 
     register(data: any): Observable<any> {
-        // Registration no longer auto-logs in - user must verify email first
-        return this.http.post(`${this.apiUrl}/register`, data);
+        return this.http.post(`${this.apiUrl}/register`, data).pipe(
+            tap((response: any) => this.handleAuthResponse(response))
+        );
     }
 
     anonymousLogin(): Observable<any> {

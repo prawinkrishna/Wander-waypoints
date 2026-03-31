@@ -1,6 +1,8 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { TripService } from '../../core/service/trip.service';
 import { AuthService } from '../../core/service/auth.service';
 import { AiService } from '../../core/service/ai.service';
@@ -14,7 +16,8 @@ import { wizardSlideAnimation } from './animations/wizard.animations';
   styleUrls: ['./create-trip.component.scss'],
   animations: [wizardSlideAnimation]
 })
-export class CreateTripComponent implements OnInit {
+export class CreateTripComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   tripForm!: FormGroup;
   submitting = false;
   generatingAI = false;
@@ -42,7 +45,7 @@ export class CreateTripComponent implements OnInit {
     this.initForm();
     this.recomputeActiveSteps();
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
       if (params['mode'] === 'edit' && params['id']) {
         this.isEditMode = true;
         this.tripId = params['id'];
@@ -385,6 +388,11 @@ export class CreateTripComponent implements OnInit {
   private mapStyleLabel(style: string): string {
     const map: Record<string, string> = { relaxed: 'Relaxed', balanced: 'Balanced', packed: 'Packed' };
     return map[style] || 'Balanced';
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onCancel() {
