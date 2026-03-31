@@ -74,12 +74,6 @@
   </div>
 
   <div class="navbar-right">
-    <!-- Theme toggle -->
-    <button mat-icon-button (click)="themeService.toggleTheme()" class="theme-toggle-btn"
-      [attr.aria-label]="themeService.isDark ? 'Switch to light mode' : 'Switch to dark mode'">
-      <mat-icon>{{ themeService.isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
-    </button>
-
     <!-- Search bar -->
     <mat-form-field appearance="outline" class="search-bar desktop-only" subscriptSizing="dynamic">
       <input matInput type="text" placeholder="Search places..." [formControl]="searchControl"
@@ -192,12 +186,6 @@
   </div>
 
   <div class="mobile-menu-content">
-    <!-- Theme toggle (mobile) -->
-    <button class="mobile-nav-link" (click)="themeService.toggleTheme()"
-      [attr.aria-label]="themeService.isDark ? 'Switch to light mode' : 'Switch to dark mode'">
-      <mat-icon>{{ themeService.isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
-      <span>{{ themeService.isDark ? 'Light Mode' : 'Dark Mode' }}</span>
-    </button>
 
     <mat-divider></mat-divider>
 

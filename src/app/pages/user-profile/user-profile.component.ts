@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { SocialService } from '../../core/service/social.service';
 import { AuthService } from '../../core/service/auth.service';
 
@@ -8,7 +10,8 @@ import { AuthService } from '../../core/service/auth.service';
     templateUrl: './user-profile.component.html',
     styleUrls: ['./user-profile.component.scss']
 })
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent implements OnInit, OnDestroy {
+    private destroy$ = new Subject<void>();
     user: any = null;
     loading = true;
     followStatus: 'NONE' | 'PENDING' | 'ACCEPTED' = 'NONE';
@@ -21,8 +24,13 @@ export class UserProfileComponent implements OnInit {
         private authService: AuthService
     ) { }
 
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
     ngOnInit() {
-        this.route.params.subscribe(params => {
+        this.route.params.pipe(takeUntil(this.destroy$)).subscribe(params => {
             const profileId = params['id'];
             if (profileId) {
                 this.loadOtherProfile(profileId);

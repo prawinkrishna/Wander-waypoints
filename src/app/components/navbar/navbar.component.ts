@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { debounceTime, switchMap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../core/service/auth.service';
@@ -14,7 +15,8 @@ import { ThemeService } from '../../core/services/theme.service';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   searchControl = new FormControl();
   filteredOptions: SearchLocation[] = [];
   provider = new OpenStreetMapProvider();
@@ -33,6 +35,7 @@ export class NavbarComponent implements OnInit {
   ) {
     this.searchControl.valueChanges
       .pipe(
+        takeUntil(this.destroy$),
         debounceTime(300),
         switchMap(async (value) => {
           if (typeof value !== 'string' || value.length < 3) return [];
@@ -48,10 +51,15 @@ export class NavbarComponent implements OnInit {
       });
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnInit() {
     if (this.authService.isAuthenticatedUser()) {
       this.notificationService.startPolling();
-      this.notificationService.unreadCount$.subscribe(count => {
+      this.notificationService.unreadCount$.pipe(takeUntil(this.destroy$)).subscribe(count => {
         this.unreadCount = count;
       });
     }

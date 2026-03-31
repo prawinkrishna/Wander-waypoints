@@ -111,12 +111,7 @@ export class AuthPage implements OnInit {
     this.authService.register(registerData).subscribe({
       next: () => {
         this.loading = false;
-        this.successMessage = 'Account created! Check your email to verify.';
-        setTimeout(() => {
-          this.router.navigate(['/auth/verify-email'], {
-            queryParams: { email: registerData.email }
-          });
-        }, 1200);
+        this.router.navigate([this.authService.getDefaultRoute()]);
       },
       error: (error) => {
         this.loading = false;
