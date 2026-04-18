@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Place } from '../../../../projects/wander-library/src/lib/models/place.model';
 import { MapService, SearchLocation } from '../../core/service/map.service';
 import { GpsComponent } from '../../../../projects/wander-library/src/lib/components/gps/gps.component';
@@ -11,7 +13,8 @@ import { SeoService } from '../../core/services/seo.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   @ViewChild(GpsComponent) gpsComponent!: GpsComponent;
 
   selectedPlace: Place | null = null;
@@ -144,5 +147,10 @@ export class HomeComponent implements OnInit {
 
   scrollToMap() {
     document.getElementById('explore-map')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
