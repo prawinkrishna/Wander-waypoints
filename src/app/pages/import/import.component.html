@@ -72,6 +72,11 @@
             {{ place.reason_to_visit }}
           </div>
         </div>
+        <button mat-icon-button class="save-btn" [class.saved]="savedPlaceIds.has(place.name)"
+          (click)="onSavePlace(place, $event)"
+          [title]="savedPlaceIds.has(place.name) ? 'Saved for later' : 'Save for later'">
+          <mat-icon>{{ savedPlaceIds.has(place.name) ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+        </button>
       </div>
     </div>
 
@@ -82,11 +87,56 @@
     </button>
   </div>
 
+  <!-- Planning: Set destination + days before AI generation -->
+  <div class="import-card planning-card" *ngIf="state === 'planning'">
+    <div class="review-header">
+      <button mat-icon-button (click)="onBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="review-title">
+        <h2>Plan your trip</h2>
+        <p>{{ selectedCount }} places selected — AI will distribute them across days</p>
+      </div>
+    </div>
+
+    <div class="planning-fields">
+      <mat-form-field appearance="outline" class="dest-field">
+        <mat-label>Destination</mat-label>
+        <input matInput [(ngModel)]="tripDestination" placeholder="e.g. Thailand, Bali, Paris">
+        <mat-icon matPrefix>place</mat-icon>
+        <mat-hint>Where are these places located?</mat-hint>
+      </mat-form-field>
+
+      <div class="days-control">
+        <label class="days-label">
+          <mat-icon>calendar_today</mat-icon>
+          Number of days
+        </label>
+        <div class="days-stepper">
+          <button mat-icon-button type="button" (click)="tripDays = tripDays > 1 ? tripDays - 1 : 1">
+            <mat-icon>remove</mat-icon>
+          </button>
+          <span class="days-value">{{ tripDays }}</span>
+          <button mat-icon-button type="button" (click)="tripDays = tripDays < 21 ? tripDays + 1 : 21">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+        <div class="days-hint">Suggested: {{ suggestedDays }} days based on {{ selectedCount }} places</div>
+      </div>
+    </div>
+
+    <button mat-raised-button color="primary" class="create-trip-btn"
+      (click)="onGenerateWithAI()" [disabled]="!tripDestination.trim()">
+      <mat-icon>auto_awesome</mat-icon>
+      Generate AI Itinerary
+    </button>
+  </div>
+
   <!-- Saving -->
   <div class="import-card loading-card" *ngIf="state === 'saving'">
     <mat-spinner diameter="48"></mat-spinner>
-    <h2>{{ existingTripId ? 'Adding places...' : 'Creating your trip...' }}</h2>
-    <p>Saving {{ selectedCount }} places</p>
+    <h2>AI is planning your trip...</h2>
+    <p>Distributing {{ selectedCount }} places across {{ tripDays }} days</p>
   </div>
 
   <!-- Error -->

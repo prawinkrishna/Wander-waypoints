@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-legal',
@@ -148,9 +149,36 @@ import { ActivatedRoute } from '@angular/router';
 export class LegalComponent {
   page = 'privacy';
 
-  constructor(private route: ActivatedRoute) {
+  // Per-page SEO copy. Centralizing the metadata in one map keeps the
+  // legal pages consistent and avoids duplicating description strings.
+  private static readonly META: Record<string, { title: string; description: string; path: string }> = {
+    privacy: {
+      title: 'Privacy Policy',
+      description: 'How Trekio collects, uses, and protects your personal information.',
+      path: '/privacy',
+    },
+    terms: {
+      title: 'Terms of Service',
+      description: 'The terms governing your use of Trekio for planning, sharing, and booking trips.',
+      path: '/terms',
+    },
+    contact: {
+      title: 'Contact Us',
+      description: 'Get in touch with the Trekio team for support, partnerships, or feedback.',
+      path: '/contact',
+    },
+  };
+
+  constructor(private route: ActivatedRoute, private seo: SeoService) {
     this.route.data.subscribe(data => {
       this.page = data['page'] || 'privacy';
+      const meta = LegalComponent.META[this.page] ?? LegalComponent.META['privacy'];
+      this.seo.setMetaTags({
+        title: meta.title,
+        description: meta.description,
+        path: meta.path,
+        type: 'website',
+      });
     });
   }
 }

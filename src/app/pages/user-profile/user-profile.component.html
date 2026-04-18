@@ -1,6 +1,7 @@
 <app-navbar></app-navbar>
 
 <lib-profile [user]="user" [isOwnProfile]="isOwnProfile" [followStatus]="followStatus" [loading]="loading"
+    [savedVideoPlacesInput]="savedVideoPlaces"
     (followClicked)="onFollowClicked()" (unfollowClicked)="onUnfollowClicked()"
     (editProfileClicked)="onEditProfileClicked()" (tripClicked)="onTripClicked($any($event))"
     (tabChanged)="onTabChanged($any($event))">

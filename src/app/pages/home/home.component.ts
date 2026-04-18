@@ -4,6 +4,7 @@ import { Place } from '../../../../projects/wander-library/src/lib/models/place.
 import { MapService, SearchLocation } from '../../core/service/map.service';
 import { GpsComponent } from '../../../../projects/wander-library/src/lib/components/gps/gps.component';
 import { SocialService } from '../../core/service/social.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-home',
@@ -20,14 +21,25 @@ export class HomeComponent implements OnInit {
   friends: any[] = [];
   trendingTrips: any[] = [];
 
+  private rawTrendingTrips: any[] = [];
+  activeTripFilter: string | null = null;
+
   constructor(
     private mapService: MapService,
     private router: Router,
-    private socialService: SocialService
+    private socialService: SocialService,
+    private seo: SeoService,
   ) { }
 
   ngOnInit(): void {
-    this.mapService.locationSelected$.subscribe((location: SearchLocation) => {
+    this.seo.setMetaTags({
+      title: 'Discover Trips',
+      description: 'Explore trending trips, follow travelers, and discover new destinations on Trekio.',
+      path: '/home',
+      type: 'website',
+    });
+
+    this.mapService.locationSelected$.pipe(takeUntil(this.destroy$)).subscribe((location: SearchLocation) => {
       if (this.gpsComponent && location) {
         this.gpsComponent.flyToLocation(location.y, location.x);
       }
@@ -41,7 +53,10 @@ export class HomeComponent implements OnInit {
       this.friends = users.map(u => ({
         id: u.userId,
         name: u.username,
-        avatar: u.profileImage || `https://ui-avatars.com/api/?name=${u.username}`,
+        // Pass the raw image URL through; the <app-avatar> component
+        // handles missing/failed images by rendering an inline SVG
+        // initials fallback (no external network call).
+        avatar: u.profileImage || null,
         isLive: u.isPublicProfile,
         location: [u.lastLatitude || 0, u.lastLongitude || 0],
         status: u.currentStatus || 'Online'
@@ -49,6 +64,10 @@ export class HomeComponent implements OnInit {
     });
 
     this.socialService.getTrendingTrips().subscribe(trips => {
+      this.rawTrendingTrips = trips;
+      // Pre-populate the map with all trending trips' places (TripPlace[] with coords)
+      this.filteredPlaces = trips.flatMap((t: any) => t.tripPlaces || []);
+
       this.trendingTrips = trips.map(t => ({
         id: t.tripId,
         title: t.title,
@@ -80,6 +99,19 @@ export class HomeComponent implements OnInit {
     if (id) {
       this.router.navigate(['/trip-details', id]);
     }
+  }
+
+  showTripOnMap(tripId: string) {
+    const trip = this.rawTrendingTrips.find((t: any) => t.tripId === tripId);
+    if (!trip) return;
+    this.activeTripFilter = tripId;
+    this.filteredPlaces = trip.tripPlaces || [];
+    document.getElementById('explore-map')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  resetMapToAll() {
+    this.activeTripFilter = null;
+    this.filteredPlaces = this.rawTrendingTrips.flatMap((t: any) => t.tripPlaces || []);
   }
 
   openAiPlanner() {

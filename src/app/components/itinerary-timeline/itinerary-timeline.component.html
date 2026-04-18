@@ -1,4 +1,57 @@
 <div class="timeline-container">
+    <!-- View Toggle -->
+    <div class="view-toggle" *ngIf="groupedPlaces.length > 0">
+        <button class="toggle-btn" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
+            <mat-icon>view_agenda</mat-icon> List
+        </button>
+        <button class="toggle-btn" [class.active]="viewMode === 'blocks'" (click)="viewMode = 'blocks'">
+            <mat-icon>view_timeline</mat-icon> Timeline
+        </button>
+    </div>
+
+    <!-- ═══ TIMELINE BLOCK VIEW ═══ -->
+    <div class="block-view" *ngIf="viewMode === 'blocks'">
+        <div *ngFor="let group of groupedPlaces" class="block-day">
+            <div class="block-day-label">
+                <span class="day-badge">Day {{ group.dayNumber }}</span>
+                <span class="day-date" *ngIf="tripStartDate">{{ getDayDate(group.dayNumber) }}</span>
+            </div>
+            <div class="block-axis">
+                <!-- Hour markers 6AM–midnight -->
+                <div class="hour-marker" *ngFor="let h of timeAxisHours" [style.left.%]="hourToPercent(h)">
+                    <span class="hour-label">{{ h | number:'2.0-0' }}:00</span>
+                </div>
+                <!-- Activity blocks -->
+                <ng-container *ngFor="let place of group.places">
+                    <div *ngIf="place.startTime && place.duration"
+                        class="activity-block"
+                        [style.left.%]="getBlockLeft(place.startTime)"
+                        [style.width.%]="getBlockWidth(place.duration)"
+                        [style.backgroundColor]="getCategoryColor(place.place?.category)"
+                        [title]="place.place?.name + ' · ' + place.startTime + ' (' + formatDuration(place.duration) + ')'">
+                        <span class="block-label">{{ place.place?.name }}</span>
+                    </div>
+                    <!-- Travel gap -->
+                    <div *ngIf="place.startTime && place.travelTimeFromPrev && place.travelTimeFromPrev > 0"
+                        class="travel-block"
+                        [style.left.%]="getTravelBlockLeft(place.startTime, place.travelTimeFromPrev)"
+                        [style.width.%]="getBlockWidth(place.travelTimeFromPrev)"
+                        [title]="formatTravelTime(place.travelTimeFromPrev) + ' travel'">
+                    </div>
+                </ng-container>
+                <!-- Free time slots -->
+                <div *ngFor="let gap of getFreeTimeGaps(group.places)"
+                    class="free-block"
+                    [style.left.%]="gap.left"
+                    [style.width.%]="gap.width"
+                    [title]="'Free time: ' + gap.label">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ LIST VIEW (existing) ═══ -->
+    <div *ngIf="viewMode === 'list'">
     <!-- Day Sections -->
     <div *ngFor="let group of groupedPlaces" class="day-section">
         <!-- Day Header -->
@@ -8,6 +61,12 @@
                 <span class="day-date" *ngIf="tripStartDate">{{ getDayDate(group.dayNumber) }}</span>
                 <span class="place-count">{{ getPlaceCount(group.dayNumber) }} {{ getPlaceCount(group.dayNumber) === 1 ?
                     'place' : 'places' }}</span>
+                <span *ngIf="group.places.length > 0"
+                    class="fatigue-badge fatigue-{{ getDayFatigue(group.places).level }}"
+                    [title]="'Total active time: ' + formatDuration(getDayFatigue(group.places).totalMinutes)">
+                    <mat-icon class="fatigue-icon">{{ getDayFatigue(group.places).level === 'easy' ? 'sentiment_satisfied' : getDayFatigue(group.places).level === 'moderate' ? 'sentiment_neutral' : 'local_fire_department' }}</mat-icon>
+                    {{ getDayFatigue(group.places).level === 'easy' ? 'Easy' : getDayFatigue(group.places).level === 'moderate' ? 'Moderate' : 'Packed' }}
+                </span>
             </div>
             <mat-icon class="collapse-icon" [class.collapsed]="isDayCollapsed(group.dayNumber)">
                 expand_more
@@ -232,8 +291,27 @@
                     <div class="drag-placeholder" *cdkDragPlaceholder></div>
                 </div>
             </div>
+
+            <!-- Meal Gap Placeholders -->
+            <div class="meal-gaps" *ngIf="getMealGaps(group.places).length > 0">
+                <div class="meal-placeholder" *ngFor="let meal of getMealGaps(group.places)">
+                    <mat-icon class="meal-icon">restaurant</mat-icon>
+                    <div class="meal-info">
+                        <strong>{{ meal === 'lunch' ? 'Lunch' : 'Dinner' }} — Not planned yet</strong>
+                        <span>{{ meal === 'lunch' ? '12:00–14:00' : '19:00–21:00' }} · Find something to eat near {{ getLastLocationName(group.places) }}</span>
+                    </div>
+                    <div class="meal-actions">
+                        <button class="meal-btn search" (click)="openRestaurantSearch(getLastLocationName(group.places))">
+                            <mat-icon>search</mat-icon>
+                            Find Restaurants
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    </div> <!-- end list view wrapper -->
 
     <!-- Empty State -->
     <div class="empty-state" *ngIf="groupedPlaces.length === 0">

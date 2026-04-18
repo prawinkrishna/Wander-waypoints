@@ -43,7 +43,6 @@ export class CreateTripDialogComponent {
 
             const tripData = {
                 ...this.tripForm.value,
-                userId: currentUser.userId
             };
 
             this.tripService.createTrip(tripData).subscribe({

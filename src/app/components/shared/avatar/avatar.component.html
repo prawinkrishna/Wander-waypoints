@@ -1,0 +1,25 @@
+<div
+    class="avatar"
+    [style.width.px]="size"
+    [style.height.px]="size"
+>
+    <img
+        *ngIf="showImage"
+        [src]="imageUrl"
+        [alt]="name || 'User avatar'"
+        [width]="size"
+        [height]="size"
+        (error)="onImageError()"
+    />
+
+    <div
+        *ngIf="!showImage"
+        class="avatar-fallback"
+        [style.background]="backgroundColor"
+        [style.font-size.px]="size * 0.4"
+        [attr.aria-label]="name || 'User avatar'"
+        role="img"
+    >
+        {{ initials }}
+    </div>
+</div>

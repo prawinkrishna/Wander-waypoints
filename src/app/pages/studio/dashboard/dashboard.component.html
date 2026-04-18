@@ -105,15 +105,15 @@
                 <mat-spinner diameter="40"></mat-spinner>
             </div>
 
-            <div class="empty-state" *ngIf="!isLoading && recentItineraries.length === 0">
-                <mat-icon class="empty-icon">travel_explore</mat-icon>
-                <h3>No itineraries yet</h3>
-                <p>Create your first itinerary to get started!</p>
-                <button mat-raised-button color="primary" (click)="createNewItinerary()">
-                    <mat-icon>add</mat-icon>
-                    Create Itinerary
-                </button>
-            </div>
+            <app-empty-state
+                *ngIf="!isLoading && recentItineraries.length === 0"
+                icon="travel_explore"
+                title="No itineraries yet"
+                subtitle="Create your first AI-generated itinerary in under a minute. We'll save it as a draft so you can refine it before sharing."
+                ctaLabel="Create your first itinerary"
+                ctaIcon="add"
+                (ctaClick)="createNewItinerary()">
+            </app-empty-state>
 
             <div class="itineraries-list" *ngIf="!isLoading && recentItineraries.length > 0">
                 <mat-card class="itinerary-card" *ngFor="let itinerary of recentItineraries" (click)="editItinerary(itinerary.tripId)">

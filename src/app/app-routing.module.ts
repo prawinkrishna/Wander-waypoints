@@ -4,6 +4,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { authenticatedUserGuard } from './core/guards/authenticated-user.guard';
 import { guestOnlyGuard } from './core/guards/guest-only.guard';
 import { agencyGuard } from './core/guards/agency.guard';
+import { featureBookingGuard } from './core/guards/feature-booking.guard';
 import { UserProfileComponent } from './pages/user-profile/user-profile.component';
 import { EditProfileComponent } from './pages/edit-profile.component';
 import { SettingsComponent } from './pages/settings.component';
@@ -104,7 +105,7 @@ const routes: Routes = [
   {
     path: 'booking',
     loadChildren: () => import('./pages/booking/booking.module').then(m => m.BookingModule),
-    canActivate: [authenticatedUserGuard]
+    canActivate: [authenticatedUserGuard, featureBookingGuard]
   },
   {
     path: 'create-trip',
@@ -117,10 +118,11 @@ const routes: Routes = [
     canActivate: [authenticatedUserGuard]
   },
 
-  // Marketplace - public traveler-facing marketplace
+  // Marketplace - public traveler-facing marketplace (gated for beta)
   {
     path: 'marketplace',
-    loadChildren: () => import('./pages/marketplace/marketplace.module').then(m => m.MarketplaceModule)
+    loadChildren: () => import('./pages/marketplace/marketplace.module').then(m => m.MarketplaceModule),
+    canActivate: [featureBookingGuard]
   },
 
   // Legal pages - public

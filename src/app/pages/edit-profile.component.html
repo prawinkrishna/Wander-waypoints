@@ -18,8 +18,11 @@
                 <div class="input-group">
                     <label>Profile Image URL</label>
                     <div class="image-preview-row">
-                        <img [src]="profileForm.get('profileImage')?.value || 'https://ui-avatars.com/api/?name=User'"
-                            class="avatar-preview">
+                        <app-avatar
+                            [imageUrl]="profileForm.get('profileImage')?.value"
+                            [name]="profileForm.get('username')?.value || 'User'"
+                            [size]="64">
+                        </app-avatar>
                         <input type="text" formControlName="profileImage" placeholder="https://example.com/avatar.jpg">
                     </div>
                 </div>

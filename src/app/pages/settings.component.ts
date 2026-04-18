@@ -226,8 +226,8 @@ export class SettingsComponent implements OnInit {
       return;
     }
 
-    // Step 1: Update role to agency_admin
-    this.userService.updateProfile(userId, { role: 'agency_admin' }).subscribe({
+    // Step 1: Upgrade role to agency_admin via dedicated endpoint
+    this.userService.upgradeToAgency().subscribe({
       next: (updatedUser) => {
         // Step 2: Create default agency
         this.http.post(`${environment.apiUrl}/agency`, {

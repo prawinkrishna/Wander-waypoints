@@ -98,6 +98,19 @@
   --text-body-sm: 0.875rem;     /* 14px - Labels, meta */
   --text-caption: 0.75rem;      /* 12px - Hints, footnotes */
 
+  /* === Z-INDEX LAYERS ===
+     Single source of truth for stacking order. Use these tokens instead
+     of arbitrary z-index values so the layering stays predictable as new
+     overlays are added. Higher number = on top. */
+  --z-base: 1;
+  --z-sticky: 50;
+  --z-navbar: 100;
+  --z-mobile-menu: 200;
+  --z-modal-backdrop: 290;
+  --z-modal: 300;
+  --z-snackbar: 400;
+  --z-tooltip: 500;
+
   /* === SHADOWS === */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);

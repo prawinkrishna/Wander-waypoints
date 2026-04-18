@@ -8,6 +8,7 @@ import { AuthService } from '../../core/service/auth.service';
 import { MapService, SearchLocation } from '../../core/service/map.service';
 import { NotificationService, Notification } from '../../core/service/notification.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -129,6 +130,11 @@ export class NavbarComponent implements OnInit {
   /** True for any authenticated user who can access /studio (agency_admin OR INFLUENCER+agency) */
   get canAccessStudio(): boolean {
     return this.isAgencyUser || this.hasAgency;
+  }
+
+  /** Whether booking + marketplace flows are exposed in this build. False for the public beta. */
+  get bookingEnabled(): boolean {
+    return environment.featureBookingEnabled;
   }
 
   get logoRoute(): string {

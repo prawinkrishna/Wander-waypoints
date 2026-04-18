@@ -139,20 +139,48 @@
 
     <!-- Saved Tab -->
     <div class="tab-content" *ngIf="activeTab === 'saved'">
-      <div class="trips-grid" *ngIf="savedTrips.length > 0">
-        <div class="trip-card" *ngFor="let trip of savedTrips" (click)="onTripClick(trip.tripId)">
-          <div class="trip-image" [style.backgroundImage]="'url(' + getTripImage(trip) + ')'">
-            <span class="trip-duration">{{ getDuration(trip) }}</span>
-          </div>
-          <div class="trip-details">
-            <h4>{{ trip.title }}</h4>
-            <span class="trip-date">{{ trip.startDate | date:'MMM yyyy' }}</span>
+
+      <!-- Saved Trips (liked by user) -->
+      <div *ngIf="savedTrips.length > 0">
+        <div class="section-label">Saved Trips</div>
+        <div class="trips-grid">
+          <div class="trip-card" *ngFor="let trip of savedTrips" (click)="onTripClick(trip.tripId)">
+            <div class="trip-image" [style.backgroundImage]="'url(' + getTripImage(trip) + ')'">
+              <span class="trip-duration">{{ getDuration(trip) }}</span>
+            </div>
+            <div class="trip-details">
+              <h4>{{ trip.title }}</h4>
+              <span class="trip-date">{{ trip.startDate | date:'MMM yyyy' }}</span>
+            </div>
           </div>
         </div>
       </div>
-      <div class="empty-state" *ngIf="savedTrips.length === 0">
+
+      <!-- Places saved from videos -->
+      <div *ngIf="savedVideoPlaces.length > 0">
+        <div class="section-label">Places from Videos</div>
+        <div class="video-places-list">
+          <div class="video-place-card" *ngFor="let place of savedVideoPlaces">
+            <div class="vpc-icon">
+              <mat-icon>{{ place.sourcePlatform === 'youtube' ? 'smart_display' : 'camera_alt' }}</mat-icon>
+            </div>
+            <div class="vpc-info">
+              <div class="vpc-name">{{ place.name }}</div>
+              <div class="vpc-meta">
+                <span *ngIf="place.category">{{ place.category }}</span>
+                <span *ngIf="place.category && place.sourceVideoTitle"> · </span>
+                <span *ngIf="place.sourceVideoTitle">{{ place.sourceVideoTitle }}</span>
+              </div>
+              <div class="vpc-desc" *ngIf="place.description">{{ place.description }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state — only when both lists are empty -->
+      <div class="empty-state" *ngIf="savedTrips.length === 0 && savedVideoPlaces.length === 0">
         <mat-icon>bookmark_border</mat-icon>
-        <p>No saved trips yet. Like trips to save them here!</p>
+        <p>Nothing saved yet. Bookmark places while browsing videos!</p>
       </div>
     </div>
   </div>

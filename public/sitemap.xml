@@ -1,28 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Trekio sitemap.xml
+  Lists publicly indexable, statically known routes. Dynamic routes
+  (trip-details/:id, profile/:id) are not listed here — when SEO matters
+  enough to warrant it post-launch, swap this static file for a build-time
+  generator that queries the API for public trip IDs.
+
+  ⚠ When the custom domain is purchased, update every <loc> below AND
+  BRAND.url in src/app/core/brand.config.ts.
+-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://wanderwaypoints.com/</loc>
+    <loc>https://wander-waypoints-u8ct.vercel.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://wanderwaypoints.com/welcome</loc>
+    <loc>https://wander-waypoints-u8ct.vercel.app/welcome</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://wanderwaypoints.com/trip-feed</loc>
+    <loc>https://wander-waypoints-u8ct.vercel.app/home</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wanderwaypoints.com/marketplace</loc>
+    <loc>https://wander-waypoints-u8ct.vercel.app/trip-feed</loc>
     <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://wander-waypoints-u8ct.vercel.app/ai-planner</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://wanderwaypoints.com/login</loc>
+    <loc>https://wander-waypoints-u8ct.vercel.app/login</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://wander-waypoints-u8ct.vercel.app/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://wander-waypoints-u8ct.vercel.app/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://wander-waypoints-u8ct.vercel.app/contact</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

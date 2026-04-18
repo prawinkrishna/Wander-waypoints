@@ -1,17 +1,11 @@
-// Design System Colors
-$primary: #48BB78;
-$primary-hover: #38A169;
-$secondary: #4299E1;
-$bg-light: #F7F9FA;
-$surface-light: #FFFFFF;
-$text-primary: #1A202C;
-$text-secondary: #4A5568;
-$text-tertiary: #A0AEC0;
-$border-light: #E2E8F0;
+// Welcome page — uses global design tokens from styles.scss.
+// Do NOT redeclare hex colors here. All values must reference the
+// CSS variables (var(--*)) defined in src/styles.scss so dark mode and
+// future theme changes propagate cleanly.
 
 .welcome-page {
     min-height: 100vh;
-    background: $bg-light;
+    background: var(--color-background);
 }
 
 // Navigation
@@ -22,9 +16,9 @@ $border-light: #E2E8F0;
     right: 0;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8px);
-    border-bottom: 1px solid $border-light;
+    border-bottom: 1px solid var(--color-border);
     z-index: 100;
-    padding: 0 24px;
+    padding: 0 var(--space-6);
 
     .nav-content {
         max-width: 1200px;
@@ -42,101 +36,103 @@ $border-light: #E2E8F0;
         .logo-pin {
             height: 32px;
             width: auto;
-            margin-right: 8px;
+            margin-right: var(--space-2);
         }
 
         .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: $text-primary;
+            font-size: var(--text-h2);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
 
             .logo-text-io {
-                color: $primary;
+                color: var(--primary);
             }
         }
     }
 
     .nav-actions {
         display: flex;
-        gap: 12px;
+        gap: var(--space-3);
         align-items: center;
 
         .login-btn {
-            color: $text-primary;
-            font-weight: 500;
+            color: var(--color-text-primary);
+            font-weight: var(--font-weight-medium);
         }
 
         .signup-btn {
-            border-radius: 8px;
-            padding: 0 20px;
-            font-weight: 500;
+            border-radius: var(--radius-lg);
+            padding: 0 var(--space-5);
+            font-weight: var(--font-weight-semibold);
         }
     }
 }
 
-// Hero Section
+// Hero Section — uses 8pt grid spacing tokens. Top padding 96px gives the
+// hero clearance from the fixed 64px navbar without floating awkwardly.
 .hero-section {
-    padding: 120px 24px 80px;
+    padding: var(--space-12) var(--space-6) var(--space-12);
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 64px;
+    gap: var(--space-16);
     align-items: center;
     min-height: 80vh;
 
     @media (max-width: 768px) {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: var(--space-10);
         text-align: center;
-        padding-top: 100px;
+        padding: var(--space-12) var(--space-4) var(--space-8);
     }
 
     .hero-content {
         .hero-title {
-            font-size: 3rem;
-            font-weight: 700;
-            color: $text-primary;
+            font-size: var(--text-display-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
             line-height: 1.1;
-            margin-bottom: 24px;
+            margin-bottom: var(--space-6);
 
             @media (max-width: 768px) {
-                font-size: 2.25rem;
+                font-size: var(--text-display-l);
             }
         }
 
         .hero-subtitle {
-            font-size: 1.25rem;
-            color: $text-secondary;
+            font-size: var(--text-h3);
+            color: var(--color-text-secondary);
             line-height: 1.6;
-            margin-bottom: 32px;
+            margin-bottom: var(--space-8);
         }
 
         .hero-actions {
             display: flex;
-            gap: 16px;
+            gap: var(--space-4);
 
             @media (max-width: 768px) {
                 justify-content: center;
                 flex-wrap: wrap;
             }
 
-            .cta-primary {
-                padding: 12px 32px;
-                font-size: 1rem;
-                font-weight: 600;
-                border-radius: 12px;
-                height: auto;
+            // Both CTAs match the global .btn-primary spec: 48px height,
+            // radius-lg, semibold weight. Override Material defaults so the
+            // spacing reads consistently with buttons elsewhere in the app.
+            .cta-primary,
+            .cta-secondary {
+                padding: 0 var(--space-8);
+                font-size: var(--text-body);
+                font-weight: var(--font-weight-semibold);
+                border-radius: var(--radius-lg);
+                height: 48px;
+                min-height: 48px;
+                line-height: 48px;
             }
 
             .cta-secondary {
-                padding: 12px 32px;
-                font-size: 1rem;
-                font-weight: 600;
-                border-radius: 12px;
-                height: auto;
-                border-color: $primary;
-                color: $primary;
+                border-color: var(--primary);
+                color: var(--primary);
             }
         }
     }
@@ -151,7 +147,7 @@ $border-light: #E2E8F0;
             width: 320px;
             height: 320px;
             background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(var(--primary-rgb), 0.05) 100%);
-            border-radius: 50%;
+            border-radius: var(--radius-full);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -160,7 +156,7 @@ $border-light: #E2E8F0;
                 font-size: 120px;
                 width: 120px;
                 height: 120px;
-                color: $primary;
+                color: var(--primary);
             }
 
             .hero-icon-1,
@@ -170,22 +166,22 @@ $border-light: #E2E8F0;
                 font-size: 40px;
                 width: 40px;
                 height: 40px;
-                color: $secondary;
+                color: var(--accent);
             }
 
             .hero-icon-1 {
-                top: 20px;
-                right: 40px;
+                top: var(--space-5);
+                right: var(--space-10);
             }
 
             .hero-icon-2 {
-                bottom: 40px;
-                left: 20px;
+                bottom: var(--space-10);
+                left: var(--space-5);
             }
 
             .hero-icon-3 {
-                bottom: 60px;
-                right: 20px;
+                bottom: var(--space-12);
+                right: var(--space-5);
             }
         }
     }
@@ -193,26 +189,26 @@ $border-light: #E2E8F0;
 
 // Audience Toggle Section
 .audience-section {
-    padding: 0 0 16px;
-    background: $surface-light;
+    padding: 0 0 var(--space-4);
+    background: var(--color-surface);
 
     .audience-toggle {
         display: flex;
         justify-content: center;
-        gap: 8px;
-        padding: 40px 0 0;
+        gap: var(--space-2);
+        padding: var(--space-10) 0 0;
 
         .toggle-btn {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 12px 32px;
-            border: 2px solid $border-light;
-            border-radius: 9999px;
-            background: $surface-light;
-            color: $text-secondary;
-            font-size: 1rem;
-            font-weight: 500;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-8);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-full);
+            background: var(--color-surface);
+            color: var(--color-text-secondary);
+            font-size: var(--text-body);
+            font-weight: var(--font-weight-medium);
             cursor: pointer;
             transition: all 0.2s ease;
 
@@ -223,14 +219,14 @@ $border-light: #E2E8F0;
             }
 
             &:hover {
-                border-color: $primary;
-                color: $primary;
+                border-color: var(--primary);
+                color: var(--primary);
             }
 
             &.active {
-                background: $primary;
-                border-color: $primary;
-                color: white;
+                background: var(--primary);
+                border-color: var(--primary);
+                color: #FFFFFF;
             }
         }
     }
@@ -240,66 +236,66 @@ $border-light: #E2E8F0;
 .section-content {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 var(--space-6);
 }
 
 .section-title {
-    font-size: 2.25rem;
-    font-weight: 700;
-    color: $text-primary;
+    font-size: var(--text-display-l);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
     text-align: center;
-    margin-bottom: 48px;
+    margin-bottom: var(--space-12);
 
     @media (max-width: 768px) {
-        font-size: 1.875rem;
-        margin-bottom: 32px;
+        font-size: var(--text-h1);
+        margin-bottom: var(--space-8);
     }
 }
 
 // How It Works Section
 .how-it-works-section {
-    padding: 80px 0;
-    background: $surface-light;
+    padding: var(--space-12) 0;
+    background: var(--color-surface);
 
     .steps-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 32px;
+        gap: var(--space-8);
 
         @media (max-width: 768px) {
             grid-template-columns: 1fr;
-            gap: 24px;
+            gap: var(--space-6);
         }
     }
 
     .step-card {
         text-align: center;
-        padding: 32px 24px;
+        padding: var(--space-8) var(--space-6);
 
         .step-number {
             width: 56px;
             height: 56px;
-            background: $primary;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 700;
-            border-radius: 50%;
+            background: var(--primary);
+            color: #FFFFFF;
+            font-size: var(--text-h2);
+            font-weight: var(--font-weight-bold);
+            border-radius: var(--radius-full);
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0 auto 20px;
+            margin: 0 auto var(--space-5);
         }
 
         .step-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: $text-primary;
-            margin-bottom: 12px;
+            font-size: var(--text-h3);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-3);
         }
 
         .step-description {
-            font-size: 1rem;
-            color: $text-secondary;
+            font-size: var(--text-body);
+            color: var(--color-text-secondary);
             line-height: 1.5;
         }
     }
@@ -307,30 +303,30 @@ $border-light: #E2E8F0;
 
 // Features Section
 .features-section {
-    padding: 80px 0;
-    background: $bg-light;
+    padding: var(--space-12) 0;
+    background: var(--color-background);
 
     .features-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 32px;
+        gap: var(--space-8);
 
         @media (max-width: 768px) {
             grid-template-columns: 1fr;
-            gap: 24px;
+            gap: var(--space-6);
         }
     }
 
     .feature-card {
-        background: $surface-light;
-        border-radius: 16px;
-        padding: 32px;
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        padding: var(--space-8);
         text-align: center;
         box-shadow: var(--shadow-card);
         transition: box-shadow 0.2s ease, transform 0.2s ease;
 
         &:hover {
-            box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.12);
+            box-shadow: var(--shadow-card-hover);
             transform: translateY(-4px);
         }
 
@@ -338,38 +334,40 @@ $border-light: #E2E8F0;
             width: 64px;
             height: 64px;
             background: rgba(var(--primary-rgb), 0.1);
-            border-radius: 16px;
+            border-radius: var(--radius-lg);
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0 auto 20px;
+            margin: 0 auto var(--space-5);
 
             mat-icon {
                 font-size: 32px;
                 width: 32px;
                 height: 32px;
-                color: $primary;
+                color: var(--primary);
             }
 
+            // "agent" variant uses the accent (ocean blue) instead of mint
+            // so the agent vs traveler audience cards read as distinct.
             &.agent {
-                background: rgba(255, 71, 87, 0.1);
+                background: rgba(var(--accent-rgb), 0.1);
 
                 mat-icon {
-                    color: $secondary;
+                    color: var(--accent);
                 }
             }
         }
 
         .feature-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: $text-primary;
-            margin-bottom: 12px;
+            font-size: var(--text-h3);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-3);
         }
 
         .feature-description {
-            font-size: 1rem;
-            color: $text-secondary;
+            font-size: var(--text-body);
+            color: var(--color-text-secondary);
             line-height: 1.5;
         }
     }
@@ -377,8 +375,8 @@ $border-light: #E2E8F0;
 
 // CTA Section
 .cta-section {
-    padding: 80px 24px;
-    background: linear-gradient(135deg, $primary 0%, $primary-hover 100%);
+    padding: var(--space-12) var(--space-6);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
     text-align: center;
 
     .cta-content {
@@ -386,36 +384,38 @@ $border-light: #E2E8F0;
         margin: 0 auto;
 
         .cta-title {
-            font-size: 2.25rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 16px;
+            font-size: var(--text-display-l);
+            font-weight: var(--font-weight-bold);
+            color: #FFFFFF;
+            margin-bottom: var(--space-4);
 
             @media (max-width: 768px) {
-                font-size: 1.875rem;
+                font-size: var(--text-h1);
             }
         }
 
         .cta-subtitle {
-            font-size: 1.125rem;
+            font-size: var(--text-body-lg);
             color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 32px;
+            margin-bottom: var(--space-8);
         }
 
         .cta-actions {
             display: flex;
             justify-content: center;
-            gap: 16px;
+            gap: var(--space-4);
         }
 
         .cta-button {
-            background: white;
-            color: $primary;
-            padding: 12px 40px;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 12px;
-            height: auto;
+            background: #FFFFFF;
+            color: var(--primary);
+            padding: 0 var(--space-10);
+            font-size: var(--text-body);
+            font-weight: var(--font-weight-semibold);
+            border-radius: var(--radius-lg);
+            height: 48px;
+            min-height: 48px;
+            line-height: 48px;
 
             &:hover {
                 background: rgba(255, 255, 255, 0.95);
@@ -426,8 +426,8 @@ $border-light: #E2E8F0;
 
 // Footer
 .welcome-footer {
-    padding: 48px 24px;
-    background: $text-primary;
+    padding: var(--space-12) var(--space-6);
+    background: var(--color-text-primary);
 
     .footer-content {
         max-width: 1200px;
@@ -438,44 +438,44 @@ $border-light: #E2E8F0;
             height: 28px;
             width: auto;
             filter: brightness(0) invert(1);
-            margin-right: 8px;
+            margin-right: var(--space-2);
         }
 
         .footer-logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
+            font-size: var(--text-h2);
+            font-weight: var(--font-weight-bold);
+            color: #FFFFFF;
 
             .footer-logo-text-io {
-                color: $primary;
+                color: var(--primary);
             }
         }
 
         .footer-tagline {
-            color: $text-tertiary;
-            margin: 8px 0 24px;
+            color: var(--color-text-tertiary);
+            margin: var(--space-2) 0 var(--space-6);
         }
 
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 24px;
-            margin-bottom: 24px;
+            gap: var(--space-6);
+            margin-bottom: var(--space-6);
 
             a {
-                color: $text-tertiary;
+                color: var(--color-text-tertiary);
                 text-decoration: none;
-                font-size: 0.875rem;
+                font-size: var(--text-body-sm);
 
                 &:hover {
-                    color: white;
+                    color: #FFFFFF;
                 }
             }
         }
 
         .footer-copyright {
-            color: $text-tertiary;
-            font-size: 0.875rem;
+            color: var(--color-text-tertiary);
+            font-size: var(--text-body-sm);
         }
     }
 }

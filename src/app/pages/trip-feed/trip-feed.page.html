@@ -7,10 +7,29 @@
             <h1>Discover Trips</h1>
             <p class="subtitle">Explore amazing trips from travelers around the world</p>
         </div>
+        <!-- View Toggle -->
+        <div class="view-toggle">
+            <button class="toggle-btn" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
+                <mat-icon>view_list</mat-icon> List
+            </button>
+            <button class="toggle-btn" [class.active]="viewMode === 'map'" (click)="switchToMapView()">
+                <mat-icon>map</mat-icon> Map
+            </button>
+        </div>
     </div>
 
-    <!-- Search and Filters -->
-    <div class="filters-section">
+    <!-- Map View -->
+    <div class="feed-map-container" *ngIf="viewMode === 'map'">
+        <div class="map-loading" *ngIf="mapLoading">
+            <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+            <p>Loading destinations...</p>
+        </div>
+        <lib-gps *ngIf="!mapLoading" [places]="mapPlaces" [selectedPlace]="null"
+            [emptyMessage]="'Loading trip destinations...'"></lib-gps>
+    </div>
+
+    <!-- Search and Filters (list view only) -->
+    <div class="filters-section" *ngIf="viewMode === 'list'">
         <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
             <input matInput [(ngModel)]="searchQuery" (ngModelChange)="onSearch()"
                 placeholder="Search by title, description, or creator...">
@@ -27,7 +46,7 @@
     </div>
 
     <!-- Loading State - Skeleton Loaders -->
-    <div class="trips-grid" *ngIf="isLoading" aria-busy="true" aria-label="Loading trips">
+    <div class="trips-grid" *ngIf="isLoading && viewMode === 'list'" aria-busy="true" aria-label="Loading trips">
         <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5,6]">
             <div class="skeleton-image"></div>
             <div class="skeleton-body">
@@ -39,7 +58,7 @@
     </div>
 
     <!-- Error State -->
-    <div class="error-container" *ngIf="error && !isLoading" role="alert">
+    <div class="error-container" *ngIf="error && !isLoading && viewMode === 'list'" role="alert">
         <mat-icon>error_outline</mat-icon>
         <h2>Failed to Load Trips</h2>
         <p>{{ error }}</p>
@@ -47,7 +66,7 @@
     </div>
 
     <!-- Trip Grid -->
-    <div class="trips-grid animate-cards" *ngIf="!isLoading && !error">
+    <div class="trips-grid animate-cards" *ngIf="!isLoading && !error && viewMode === 'list'">
         <!-- Empty State -->
         <div class="empty-state" *ngIf="filteredTrips.length === 0">
             <mat-icon>explore_off</mat-icon>

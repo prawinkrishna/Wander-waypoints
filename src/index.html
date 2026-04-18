@@ -1,30 +1,57 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-IN">
 
 <head>
   <meta charset="utf-8">
-  <title>Trekio — Plan, Share & Book Travel Experiences</title>
+
+  <!--
+    Default <title>, <meta description>, and OG tags below are the
+    fallbacks for the very first page render before Angular bootstraps.
+    The SeoService (src/app/core/services/seo.service.ts) overwrites all
+    of these per-route on every navigation, so the values here only
+    matter for:
+      - the initial paint
+      - bots that don't execute JS
+      - the index.html that gets prerendered/cached by Vercel
+
+    All canonical URLs / OG image URLs use the current Vercel host. When
+    the custom domain is purchased, find/replace this file's URLs and
+    update brand.config.ts (one place).
+  -->
+  <title>Trekio — AI Trip Planner & Travel Itineraries</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Trekio helps you plan trips with AI, discover destinations, connect with travel agents, and book unforgettable experiences.">
-  <meta name="keywords" content="travel, trip planner, AI travel, itinerary, booking, travel agent, trekio">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Plan trips with AI, discover destinations, connect with travel agents, and book unforgettable experiences with Trekio.">
+  <meta name="keywords" content="travel, trip planner, AI travel, itinerary, booking, travel agent, India travel, trekio">
   <meta name="author" content="Trekio">
   <meta name="theme-color" content="#48BB78">
   <meta name="robots" content="index, follow">
 
+  <!-- Canonical default — SeoService overwrites this per route -->
+  <link rel="canonical" href="https://wander-waypoints-u8ct.vercel.app/">
+
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Trekio — Plan, Share & Book Travel Experiences">
-  <meta property="og:description" content="Plan trips with AI, discover destinations, connect with travel agents, and book unforgettable experiences.">
-  <meta property="og:url" content="https://trekio.com">
+  <meta property="og:title" content="Trekio — AI Trip Planner & Travel Itineraries">
+  <meta property="og:description" content="Plan trips with AI, discover destinations, connect with travel agents, and book unforgettable experiences with Trekio.">
+  <meta property="og:url" content="https://wander-waypoints-u8ct.vercel.app/">
   <meta property="og:site_name" content="Trekio">
-  <meta property="og:image" content="https://trekio.com/assets/images/og-image.jpg">
+  <meta property="og:image" content="https://wander-waypoints-u8ct.vercel.app/assets/images/og-image.svg">
+  <meta property="og:locale" content="en_IN">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Trekio — Plan, Share & Book Travel Experiences">
+  <meta name="twitter:title" content="Trekio — AI Trip Planner & Travel Itineraries">
   <meta name="twitter:description" content="Plan trips with AI, discover destinations, and book unforgettable experiences.">
-  <meta name="twitter:image" content="https://trekio.com/assets/images/og-image.jpg">
+  <meta name="twitter:image" content="https://wander-waypoints-u8ct.vercel.app/assets/images/og-image.svg">
+
+  <!--
+    Google Search Console verification.
+    Replace REPLACE_WITH_GSC_TOKEN with the value from Search Console
+    (Settings → Ownership verification → HTML tag) before deploying.
+    The site stays unverified until this is filled in.
+  -->
+  <meta name="google-site-verification" content="REPLACE_WITH_GSC_TOKEN">
 
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 
@@ -36,6 +63,34 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!--
+    Google Identity Services (GIS) loader for Google SSO.
+    The OAuth 2.0 Client ID is configured in the AuthService
+    (environment.googleClientId) and passed to the GIS button at runtime.
+    This script must load before the auth page renders.
+  -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!--
+    Google Analytics 4 — gtag.js loader.
+    Replace G-XXXXXXXXXX with the GA4 Measurement ID from analytics.google.com
+    (Admin → Data streams → Web). Until then the script is a no-op
+    (gtag() calls queue but never send), so leaving the placeholder is safe.
+  -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX', {
+      // Anonymize IP addresses for India-only beta privacy hygiene.
+      anonymize_ip: true,
+      // We send page_view manually from AnalyticsService on route changes
+      // so we get accurate SPA navigation tracking.
+      send_page_view: false
+    });
+  </script>
 </head>
 
 <body>

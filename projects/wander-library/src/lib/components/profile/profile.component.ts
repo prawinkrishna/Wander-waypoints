@@ -53,9 +53,14 @@ export class ProfileComponent implements OnInit, OnChanges {
   tabs: string[] = ['trips', 'map', 'saved'];
   mapPlaces: any[] = [];
   savedTrips: any[] = [];
+  savedVideoPlaces: any[] = [];
 
   @Input() set savedTripsInput(trips: any[]) {
     this.savedTrips = trips || [];
+  }
+
+  @Input() set savedVideoPlacesInput(places: any[]) {
+    this.savedVideoPlaces = places || [];
   }
 
   profileStats: ProfileStats = {

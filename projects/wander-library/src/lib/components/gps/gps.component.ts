@@ -17,6 +17,9 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
   @Input() searchFn: ((query: string) => Promise<any[]>) | null = null;
   @Input() selectedPlace: Place | null = null;
   @Input() friends: any[] = []; // List of friends
+  @Input() emptyMessage: string = '';
+
+  hasMarkers = false;
 
   @Output() markerClicked = new EventEmitter<string>();
   @Output() mapMoved = new EventEmitter<[[number, number], [number, number]]>();
@@ -165,6 +168,7 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
     this.routeLayers.clearLayers();
     this.markers.clear();
 
+    this.hasMarkers = false;
     if (!this.places || this.places.length === 0) return;
 
     // 1. Normalize Data
@@ -314,6 +318,8 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
       });
     });
 
+    this.hasMarkers = this.markers.size > 0;
+
     // Fit bounds to show all markers
     if (this.markers.size > 0) {
       const bounds = this.markerClusterGroup.getBounds();
@@ -339,6 +345,7 @@ export class GpsComponent implements OnInit, OnChanges, OnDestroy {
       if (!friend.location) return;
 
       const [lat, lng] = friend.location;
+      if (!lat || !lng || (Math.abs(lat) < 0.01 && Math.abs(lng) < 0.01)) return;
 
       const friendIcon = L.divIcon({
         html: `<div class="friend-marker" style="background-image: url('${friend.avatar}'); border-color: ${friend.isLive ? '#ff3b30' : '#fff'}"></div>`,

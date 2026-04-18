@@ -101,8 +101,122 @@
                     </mat-card-content>
                 </mat-card>
 
+                <!-- Travel Guide CTA -->
+                <mat-card class="travel-guide-cta" *ngIf="isOwner">
+                    <mat-card-content>
+                        <div class="cta-row">
+                            <div class="cta-text">
+                                <mat-icon>travel_explore</mat-icon>
+                                <div>
+                                    <strong>Generate Travel Guide</strong>
+                                    <p>Visa info, budget estimate, packing list & local tips</p>
+                                </div>
+                            </div>
+                            <button mat-raised-button color="primary" (click)="generateTripExtras()" [disabled]="loadingExtras">
+                                <mat-spinner diameter="18" *ngIf="loadingExtras"></mat-spinner>
+                                <mat-icon *ngIf="!loadingExtras">auto_awesome</mat-icon>
+                                <span>{{ loadingExtras ? 'Generating...' : (tripExtras ? 'Regenerate' : 'Generate') }}</span>
+                            </button>
+                        </div>
+                        <div class="extras-error" *ngIf="extrasError">
+                            <mat-icon>error_outline</mat-icon> {{ extrasError }}
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Pre-Trip Checklist -->
+                <mat-card class="extras-card checklist-card" *ngIf="tripExtras">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>checklist</mat-icon>
+                            Before You Go
+                            <span class="progress-badge">{{ checkedCount }}/{{ checklistTotal }} done</span>
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="checklist-items">
+                            <div class="checklist-item" *ngFor="let item of [
+                                {key: 'visa_info', label: 'Visa Requirements', icon: 'policy'},
+                                {key: 'passport_requirements', label: 'Passport Validity', icon: 'badge'},
+                                {key: 'vaccinations', label: 'Vaccinations', icon: 'vaccines'},
+                                {key: 'travel_insurance', label: 'Travel Insurance', icon: 'health_and_safety'},
+                                {key: 'currency_tips', label: 'Currency & Money', icon: 'payments'}
+                            ]">
+                                <div class="checklist-row" [class.checked]="checkedItems.has(item.key)" (click)="toggleCheckedItem(item.key)">
+                                    <mat-icon class="check-icon">{{ checkedItems.has(item.key) ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                                    <mat-icon class="item-icon">{{ item.icon }}</mat-icon>
+                                    <div class="item-content">
+                                        <strong>{{ item.label }}</strong>
+                                        <p>{{ getChecklistValue(item.key) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="emergency-contacts" *ngIf="tripExtras.pre_trip_checklist.emergency_contacts">
+                            <h4><mat-icon>emergency</mat-icon> Emergency Contacts</h4>
+                            <div class="contact-grid">
+                                <div class="contact-item">
+                                    <mat-icon>domain</mat-icon>
+                                    <div>
+                                        <span class="contact-label">Embassy</span>
+                                        <span>{{ tripExtras.pre_trip_checklist.emergency_contacts.embassy }}</span>
+                                    </div>
+                                </div>
+                                <div class="contact-item">
+                                    <mat-icon>local_police</mat-icon>
+                                    <div>
+                                        <span class="contact-label">Tourist Police</span>
+                                        <span>{{ tripExtras.pre_trip_checklist.emergency_contacts.tourist_police }}</span>
+                                    </div>
+                                </div>
+                                <div class="contact-item">
+                                    <mat-icon>local_hospital</mat-icon>
+                                    <div>
+                                        <span class="contact-label">Hospital</span>
+                                        <span>{{ tripExtras.pre_trip_checklist.emergency_contacts.hospital }}</span>
+                                    </div>
+                                </div>
+                                <div class="contact-item">
+                                    <mat-icon>sos</mat-icon>
+                                    <div>
+                                        <span class="contact-label">Emergency</span>
+                                        <span>{{ tripExtras.pre_trip_checklist.emergency_contacts.emergency_number }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Budget Breakdown -->
+                <mat-card class="extras-card budget-card" *ngIf="tripExtras">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>account_balance_wallet</mat-icon>
+                            Estimated Budget
+                            <span class="budget-total">{{ tripExtras.budget_estimate.currency }} {{ tripExtras.budget_estimate.estimated_total | number }}</span>
+                        </mat-card-title>
+                        <mat-card-subtitle *ngIf="tripExtras.budget_estimate.per_person">Per person estimate</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="budget-table">
+                            <div class="budget-row" *ngFor="let item of tripExtras.budget_estimate.breakdown">
+                                <div class="budget-category">
+                                    <span class="category-name">{{ item.category }}</span>
+                                    <span class="category-note">{{ item.note }}</span>
+                                </div>
+                                <span class="budget-amount">{{ tripExtras.budget_estimate.currency }} {{ item.amount | number }}</span>
+                            </div>
+                            <div class="budget-row total-row">
+                                <strong>Total Estimate</strong>
+                                <strong>{{ tripExtras.budget_estimate.currency }} {{ tripExtras.budget_estimate.estimated_total | number }}</strong>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
                 <!-- Booking Card (for bookable trips) -->
-                <mat-card class="booking-card" *ngIf="trip.isBookable">
+                <mat-card class="booking-card" *ngIf="trip.isBookable && bookingEnabled">
                     <mat-card-header>
                         <mat-card-title>
                             <mat-icon>confirmation_number</mat-icon>
@@ -203,10 +317,86 @@
 
                     <app-itinerary-timeline *ngIf="trip.places && trip.places.length > 0" [tripPlaces]="trip.places"
                         [isOwner]="isOwner" [tripStartDate]="trip.startDate" [enableInlineEditing]="isOwner"
+                        [tripDestination]="trip.destination || ''"
                         (placeDeleted)="onPlaceDeleted($event)" (placesReordered)="onPlacesReordered($event)"
                         (placeUpdated)="onPlaceUpdated($event)">
                     </app-itinerary-timeline>
                 </div>
+
+                <!-- Local Tips & Cultural Guide -->
+                <mat-card class="extras-card tips-card" *ngIf="tripExtras">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>tips_and_updates</mat-icon>
+                            Local Tips & Cultural Guide
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <mat-tab-group>
+                            <mat-tab label="Culture">
+                                <ul class="tips-list">
+                                    <li *ngFor="let tip of tripExtras.local_tips.culture">{{ tip }}</li>
+                                </ul>
+                            </mat-tab>
+                            <mat-tab label="Food">
+                                <ul class="tips-list">
+                                    <li *ngFor="let tip of tripExtras.local_tips.food">{{ tip }}</li>
+                                </ul>
+                            </mat-tab>
+                            <mat-tab label="Transport">
+                                <ul class="tips-list">
+                                    <li *ngFor="let tip of tripExtras.local_tips.transport">{{ tip }}</li>
+                                </ul>
+                            </mat-tab>
+                            <mat-tab label="Safety">
+                                <ul class="tips-list">
+                                    <li *ngFor="let tip of tripExtras.local_tips.safety">{{ tip }}</li>
+                                </ul>
+                            </mat-tab>
+                        </mat-tab-group>
+                        <div class="useful-phrases" *ngIf="tripExtras.local_tips.useful_phrases?.length">
+                            <h4><mat-icon>translate</mat-icon> Useful Phrases</h4>
+                            <div class="phrase-row" *ngFor="let p of tripExtras.local_tips.useful_phrases">
+                                <span class="phrase-english">{{ p.phrase }}</span>
+                                <span class="phrase-local">{{ p.local }}</span>
+                                <span class="phrase-pronunciation">{{ p.pronunciation }}</span>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Packing List -->
+                <mat-card class="extras-card packing-card" *ngIf="tripExtras">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>luggage</mat-icon>
+                            What to Pack
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="packing-grid">
+                            <div class="pack-category" *ngFor="let cat of [
+                                {key: 'documents', label: 'Documents', icon: 'description'},
+                                {key: 'clothing', label: 'Clothing', icon: 'checkroom'},
+                                {key: 'electronics', label: 'Electronics', icon: 'devices'},
+                                {key: 'toiletries', label: 'Toiletries', icon: 'soap'},
+                                {key: 'medications', label: 'Medications', icon: 'medication'},
+                                {key: 'extras', label: 'Extras', icon: 'more_horiz'}
+                            ]">
+                                <div class="cat-header">
+                                    <mat-icon>{{ cat.icon }}</mat-icon>
+                                    <strong>{{ cat.label }}</strong>
+                                </div>
+                                <div class="pack-item" *ngFor="let item of getPackingItems(cat.key)"
+                                    [class.packed]="packedItems.has(cat.key + ':' + item)"
+                                    (click)="togglePackedItem(cat.key + ':' + item)">
+                                    <mat-icon>{{ packedItems.has(cat.key + ':' + item) ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+                                    <span>{{ item }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
 
                 <!-- Comments Section -->
                 <mat-card class="comments-card">
@@ -257,15 +447,26 @@
 
             <!-- Right Column: Map -->
             <div class="right-column">
+                <!-- Day Filter Pills -->
+                <div class="day-filter-pills" *ngIf="tripDayNumbers.length > 1">
+                    <button class="day-pill" [class.active]="mapDayFilter === null" (click)="mapDayFilter = null">
+                        All Days
+                    </button>
+                    <button class="day-pill" *ngFor="let day of tripDayNumbers"
+                        [class.active]="mapDayFilter === day" (click)="mapDayFilter = day">
+                        Day {{ day }}
+                    </button>
+                </div>
                 <div class="map-container sticky">
-                    <lib-gps [places]="trip.places || []" [selectedPlace]="null"></lib-gps>
+                    <lib-gps [places]="mapFilteredPlaces" [selectedPlace]="null"
+                        [emptyMessage]="'No places with coordinates for this day'"></lib-gps>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Fixed Mobile Booking Bar -->
-    <div class="mobile-booking-bar" *ngIf="trip && trip.isBookable">
+    <div class="mobile-booking-bar" *ngIf="trip && trip.isBookable && bookingEnabled">
         <div class="price-info">
             <div class="price-amount">{{ trip.currency || '₹' }}{{ trip.pricePerPerson | number }}</div>
             <div class="price-label">per person</div>
@@ -281,6 +482,7 @@
         [trip]="trip"
         [isOpen]="showAiChat"
         (close)="showAiChat = false"
-        (itineraryUpdated)="onAiItineraryUpdated($event)">
+        (itineraryUpdated)="onAiItineraryUpdated($event)"
+        (planAsAgencyRequested)="generateTripExtras()">
     </app-ai-trip-chat>
 </div>

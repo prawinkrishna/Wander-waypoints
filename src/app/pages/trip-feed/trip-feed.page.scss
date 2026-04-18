@@ -11,6 +11,61 @@
    HEADER
    ============================================================================= */
 
+.view-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: var(--space-4);
+
+  .toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    border-radius: 9999px;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &.active {
+      background: #48BB78;
+      border-color: #48BB78;
+      color: #fff;
+    }
+
+    &:hover:not(.active) {
+      border-color: #48BB78;
+      color: #48BB78;
+    }
+  }
+}
+
+.feed-map-container {
+  height: calc(100vh - 200px);
+  min-height: 480px;
+  position: relative;
+
+  .map-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 16px;
+    color: var(--color-text-secondary);
+  }
+}
+
 .feed-header {
   background-color: var(--color-surface);
   padding: var(--space-12) var(--space-8);

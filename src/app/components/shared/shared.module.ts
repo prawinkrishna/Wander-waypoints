@@ -23,6 +23,8 @@ import { TripRequestCardComponent } from './trip-request-card/trip-request-card.
 import { BidCardComponent } from './bid-card/bid-card.component';
 import { AgentProfileCardComponent } from './agent-profile-card/agent-profile-card.component';
 import { BidChatComponent } from './bid-chat/bid-chat.component';
+import { EmptyStateComponent } from './empty-state/empty-state.component';
+import { AvatarComponent } from './avatar/avatar.component';
 import { EditTripDialogComponent } from '../edit-trip-dialog/edit-trip-dialog.component';
 import { AiTripChatComponent } from '../ai-trip-chat/ai-trip-chat.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -39,7 +41,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     AgentProfileCardComponent,
     BidChatComponent,
     EditTripDialogComponent,
-    AiTripChatComponent
+    AiTripChatComponent,
+    EmptyStateComponent,
+    AvatarComponent
   ],
   imports: [
     CommonModule,
@@ -74,6 +78,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     BidChatComponent,
     EditTripDialogComponent,
     AiTripChatComponent,
+    EmptyStateComponent,
+    AvatarComponent,
     MatProgressSpinnerModule,
     MatIconModule,
     MatDividerModule,
