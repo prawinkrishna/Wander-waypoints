@@ -1,4 +1,7 @@
 {
+  "buildCommand": "ng build wander-library && ng build",
+  "outputDirectory": "dist/wander-waypoints/browser",
+  "framework": null,
   "rewrites": [
     { "source": "/api/(.*)", "destination": "https://trekio-api.onrender.com/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
