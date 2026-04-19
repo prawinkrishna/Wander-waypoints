@@ -7,7 +7,7 @@ export const environment = {
   // OAuth 2.0 Client ID from Google Cloud Console. Required for the
   // "Continue with Google" button to function. Until this is set, the
   // button is hidden gracefully.
-  googleClientId: '',
+  googleClientId: '1028529572160-csql6t91qhue0d9td4jl788ev9ageksv.apps.googleusercontent.com',
   // GA4 Measurement ID (e.g., G-ABC123XYZ) — also referenced from index.html.
   gaMeasurementId: '',
   // Sentry DSN for error tracking.
