@@ -1,5 +1,5 @@
 /* =============================================================================
-   AUTH PAGE - Electric Horizon Theme
+   AUTH PAGE - Electric Horizon Theme (SSO-only)
    ============================================================================= */
 
 .auth-container {
@@ -97,7 +97,7 @@
 }
 
 /* =============================================================================
-   RIGHT PANEL - Form
+   RIGHT PANEL - SSO
    ============================================================================= */
 
 .auth-form-panel {
@@ -121,8 +121,17 @@
   }
 }
 
+.sso-only-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-12);
+  gap: var(--space-6);
+}
+
 .form-header {
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-2);
 
   h2 {
     font-size: 1.75rem;
@@ -136,12 +145,6 @@
     font-size: var(--text-body);
     margin: 0;
   }
-}
-
-.tab-content {
-  padding: var(--space-12);
-  height: 100%;
-  overflow-y: auto;
 }
 
 /* =============================================================================
@@ -223,71 +226,55 @@
 }
 
 /* =============================================================================
-   FORM STYLES
+   GOOGLE SSO BUTTON
    ============================================================================= */
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
+.google-btn {
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-text-primary) !important;
+  background-color: var(--color-surface) !important;
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.2s ease;
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-
-    .form-label {
-      font-size: var(--text-body-sm);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-text-primary);
-      margin-left: 0;
-      margin-bottom: var(--space-1);
-      display: block;
-    }
+  // Material wraps content in .mdc-button__label — align inside that wrapper
+  ::ng-deep .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
   }
 
-  mat-form-field {
-    width: 100%;
+  .google-icon {
+    flex-shrink: 0;
+  }
 
-    ::ng-deep .mdc-text-field--outlined {
-      --mdc-outlined-text-field-container-shape: var(--radius-md);
-      --mdc-outlined-text-field-outline-color: var(--color-border);
-      --mdc-outlined-text-field-focus-outline-color: var(--primary);
-      background-color: white !important;
-      padding-left: 0;
-    }
+  &:hover:not(:disabled) {
+    background-color: var(--color-background) !important;
+    border-color: var(--color-text-tertiary) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
 
-    ::ng-deep .mdc-notched-outline__notch {
-      display: none !important;
-    }
-
-    ::ng-deep .mat-mdc-form-field-icon-prefix {
-      color: var(--color-text-tertiary);
-      padding: 0 var(--space-3);
-      align-self: center;
-    }
-
-    &.mat-focused ::ng-deep .mat-mdc-form-field-icon-prefix {
-      color: var(--primary);
-    }
-
-    ::ng-deep .mat-mdc-form-field-subscript-wrapper {
-      margin-top: var(--space-1);
-    }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: calc(-1 * var(--space-2));
+.sso-disclaimer {
+  font-size: var(--text-body-sm);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
 
-  .forgot-password {
+  a {
     color: var(--primary);
-    font-size: var(--text-body-sm);
-    font-weight: var(--font-weight-medium);
-    cursor: pointer;
     text-decoration: none;
+    font-weight: var(--font-weight-medium);
 
     &:hover {
       text-decoration: underline;
@@ -295,119 +282,28 @@ form {
   }
 }
 
-.submit-btn {
-  height: 52px;
-  font-size: var(--text-body);
-  font-weight: var(--font-weight-semibold);
-  border-radius: var(--radius-md) !important;
-  box-shadow: 0 4px 6px -1px rgba(var(--primary-rgb), 0.2) !important;
-  margin-top: var(--space-2);
-  background-color: var(--primary) !important;
-  color: white !important;
-
-  &:hover:not(:disabled) {
-    box-shadow: 0 10px 15px -3px rgba(var(--primary-rgb), 0.3) !important;
-    transform: translateY(-1px);
-  }
-}
-
-.divider {
+.sso-unavailable {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  background-color: var(--color-background);
   text-align: center;
-  margin: var(--space-8) 0;
-  position: relative;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--color-border);
-    z-index: 0;
-  }
-
-  span {
-    background: var(--color-surface);
-    padding: 0 var(--space-4);
+  mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
     color: var(--color-text-tertiary);
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-text-secondary);
     font-size: var(--text-body-sm);
-    font-weight: var(--font-weight-medium);
-    position: relative;
-    z-index: 1;
-  }
-}
-
-.guest-btn {
-  width: 100%;
-  height: 52px;
-  border-radius: var(--radius-md) !important;
-  border: 1px solid var(--color-border) !important;
-  color: var(--color-text-secondary) !important;
-  font-weight: var(--font-weight-medium);
-
-  &:hover:not(:disabled) {
-    background-color: var(--color-background);
-    color: var(--color-text-primary) !important;
-    border-color: var(--color-text-tertiary) !important;
-  }
-}
-
-/* =============================================================================
-   TAB STYLES - Segmented Pill Design
-   ============================================================================= */
-
-::ng-deep .mat-mdc-tab-group {
-  .mat-mdc-tab-header {
-    border-bottom: none;
-    padding: 0 var(--space-8);
-    margin-top: var(--space-6);
-
-    .mat-mdc-tab-header-pagination {
-      display: none;
-    }
-  }
-
-  .mat-mdc-tab-labels {
-    background-color: var(--color-background);
-    border-radius: var(--radius-md);
-    padding: var(--space-1);
-    width: 100%;
-    display: flex;
-  }
-
-  .mat-mdc-tab {
-    flex: 1;
-    opacity: 1;
-    min-width: 0;
-    padding: 0;
-    height: 40px;
-    border-radius: var(--radius-sm);
-    transition: all 0.2s ease;
-
-    .mdc-tab__content {
-      color: var(--color-text-secondary);
-      font-weight: var(--font-weight-medium);
-      z-index: 2;
-    }
-
-    &.mdc-tab--active {
-      background-color: var(--color-surface);
-      box-shadow: var(--shadow-sm);
-
-      .mdc-tab__content {
-        color: var(--primary);
-        font-weight: var(--font-weight-semibold);
-      }
-    }
-
-    .mat-ripple {
-      display: none;
-    }
-  }
-
-  .mdc-tab-indicator {
-    display: none;
+    line-height: 1.5;
   }
 }
 
@@ -438,7 +334,7 @@ form {
     display: none;
   }
 
-  .tab-content {
+  .sso-only-content {
     padding: var(--space-8);
   }
 }

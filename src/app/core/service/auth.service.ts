@@ -27,6 +27,12 @@ export class AuthService {
         return this.http.post(`${this.apiUrl}/register`, data);
     }
 
+    googleLogin(idToken: string): Observable<any> {
+        return this.http.post(`${this.apiUrl}/google`, { idToken }).pipe(
+            tap((response: any) => this.handleAuthResponse(response))
+        );
+    }
+
     anonymousLogin(): Observable<any> {
         return this.http.post(`${this.apiUrl}/anonymous`, {}).pipe(
             tap((response: any) => this.handleAuthResponse(response))
