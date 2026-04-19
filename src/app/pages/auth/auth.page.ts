@@ -31,10 +31,10 @@ export class AuthPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.seo.updateMetaTags({
+    this.seo.setMetaTags({
       title: 'Sign in',
       description: 'Sign in to Trekio with Google to plan trips with AI, browse curated itineraries, and connect with travel agents.',
-      url: '/login',
+      path: '/login',
       type: 'website',
     });
     this.initGoogleSso();

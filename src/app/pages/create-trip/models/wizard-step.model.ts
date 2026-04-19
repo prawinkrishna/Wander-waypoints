@@ -9,7 +9,7 @@ export interface WizardStep {
 
 export interface WizardStepField {
   key: string;
-  type: 'text' | 'textarea' | 'date-range' | 'location-pair' | 'image-url' | 'toggle' | 'card-select';
+  type: 'text' | 'textarea' | 'date-range' | 'location-pair' | 'image-url' | 'toggle' | 'card-select' | 'transport-section';
   label: string;
   placeholder?: string;
   icon?: string;

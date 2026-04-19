@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Trekio Open Graph image (1200×630 — the canonical OG aspect ratio).
+  Used by social-card meta tags in src/index.html and per-page meta tags
+  set by SeoService.
+
+  ⚠ NOTE: Facebook + some legacy crawlers don't render SVG OG images.
+  For maximum platform compatibility, convert this to og-image.png
+  before serious launch (any svg→png tool works; export at 1200×630).
+  Until then, Twitter/Slack/WhatsApp/LinkedIn render SVG fine.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <!-- Background gradient: mint → mint-hover -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#48BB78"/>
+      <stop offset="100%" stop-color="#38A169"/>
+    </linearGradient>
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.05"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+      <feOffset dx="0" dy="4" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.25"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+
+  <!-- Decorative dots -->
+  <circle cx="100" cy="120" r="8" fill="#FFFFFF" opacity="0.12"/>
+  <circle cx="160" cy="180" r="5" fill="#FFFFFF" opacity="0.18"/>
+  <circle cx="1080" cy="80" r="10" fill="#FFFFFF" opacity="0.14"/>
+  <circle cx="1140" cy="140" r="6" fill="#FFFFFF" opacity="0.18"/>
+  <circle cx="80" cy="540" r="9" fill="#FFFFFF" opacity="0.12"/>
+  <circle cx="1100" cy="510" r="7" fill="#FFFFFF" opacity="0.16"/>
+  <circle cx="1050" cy="570" r="11" fill="#FFFFFF" opacity="0.10"/>
+
+  <!-- Map pin glyph -->
+  <g transform="translate(540, 130)" filter="url(#softShadow)">
+    <path d="M60 0 C26.86 0 0 26.86 0 60 C0 100 60 160 60 160 C60 160 120 100 120 60 C120 26.86 93.14 0 60 0 Z"
+          fill="#FFFFFF"/>
+    <circle cx="60" cy="60" r="22" fill="#48BB78"/>
+  </g>
+
+  <!-- Wordmark "Trekio" — semi-transparent fill for art-direction feel -->
+  <text x="600" y="380"
+        font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif"
+        font-size="120"
+        font-weight="800"
+        fill="#FFFFFF"
+        text-anchor="middle"
+        letter-spacing="-3">Trekio</text>
+
+  <!-- Tagline -->
+  <text x="600" y="450"
+        font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif"
+        font-size="32"
+        font-weight="500"
+        fill="#FFFFFF"
+        fill-opacity="0.92"
+        text-anchor="middle">Create journeys worth sharing.</text>
+
+  <!-- Sub-line / value props -->
+  <text x="600" y="520"
+        font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif"
+        font-size="22"
+        font-weight="400"
+        fill="#FFFFFF"
+        fill-opacity="0.78"
+        text-anchor="middle">AI Trip Planner · Travel Itineraries · Social Travel</text>
+</svg>

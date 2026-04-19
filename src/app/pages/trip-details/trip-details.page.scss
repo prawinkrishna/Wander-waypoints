@@ -654,6 +654,36 @@
   position: relative;
 }
 
+.day-filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  .day-pill {
+    padding: 5px 14px;
+    border-radius: 9999px;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &.active {
+      background: #48BB78;
+      border-color: #48BB78;
+      color: #fff;
+    }
+
+    &:hover:not(.active) {
+      border-color: #48BB78;
+      color: #48BB78;
+    }
+  }
+}
+
 .map-container {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -840,6 +870,336 @@
     font-size: 18px;
     width: 18px;
     height: 18px;
+  }
+}
+
+/* =============================================================================
+   TRAVEL GUIDE — CTA + EXTRAS CARDS
+   ============================================================================= */
+
+.travel-guide-cta {
+  margin-bottom: 16px;
+
+  .cta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    .cta-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: #48BB78;
+      }
+
+      strong {
+        display: block;
+        font-size: 15px;
+        color: #2D3748;
+      }
+
+      p {
+        margin: 2px 0 0;
+        font-size: 13px;
+        color: #718096;
+      }
+    }
+  }
+
+  .extras-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #F56565;
+    font-size: 13px;
+    margin-top: 10px;
+  }
+}
+
+.extras-card {
+  margin-bottom: 16px;
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+
+    mat-icon {
+      color: #48BB78;
+    }
+  }
+
+  // Checklist card
+  &.checklist-card {
+    .progress-badge {
+      margin-left: auto;
+      font-size: 12px;
+      font-weight: 600;
+      background: #C6F6D5;
+      color: #276749;
+      padding: 2px 10px;
+      border-radius: 9999px;
+    }
+
+    .checklist-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .checklist-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid #E2E8F0;
+
+      &:hover { background: #F7FAFC; }
+      &.checked { background: #F0FFF4; border-color: #9AE6B4; }
+
+      .check-icon {
+        color: #CBD5E0;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      &.checked .check-icon { color: #48BB78; }
+
+      .item-icon {
+        color: #4299E1;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .item-content {
+        strong { display: block; font-size: 13px; color: #2D3748; }
+        p { margin: 2px 0 0; font-size: 12px; color: #4A5568; line-height: 1.4; }
+      }
+    }
+
+    .emergency-contacts {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #E2E8F0;
+
+      h4 {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #2D3748;
+        margin: 0 0 10px;
+
+        mat-icon { font-size: 18px; width: 18px; height: 18px; color: #F56565; }
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          color: #718096;
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+
+        div {
+          .contact-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+          span:not(.contact-label) {
+            font-size: 12px;
+            color: #2D3748;
+          }
+        }
+      }
+    }
+  }
+
+  // Budget card
+  &.budget-card {
+    .budget-total {
+      margin-left: auto;
+      font-size: 13px;
+      font-weight: 700;
+      color: #48BB78;
+    }
+
+    .budget-table {
+      margin-top: 12px;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      overflow: hidden;
+
+      .budget-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        border-bottom: 1px solid #E2E8F0;
+
+        &:last-child { border-bottom: none; }
+
+        &.total-row {
+          background: #F7FAFC;
+          font-size: 14px;
+        }
+
+        .budget-category {
+          display: flex;
+          flex-direction: column;
+
+          .category-name { font-size: 13px; color: #2D3748; font-weight: 500; }
+          .category-note { font-size: 11px; color: #718096; }
+        }
+
+        .budget-amount {
+          font-size: 13px;
+          font-weight: 600;
+          color: #2D3748;
+        }
+      }
+    }
+  }
+
+  // Local tips card
+  &.tips-card {
+    .tips-list {
+      margin: 12px 0 0;
+      padding-left: 20px;
+
+      li {
+        font-size: 13px;
+        color: #4A5568;
+        line-height: 1.6;
+        margin-bottom: 4px;
+      }
+    }
+
+    .useful-phrases {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #E2E8F0;
+
+      h4 {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #2D3748;
+        margin: 0 0 10px;
+
+        mat-icon { font-size: 18px; width: 18px; height: 18px; color: #48BB78; }
+      }
+
+      .phrase-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        margin-bottom: 4px;
+        background: #F7FAFC;
+
+        .phrase-english { color: #2D3748; font-weight: 500; }
+        .phrase-local { color: #4299E1; font-weight: 600; }
+        .phrase-pronunciation { color: #718096; font-style: italic; }
+      }
+    }
+  }
+
+  // Packing card
+  &.packing-card {
+    .packing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+
+      @media (max-width: 480px) { grid-template-columns: 1fr; }
+    }
+
+    .cat-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #4299E1;
+      }
+
+      strong { font-size: 13px; color: #2D3748; }
+    }
+
+    .pack-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #4A5568;
+      transition: background 0.1s;
+
+      &:hover { background: #EBF8FF; }
+
+      &.packed {
+        text-decoration: line-through;
+        color: #A0AEC0;
+        background: #F0FFF4;
+      }
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: #CBD5E0;
+        flex-shrink: 0;
+      }
+
+      &.packed mat-icon { color: #48BB78; }
+    }
   }
 }
 

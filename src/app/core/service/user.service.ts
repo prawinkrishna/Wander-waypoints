@@ -23,6 +23,10 @@ export class UserService {
         return this.http.patch(`${this.apiUrl}/${id}`, data);
     }
 
+    upgradeToAgency(): Observable<any> {
+        return this.http.post(`${this.apiUrl}/me/upgrade-to-agency`, {});
+    }
+
     deleteUser(id: string): Observable<any> {
         return this.http.delete(`${this.apiUrl}/${id}`);
     }

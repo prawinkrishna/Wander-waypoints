@@ -74,7 +74,7 @@
   box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: var(--z-navbar);
   border-bottom: 1px solid var(--color-border);
 
   .navbar-left {
@@ -107,6 +107,22 @@
         .site-name-io {
           color: var(--primary);
         }
+      }
+
+      // Public-beta badge — sits next to the wordmark to set user
+      // expectations. Remove this element when leaving beta.
+      .beta-badge {
+        margin-left: var(--space-2);
+        padding: 2px var(--space-2);
+        background: var(--primary-tint);
+        color: var(--primary);
+        font-size: 10px;
+        font-weight: var(--font-weight-bold);
+        letter-spacing: 0.8px;
+        border-radius: var(--radius-xs);
+        text-transform: uppercase;
+        line-height: 1.4;
+        align-self: center;
       }
     }
   }
@@ -358,7 +374,8 @@
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1099;
+  // Mobile menu backdrop sits between navbar and the menu drawer itself.
+  z-index: calc(var(--z-mobile-menu) - 1);
   animation: fadeIn 0.2s ease;
 }
 
@@ -371,7 +388,7 @@
   max-width: 320px;
   height: 100vh;
   background: var(--color-surface);
-  z-index: 1100;
+  z-index: var(--z-mobile-menu);
   transform: translateX(-100%);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: var(--shadow-lg);
@@ -492,7 +509,9 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 999;
+  // Sits just under the navbar so clicking outside the dropdown closes it
+  // without intercepting nav clicks.
+  z-index: calc(var(--z-navbar) - 1);
 }
 
 .notification-dropdown {
@@ -505,7 +524,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  z-index: 1001;
+  z-index: calc(var(--z-navbar) + 1);
   overflow: hidden;
   animation: fadeIn 0.15s ease;
 

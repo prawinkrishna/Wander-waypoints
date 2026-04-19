@@ -73,21 +73,23 @@
 
               <!-- Date Range -->
               <div class="date-range" *ngIf="field.type === 'date-range'">
-                <mat-form-field appearance="outline" class="date-field">
-                  <mat-label>Start Date</mat-label>
-                  <input matInput [matDatepicker]="startPicker" formControlName="startDate" [min]="minDate">
-                  <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-                  <mat-datepicker #startPicker></mat-datepicker>
-                  <mat-error>Start date is required</mat-error>
-                </mat-form-field>
+                <div class="date-pair">
+                  <mat-form-field appearance="outline" class="date-field">
+                    <mat-label>Start Date</mat-label>
+                    <input matInput [matDatepicker]="startPicker" formControlName="startDate" [min]="minDate">
+                    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startPicker></mat-datepicker>
+                    <mat-error>Start date is required</mat-error>
+                  </mat-form-field>
 
-                <mat-form-field appearance="outline" class="date-field">
-                  <mat-label>End Date</mat-label>
-                  <input matInput [matDatepicker]="endPicker" formControlName="endDate" [min]="f['startDate'].value">
-                  <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-                  <mat-datepicker #endPicker></mat-datepicker>
-                  <mat-error>End date is required</mat-error>
-                </mat-form-field>
+                  <mat-form-field appearance="outline" class="date-field">
+                    <mat-label>End Date</mat-label>
+                    <input matInput [matDatepicker]="endPicker" formControlName="endDate" [min]="f['startDate'].value">
+                    <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #endPicker></mat-datepicker>
+                    <mat-error>End date is required</mat-error>
+                  </mat-form-field>
+                </div>
               </div>
 
               <!-- Card Select -->
@@ -102,6 +104,161 @@
                   <span class="card-label">{{ option.label }}</span>
                   <span class="card-desc">{{ option.description }}</span>
                 </button>
+              </div>
+
+              <!-- Transport Section -->
+              <div class="transport-section" *ngIf="field.type === 'transport-section'">
+
+                <!-- Section A: Getting There -->
+                <div class="transport-subsection">
+                  <div class="transport-subsection-header">
+                    <mat-icon>directions</mat-icon>
+                    <div>
+                      <span class="transport-subsection-title">Getting There</span>
+                      <span class="transport-subsection-sub">{{ f['origin'].value || 'Origin' }} → {{ f['destination'].value || 'Destination' }}</span>
+                    </div>
+                  </div>
+                  <div class="transport-grid">
+                    <button type="button" class="transport-card"
+                      [class.selected]="f['interCityTransport'].value === 'flight'"
+                      (click)="selectCardOption('interCityTransport', 'flight')">
+                      <mat-icon class="card-icon">flight</mat-icon>
+                      <span class="card-label">Flight</span>
+                    </button>
+                    <button type="button" class="transport-card"
+                      [class.selected]="f['interCityTransport'].value === 'train'"
+                      (click)="selectCardOption('interCityTransport', 'train')">
+                      <mat-icon class="card-icon">train</mat-icon>
+                      <span class="card-label">Train</span>
+                    </button>
+                    <button type="button" class="transport-card"
+                      [class.selected]="f['interCityTransport'].value === 'bus'"
+                      (click)="selectCardOption('interCityTransport', 'bus')">
+                      <mat-icon class="card-icon">directions_bus</mat-icon>
+                      <span class="card-label">Bus</span>
+                    </button>
+                    <button type="button" class="transport-card"
+                      [class.selected]="f['interCityTransport'].value === 'car'"
+                      (click)="selectCardOption('interCityTransport', 'car')">
+                      <mat-icon class="card-icon">directions_car</mat-icon>
+                      <span class="card-label">Own Car</span>
+                    </button>
+                    <button type="button" class="transport-card"
+                      [class.selected]="f['interCityTransport'].value === 'rental_car'"
+                      (click)="selectCardOption('interCityTransport', 'rental_car')">
+                      <mat-icon class="card-icon">car_rental</mat-icon>
+                      <span class="card-label">Rental Car</span>
+                    </button>
+                    <button type="button" class="transport-card"
+                      [class.selected]="f['interCityTransport'].value === 'cab'"
+                      (click)="selectCardOption('interCityTransport', 'cab')">
+                      <mat-icon class="card-icon">local_taxi</mat-icon>
+                      <span class="card-label">Cab / Taxi</span>
+                    </button>
+                  </div>
+
+                  <!-- Flight arrival details -->
+                  <div class="arrival-details-panel" *ngIf="isFlightTrip">
+                    <div class="arrival-panel-header">
+                      <mat-icon>info_outline</mat-icon>
+                      <span>We'll factor these into your Day 1 itinerary</span>
+                    </div>
+                    <div class="arrival-fields-row">
+                      <mat-form-field appearance="outline" class="arrival-field">
+                        <mat-label>Flight arrival time</mat-label>
+                        <input matInput type="time" formControlName="arrivalTime">
+                        <mat-icon matSuffix>flight_land</mat-icon>
+                        <mat-hint>Local time at {{ f['destination'].value || 'destination' }}</mat-hint>
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="arrival-field">
+                        <mat-label>Airport → Hotel transfer</mat-label>
+                        <mat-select formControlName="airportTransferMins">
+                          <mat-option [value]="20">20 min (city centre)</mat-option>
+                          <mat-option [value]="30">30 min</mat-option>
+                          <mat-option [value]="45">45 min (typical)</mat-option>
+                          <mat-option [value]="60">60 min</mat-option>
+                          <mat-option [value]="90">90 min (far airport)</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <!-- Train arrival details -->
+                  <div class="arrival-details-panel" *ngIf="isTrainTrip">
+                    <div class="arrival-panel-header">
+                      <mat-icon>info_outline</mat-icon>
+                      <span>We'll plan Day 1 around your train arrival</span>
+                    </div>
+                    <div class="arrival-fields-row">
+                      <mat-form-field appearance="outline" class="arrival-field">
+                        <mat-label>Train arrival time (optional)</mat-label>
+                        <input matInput type="time" formControlName="arrivalTime">
+                        <mat-icon matSuffix>train</mat-icon>
+                        <mat-hint>Local time at {{ f['destination'].value || 'destination' }}</mat-hint>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Section B: Getting Around -->
+                <div class="transport-subsection">
+                  <div class="transport-subsection-header">
+                    <mat-icon>explore</mat-icon>
+                    <div>
+                      <span class="transport-subsection-title">Getting Around</span>
+                      <span class="transport-subsection-sub">How you'll move within {{ f['destination'].value || 'the destination' }}</span>
+                    </div>
+                  </div>
+                  <div class="transport-grid local-grid">
+                    <button type="button" class="transport-card multi"
+                      [class.selected]="isLocalModeSelected('own_car')"
+                      (click)="toggleLocalTransport('own_car')">
+                      <mat-icon class="card-icon">directions_car</mat-icon>
+                      <span class="card-label">Own Car</span>
+                    </button>
+                    <button type="button" class="transport-card multi"
+                      [class.selected]="isLocalModeSelected('walk')"
+                      (click)="toggleLocalTransport('walk')">
+                      <mat-icon class="card-icon">directions_walk</mat-icon>
+                      <span class="card-label">Walk</span>
+                    </button>
+                    <button type="button" class="transport-card multi"
+                      [class.selected]="isLocalModeSelected('bus')"
+                      (click)="toggleLocalTransport('bus')">
+                      <mat-icon class="card-icon">directions_bus</mat-icon>
+                      <span class="card-label">Bus / Metro</span>
+                    </button>
+                    <button type="button" class="transport-card multi"
+                      [class.selected]="isLocalModeSelected('auto')"
+                      (click)="toggleLocalTransport('auto')">
+                      <mat-icon class="card-icon">local_taxi</mat-icon>
+                      <span class="card-label">Auto / Cab</span>
+                    </button>
+                    <button type="button" class="transport-card multi"
+                      [class.selected]="isLocalModeSelected('bike')"
+                      (click)="toggleLocalTransport('bike')">
+                      <mat-icon class="card-icon">two_wheeler</mat-icon>
+                      <span class="card-label">Rental Bike</span>
+                    </button>
+                    <button type="button" class="transport-card multi"
+                      [class.selected]="isLocalModeSelected('rental')"
+                      (click)="toggleLocalTransport('rental')">
+                      <mat-icon class="card-icon">car_rental</mat-icon>
+                      <span class="card-label">Rental Car</span>
+                    </button>
+                    <button type="button" class="transport-card multi"
+                      [class.selected]="isLocalModeSelected('mix')"
+                      (click)="toggleLocalTransport('mix')">
+                      <mat-icon class="card-icon">auto_awesome</mat-icon>
+                      <span class="card-label">AI Decides</span>
+                    </button>
+                  </div>
+                  <p class="local-transport-hint" *ngIf="!isLocalModeSelected('mix')">
+                    <mat-icon>check_circle</mat-icon>
+                    {{ localTransportCount }} mode(s) selected — AI will prioritise these
+                  </p>
+                </div>
+
               </div>
 
               <!-- Text Input -->

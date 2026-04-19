@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
-import { AiService, ChatMessage, ModifyTripRequest } from '../../core/service/ai.service';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
+import { AiService, ChatMessage, ModifyTripRequest, TripExtrasRequest } from '../../core/service/ai.service';
 
 interface DisplayMessage {
   role: 'user' | 'assistant';
@@ -13,29 +13,87 @@ interface DisplayMessage {
   templateUrl: './ai-trip-chat.component.html',
   styleUrls: ['./ai-trip-chat.component.scss']
 })
-export class AiTripChatComponent implements AfterViewChecked {
+export class AiTripChatComponent implements AfterViewChecked, OnChanges {
   @Input() trip: any;
   @Input() isOpen = false;
   @Output() close = new EventEmitter<void>();
   @Output() itineraryUpdated = new EventEmitter<any[]>();
+  @Output() planAsAgencyRequested = new EventEmitter<void>();
 
   @ViewChild('chatMessages') chatMessagesEl!: ElementRef;
 
   messages: DisplayMessage[] = [];
   newMessage = '';
   isProcessing = false;
+  generatingAgency = false;
   private shouldScroll = false;
 
-  suggestions = [
-    'Add more food spots',
+  contextSuggestions: string[] = [];
+  readonly staticSuggestions = [
+    'Add hidden gems locals love',
+    'Suggest must-try local food',
     'Make it less packed',
     'Add free activities',
     'Rearrange for better flow',
-    'Add a beach day',
     'More cultural experiences'
   ];
 
   constructor(private aiService: AiService) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['trip'] && this.trip) {
+      this.contextSuggestions = this.buildContextSuggestions();
+    }
+  }
+
+  get suggestions(): string[] {
+    return this.contextSuggestions.length
+      ? [...this.contextSuggestions, ...this.staticSuggestions].slice(0, 6)
+      : this.staticSuggestions;
+  }
+
+  private buildContextSuggestions(): string[] {
+    if (!this.trip?.places?.length) return [];
+    const dest = this.trip.destination || this.trip.title || '';
+    const suggestions: string[] = [];
+
+    // Group places by day to detect issues
+    const dayMap = new Map<number, any[]>();
+    (this.trip.places || []).forEach((p: any) => {
+      const d = p.dayNumber || 1;
+      if (!dayMap.has(d)) dayMap.set(d, []);
+      dayMap.get(d)!.push(p);
+    });
+
+    // Detect packed days
+    for (const [day, places] of dayMap) {
+      const totalMins = places.reduce((s: number, p: any) => s + (p.duration || 60) + (p.travelTimeFromPrev || 0), 0);
+      if (totalMins > 480) {
+        suggestions.push(`Relax Day ${day} — it's too packed`);
+        break;
+      }
+    }
+
+    // Detect days with no food place
+    for (const [day, places] of dayMap) {
+      const hasFood = places.some((p: any) => {
+        const cat = (p.place?.category || '').toLowerCase();
+        return cat.includes('restaurant') || cat.includes('cafe') || cat.includes('food');
+      });
+      if (!hasFood) {
+        suggestions.push(`Add lunch for Day ${day} near the attractions`);
+        break;
+      }
+    }
+
+    // Destination-specific nudges
+    if (dest) {
+      suggestions.push(`What should I not miss in ${dest}?`);
+      suggestions.push(`Add a local market or street food spot in ${dest}`);
+    }
+
+    return suggestions.slice(0, 3);
+  }
 
   ngAfterViewChecked() {
     if (this.shouldScroll) {
@@ -149,6 +207,16 @@ export class AiTripChatComponent implements AfterViewChecked {
       event.preventDefault();
       this.sendMessage();
     }
+  }
+
+  planAsAgency() {
+    this.planAsAgencyRequested.emit();
+    this.messages.push({
+      role: 'assistant',
+      content: `Generating your complete travel guide for ${this.trip?.destination || 'your destination'} — visa info, budget, packing list & local tips. Check the travel guide cards below when ready!`,
+      timestamp: new Date()
+    });
+    this.shouldScroll = true;
   }
 
   onClose() {
