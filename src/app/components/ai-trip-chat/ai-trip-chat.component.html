@@ -5,6 +5,10 @@
             <mat-icon>auto_awesome</mat-icon>
             <span>AI Trip Assistant</span>
         </div>
+        <button class="agency-btn" (click)="planAsAgency()" [disabled]="isProcessing" matTooltip="Generate full travel guide — visa, budget, packing & local tips">
+            <mat-icon>travel_explore</mat-icon>
+            Plan as Agency
+        </button>
         <button mat-icon-button (click)="onClose()">
             <mat-icon>close</mat-icon>
         </button>

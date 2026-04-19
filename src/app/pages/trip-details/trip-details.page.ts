@@ -2,13 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TripService } from '../../core/service/trip.service';
 import { AuthService } from '../../core/service/auth.service';
-import { AiService } from '../../core/service/ai.service';
+import { AiService, TripExtras } from '../../core/service/ai.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPlaceDialogComponent } from '../../components/add-place-dialog.component';
 import { BookTripDialogComponent } from '../../components/book-trip-dialog/book-trip-dialog.component';
 import { ConfirmDialogComponent } from '../../components/shared/confirm-dialog/confirm-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EditTripDialogComponent } from '../../components/edit-trip-dialog/edit-trip-dialog.component';
+import { environment } from '../../../environments/environment';
+import { SeoService } from '../../core/services/seo.service';
+import { BRAND } from '../../core/brand.config';
 interface Trip {
   tripId: string;
   title: string;
@@ -63,6 +66,30 @@ export class TripDetailsPage implements OnInit {
   generatingAI = false;
   showAiChat = false;
 
+  // Travel Guide (Trip Extras)
+  tripExtras: TripExtras | null = null;
+  loadingExtras = false;
+  extrasError: string | null = null;
+  checkedItems = new Set<string>();
+  packedItems = new Set<string>();
+
+  // Hide booking widgets unless the booking feature is enabled (public beta has it off).
+  bookingEnabled = environment.featureBookingEnabled;
+
+  // Map day filter
+  mapDayFilter: number | null = null;
+
+  get mapFilteredPlaces(): any[] {
+    if (!this.trip?.places) return [];
+    if (this.mapDayFilter === null) return this.trip.places;
+    return this.trip.places.filter((p: any) => p.dayNumber === this.mapDayFilter);
+  }
+
+  get tripDayNumbers(): number[] {
+    const days = new Set((this.trip?.places || []).map((p: any) => p.dayNumber || 1));
+    return Array.from(days).sort((a: number, b: number) => a - b);
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -70,7 +97,8 @@ export class TripDetailsPage implements OnInit {
     private authService: AuthService,
     private aiService: AiService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private seo: SeoService,
   ) { }
 
   ngOnInit() {
@@ -97,11 +125,73 @@ export class TripDetailsPage implements OnInit {
         const tripOwnerId = trip.userId || trip.user?.userId;
         this.isOwner = !!(this.currentUserId && tripOwnerId && this.currentUserId === tripOwnerId);
         this.isLoading = false;
+        this.applySeoForTrip(trip);
       },
       error: (err) => {
         this.error = 'Failed to load trip details. The trip may not exist or you may not have permission to view it.';
         this.isLoading = false;
       }
+    });
+  }
+
+  /**
+   * Set per-trip meta tags + JSON-LD once the data has loaded. Critical
+   * for sharing — without this, every trip URL would render the generic
+   * site description in Slack/WhatsApp/Twitter previews. Also injects
+   * `TouristTrip` schema.org markup so Google can rich-snippet the trip.
+   *
+   * Note: this only runs client-side, so until SSR is added the meta
+   * tags only work for users with JS-enabled browsers (Google's bot can
+   * usually execute JS now, but unreliably). When SSR lands post-beta,
+   * the same call sites work without modification.
+   */
+  private applySeoForTrip(trip: Trip): void {
+    if (!trip) return;
+
+    const destination = trip.destination || '';
+    const description =
+      trip.description?.slice(0, 155) ||
+      `${destination ? `Explore ${destination}. ` : ''}A travel itinerary on Trekio.`;
+
+    this.seo.setMetaTags({
+      title: `${trip.title}${destination ? ` — ${destination}` : ''}`,
+      description,
+      path: `/trip-details/${trip.tripId}`,
+      type: 'article',
+      // Public trips are indexable; private trips should not be.
+      noIndex: !(trip as any).isPublic,
+    });
+
+    if (!(trip as any).isPublic) {
+      // Don't expose private trip data via JSON-LD even if the page
+      // happens to render. The noIndex flag above already covers
+      // crawlers, but structured data is fetched independently.
+      return;
+    }
+
+    this.seo.setStructuredData({
+      '@context': 'https://schema.org',
+      '@type': 'TouristTrip',
+      name: trip.title,
+      description,
+      url: `${BRAND.url}/trip-details/${trip.tripId}`,
+      ...(trip.user?.username
+        ? {
+            author: {
+              '@type': 'Person',
+              name: trip.user.username,
+            },
+          }
+        : {}),
+      ...(destination
+        ? {
+            touristType: 'leisure',
+            itinerary: {
+              '@type': 'ItemList',
+              numberOfItems: trip.places?.length || 0,
+            },
+          }
+        : {}),
     });
   }
 
@@ -446,6 +536,74 @@ export class TripDetailsPage implements OnInit {
 
   toggleAiChat() {
     this.showAiChat = !this.showAiChat;
+  }
+
+  generateTripExtras() {
+    if (!this.trip || this.loadingExtras) return;
+    this.loadingExtras = true;
+    this.extrasError = null;
+
+    const destination = this.trip.destination || '';
+    const start = this.trip.startDate ? new Date(this.trip.startDate) : null;
+    const end = this.trip.endDate ? new Date(this.trip.endDate) : null;
+    const duration = start && end
+      ? Math.max(1, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1)
+      : 7;
+
+    this.aiService.generateTripExtras({
+      destination,
+      duration,
+      origin: this.trip.origin,
+      trip_type: this.trip.tripType,
+    }).subscribe({
+      next: (extras) => {
+        this.tripExtras = extras;
+        this.loadingExtras = false;
+      },
+      error: () => {
+        this.extrasError = 'Failed to generate travel guide. Please try again.';
+        this.loadingExtras = false;
+      }
+    });
+  }
+
+  toggleCheckedItem(key: string) {
+    if (this.checkedItems.has(key)) {
+      this.checkedItems.delete(key);
+    } else {
+      this.checkedItems.add(key);
+    }
+  }
+
+  togglePackedItem(key: string) {
+    if (this.packedItems.has(key)) {
+      this.packedItems.delete(key);
+    } else {
+      this.packedItems.add(key);
+    }
+  }
+
+  get checkedCount(): number {
+    if (!this.tripExtras) return 0;
+    const keys = Object.keys(this.tripExtras.pre_trip_checklist).filter(k => k !== 'emergency_contacts');
+    return keys.filter(k => this.checkedItems.has(k)).length;
+  }
+
+  get checklistTotal(): number {
+    if (!this.tripExtras) return 0;
+    return Object.keys(this.tripExtras.pre_trip_checklist).filter(k => k !== 'emergency_contacts').length;
+  }
+
+  getChecklistValue(key: string): string {
+    if (!this.tripExtras) return '';
+    const checklist = this.tripExtras.pre_trip_checklist as Record<string, any>;
+    return checklist[key] || '';
+  }
+
+  getPackingItems(key: string): string[] {
+    if (!this.tripExtras) return [];
+    const list = this.tripExtras.packing_list as Record<string, string[]>;
+    return list[key] || [];
   }
 
   onAiItineraryUpdated(modifiedItinerary: any[]) {

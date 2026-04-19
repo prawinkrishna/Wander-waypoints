@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { TripFeedRoutingModule } from './trip-feed-routing.module';
 import { TripFeedPage } from './trip-feed.page';
 import { SharedModule } from '../../components/shared/shared.module';
+import { WanderLibraryModule } from 'wander-library';
 
 @NgModule({
   declarations: [TripFeedPage],
@@ -25,7 +26,8 @@ import { SharedModule } from '../../components/shared/shared.module';
     MatInputModule,
     MatSelectModule,
     TripFeedRoutingModule,
-    SharedModule
+    SharedModule,
+    WanderLibraryModule
   ],
 })
 export class TripFeedModule { }

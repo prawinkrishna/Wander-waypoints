@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SocialService } from '../../core/service/social.service';
 import { AuthService } from '../../core/service/auth.service';
+import { TripService } from '../../core/service/trip.service';
+import { SavedPlaceService } from '../../core/service/saved-place.service';
 
 @Component({
     selector: 'app-user-profile',
@@ -13,12 +15,15 @@ export class UserProfileComponent implements OnInit {
     loading = true;
     followStatus: 'NONE' | 'PENDING' | 'ACCEPTED' = 'NONE';
     isOwnProfile = false;
+    savedVideoPlaces: any[] = [];
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private socialService: SocialService,
-        private authService: AuthService
+        private authService: AuthService,
+        private tripService: TripService,
+        private savedPlaceService: SavedPlaceService
     ) { }
 
     ngOnInit() {
@@ -41,16 +46,26 @@ export class UserProfileComponent implements OnInit {
             this.socialService.getPublicProfile(currentUser.userId).subscribe({
                 next: (data) => {
                     this.user = data;
-                    this.loading = false;
+                    // Load ALL trips including private imported ones
+                    this.tripService.getUserTrips(currentUser.userId).subscribe({
+                        next: (allTrips) => {
+                            if (this.user) this.user = { ...this.user, trips: allTrips };
+                            this.loading = false;
+                        },
+                        error: () => { this.loading = false; }
+                    });
+                    // Load saved video places
+                    this.savedPlaceService.getMySavedPlaces().subscribe({
+                        next: (places) => { this.savedVideoPlaces = places; },
+                        error: () => {}
+                    });
                 },
                 error: () => {
-                    // Fallback to stored user data
                     this.user = currentUser;
                     this.loading = false;
                 }
             });
         } else {
-            // Guest user - redirect to login
             this.router.navigate(['/auth']);
         }
     }
@@ -65,7 +80,6 @@ export class UserProfileComponent implements OnInit {
                 this.user = data;
                 this.loading = false;
 
-                // Check follow status if not own profile
                 if (!this.isOwnProfile && currentUser?.userId) {
                     this.socialService.getFollowStatus(id).subscribe({
                         next: (res) => {
@@ -86,7 +100,6 @@ export class UserProfileComponent implements OnInit {
     onFollowClicked() {
         if (!this.user) return;
 
-        // Can only follow if not already following
         if (this.followStatus === 'NONE') {
             this.socialService.followUser(this.user.userId).subscribe({
                 next: (res) => {
@@ -101,7 +114,6 @@ export class UserProfileComponent implements OnInit {
     onUnfollowClicked() {
         if (!this.user) return;
 
-        // Can unfollow if PENDING (cancel request) or ACCEPTED (unfollow)
         if (this.followStatus === 'PENDING' || this.followStatus === 'ACCEPTED') {
             this.socialService.unfollowUser(this.user.userId).subscribe({
                 next: () => {
@@ -122,6 +134,6 @@ export class UserProfileComponent implements OnInit {
     }
 
     onTabChanged(tab: string) {
-        // Tab changed - could be used for analytics or lazy loading
+        // Tab changed
     }
 }

@@ -30,12 +30,19 @@ export class ItineraryTimelineComponent implements OnInit, OnChanges {
     @Input() isOwner: boolean = false;
     @Input() tripStartDate: Date | string | null = null;
     @Input() enableInlineEditing: boolean = false;
+    @Input() tripDestination: string = '';
     @Output() placeDeleted = new EventEmitter<string>();
     @Output() placesReordered = new EventEmitter<TripPlace[]>();
     @Output() placeUpdated = new EventEmitter<{ tripPlaceId: string; data: Partial<TripPlace & { place: any }> }>();
 
+    viewMode: 'list' | 'blocks' = 'list';
     groupedPlaces: DayGroup[] = [];
     collapsedDays = new Set<number>();
+
+    // Block view: 6am–midnight axis (18 hours)
+    readonly timeAxisHours = Array.from({ length: 7 }, (_, i) => 6 + i * 3); // 6,9,12,15,18,21,24
+    private readonly AXIS_START = 6 * 60;   // 6:00 in minutes
+    private readonly AXIS_TOTAL = 18 * 60;  // 18 hours span (6:00–24:00)
 
     // Transport editing
     transportModes = [
@@ -240,13 +247,28 @@ export class ItineraryTimelineComponent implements OnInit, OnChanges {
     }
 
     openDirections(tripPlace: TripPlace) {
-        if (tripPlace.place?.latitude && tripPlace.place?.longitude) {
-            const url = `https://www.google.com/maps/dir/?api=1&destination=${tripPlace.place.latitude},${tripPlace.place.longitude}`;
-            window.open(url, '_blank');
-        } else if (tripPlace.place?.address) {
+        const lat = parseFloat(String(tripPlace.place?.latitude ?? 0));
+        const lng = parseFloat(String(tripPlace.place?.longitude ?? 0));
+        const hasValidCoords = Math.abs(lat) > 0.001 && Math.abs(lng) > 0.001;
+
+        if (hasValidCoords) {
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+        } else if (tripPlace.place?.address && tripPlace.place.address.toLowerCase() !== this.tripDestination.toLowerCase() && tripPlace.place.address.trim().length > 5) {
             const address = encodeURIComponent(tripPlace.place.address);
             window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank');
+        } else {
+            const query = encodeURIComponent(`${tripPlace.place?.name || ''} ${this.tripDestination}`.trim());
+            window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
         }
+    }
+
+    getDayFatigue(places: TripPlace[]): { level: 'easy' | 'moderate' | 'packed'; totalMinutes: number } {
+        const totalMinutes = places.reduce((sum, p) => sum + (p.duration || 60) + (p.travelTimeFromPrev || 0), 0);
+        let level: 'easy' | 'moderate' | 'packed';
+        if (totalMinutes < 300) level = 'easy';
+        else if (totalMinutes < 480) level = 'moderate';
+        else level = 'packed';
+        return { level, totalMinutes };
     }
 
     onDeletePlace(tripPlaceId: string) {
@@ -386,5 +408,106 @@ export class ItineraryTimelineComponent implements OnInit, OnChanges {
     getTransportLabel(mode: string): string {
         const found = this.transportModes.find(m => m.value === mode);
         return found ? found.label : mode;
+    }
+
+    /** Returns which meal gaps are missing for a day ('lunch' | 'dinner') */
+    getMealGaps(places: TripPlace[]): ('lunch' | 'dinner')[] {
+        const gaps: ('lunch' | 'dinner')[] = [];
+        if (!places.length) return gaps;
+
+        const isFoodPlace = (p: TripPlace) => {
+            const cat = (p.place?.category || '').toLowerCase();
+            const name = (p.place?.name || '').toLowerCase();
+            return cat.includes('restaurant') || cat.includes('cafe') || cat.includes('food') ||
+                cat.includes('dining') || cat.includes('bar') || cat.includes('eat') ||
+                name.includes('restaurant') || name.includes('cafe') || name.includes('lunch') ||
+                name.includes('dinner') || name.includes('breakfast') || name.includes('food');
+        };
+
+        const timeToMinutes = (t: string): number => {
+            const [h, m] = t.split(':').map(Number);
+            return h * 60 + m;
+        };
+
+        const hasLunch = places.some(p => {
+            if (!isFoodPlace(p) || !p.startTime) return false;
+            const start = timeToMinutes(p.startTime);
+            const end = start + (p.duration || 60);
+            return start >= 720 && start <= 840 || (end >= 720 && end <= 840);
+        });
+
+        const hasDinner = places.some(p => {
+            if (!isFoodPlace(p) || !p.startTime) return false;
+            const start = timeToMinutes(p.startTime);
+            const end = start + (p.duration || 60);
+            return start >= 1140 && start <= 1260 || (end >= 1140 && end <= 1260);
+        });
+
+        if (!hasLunch) gaps.push('lunch');
+        if (!hasDinner) gaps.push('dinner');
+        return gaps;
+    }
+
+    /** Get the last non-hotel place name in a day for nearby restaurant search context */
+    getLastLocationName(places: TripPlace[]): string {
+        const nonHotel = places.filter(p => {
+            const cat = (p.place?.category || '').toLowerCase();
+            return !cat.includes('hotel') && !cat.includes('accommodation') && !cat.includes('hostel');
+        });
+        return nonHotel[nonHotel.length - 1]?.place?.name || this.tripDestination;
+    }
+
+    openRestaurantSearch(nearLocation: string) {
+        const query = encodeURIComponent(`restaurants near ${nearLocation}`);
+        window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+    }
+
+    // ── Block View helpers ──────────────────────────────────────────────────
+
+    private parseTimeMinutes(time: string): number {
+        const [h, m] = time.split(':').map(Number);
+        return h * 60 + (m || 0);
+    }
+
+    hourToPercent(h: number): number {
+        return ((h * 60 - this.AXIS_START) / this.AXIS_TOTAL) * 100;
+    }
+
+    getBlockLeft(startTime: string): number {
+        const mins = this.parseTimeMinutes(startTime);
+        return Math.max(0, ((mins - this.AXIS_START) / this.AXIS_TOTAL) * 100);
+    }
+
+    getBlockWidth(durationMins: number): number {
+        return Math.max(1, (durationMins / this.AXIS_TOTAL) * 100);
+    }
+
+    getTravelBlockLeft(startTime: string, travelMins: number): number {
+        const activityStart = this.parseTimeMinutes(startTime);
+        const travelStart = activityStart - travelMins;
+        return Math.max(0, ((travelStart - this.AXIS_START) / this.AXIS_TOTAL) * 100);
+    }
+
+    getFreeTimeGaps(places: TripPlace[]): { left: number; width: number; label: string }[] {
+        const gaps: { left: number; width: number; label: string }[] = [];
+        const sortedPlaces = places
+            .filter(p => p.startTime && p.duration)
+            .sort((a, b) => this.parseTimeMinutes(a.startTime!) - this.parseTimeMinutes(b.startTime!));
+
+        let prevEnd = this.AXIS_START;
+        for (const place of sortedPlaces) {
+            const start = this.parseTimeMinutes(place.startTime!);
+            const travelStart = place.travelTimeFromPrev ? start - place.travelTimeFromPrev : start;
+            if (travelStart > prevEnd + 15) {
+                const gapMins = travelStart - prevEnd;
+                const left = ((prevEnd - this.AXIS_START) / this.AXIS_TOTAL) * 100;
+                const width = (gapMins / this.AXIS_TOTAL) * 100;
+                const h = Math.floor(prevEnd / 60);
+                const m = prevEnd % 60;
+                gaps.push({ left, width, label: `${h}:${m.toString().padStart(2,'0')} – ${gapMins}min free` });
+            }
+            prevEnd = start + (place.duration || 60);
+        }
+        return gaps;
     }
 }

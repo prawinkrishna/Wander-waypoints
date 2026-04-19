@@ -29,8 +29,7 @@
         <mat-icon>add</mat-icon>
       </div>
       <div class="story-circle" *ngFor="let friend of friends; trackBy: trackByFriendId" (click)="viewProfile(friend.id)">
-        <img [src]="friend.avatar" [alt]="friend.name" loading="lazy"
-          (error)="$any($event.target).src='https://ui-avatars.com/api/?name=' + friend.name">
+        <app-avatar [imageUrl]="friend.avatar" [name]="friend.name" [size]="72"></app-avatar>
         <span class="story-name">{{ friend.name }}</span>
       </div>
     </div>
@@ -64,16 +63,23 @@
             <span><mat-icon>visibility</mat-icon> {{ trip.clones }}</span>
             <span><mat-icon>star</mat-icon> {{ trip.rating }}</span>
           </div>
+          <button class="show-on-map-btn" (click)="showTripOnMap(trip.id); $event.stopPropagation()">
+            <mat-icon>map</mat-icon> Show on Map
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Map Section Intergration (Optional based on design, but good for context) -->
-    <div class="section-header" style="margin-top: 32px;">
-      <h2>Explore Nearby</h2>
+    <!-- Map Section -->
+    <div class="section-header map-section-header" style="margin-top: 32px;">
+      <h2>{{ activeTripFilter ? 'Trip Locations' : 'Explore Nearby' }}</h2>
+      <span class="see-all reset-map-btn" *ngIf="activeTripFilter" (click)="resetMapToAll()">
+        <mat-icon>layers</mat-icon> Show All Trips
+      </span>
     </div>
-    <div id="explore-map" style="height: 400px; border-radius: 16px; overflow: hidden; margin-top: 16px;">
+    <div id="explore-map" style="height: 420px; border-radius: 16px; overflow: hidden; margin-top: 16px; position: relative;">
       <lib-gps [places]="filteredPlaces" [selectedPlace]="selectedPlace" [friends]="friends"
+        [emptyMessage]="'No trip destinations available yet'"
         (markerClicked)="onMarkerClicked($any($event))" (mapMoved)="onMapMoved($any($event))" [searchFn]="mapSearchFn"></lib-gps>
     </div>
 

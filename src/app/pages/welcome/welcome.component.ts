@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { SeoService } from '../../core/services/seo.service';
+import { BRAND } from '../../core/brand.config';
 
 @Component({
     selector: 'app-welcome',
     templateUrl: './welcome.component.html',
     styleUrls: ['./welcome.component.scss']
 })
-export class WelcomeComponent {
+export class WelcomeComponent implements OnInit {
     activeAudience: 'travelers' | 'agents' = 'travelers';
 
     consumerFeatures = [
@@ -81,7 +83,44 @@ export class WelcomeComponent {
         }
     ];
 
-    constructor(private router: Router) {}
+    constructor(private router: Router, private seo: SeoService) {}
+
+    ngOnInit(): void {
+        // Welcome is the public landing page — use the brand default title
+        // (no suffix), the full marketing description, and inject Organization
+        // + WebSite JSON-LD so Google can render rich snippets if it picks
+        // them up.
+        this.seo.setMetaTags({
+            description:
+                'Plan trips with AI, discover destinations, and create journeys worth sharing. Trekio is the all-in-one platform for travelers and travel agents.',
+            path: '/welcome',
+            type: 'website',
+        });
+
+        this.seo.setStructuredData({
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'Organization',
+                    '@id': `${BRAND.url}/#organization`,
+                    name: BRAND.seo.organization.legalName,
+                    url: BRAND.url,
+                    logo: `${BRAND.url}${BRAND.logo.icon}`,
+                    foundingDate: BRAND.seo.organization.foundingDate,
+                    sameAs: BRAND.seo.organization.sameAs,
+                },
+                {
+                    '@type': 'WebSite',
+                    '@id': `${BRAND.url}/#website`,
+                    url: BRAND.url,
+                    name: BRAND.name,
+                    description: BRAND.description,
+                    publisher: { '@id': `${BRAND.url}/#organization` },
+                    inLanguage: 'en-IN',
+                },
+            ],
+        });
+    }
 
     navigateToLogin() {
         this.router.navigate(['/login']);

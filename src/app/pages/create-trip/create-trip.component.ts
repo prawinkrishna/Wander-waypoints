@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { TripService } from '../../core/service/trip.service';
 import { AuthService } from '../../core/service/auth.service';
 import { AiService } from '../../core/service/ai.service';
+import { AnalyticsService } from '../../core/services/analytics.service';
 import { WizardStep } from './models/wizard-step.model';
 import { WIZARD_STEPS } from './config/wizard-steps.config';
 import { wizardSlideAnimation } from './animations/wizard.animations';
@@ -35,7 +36,8 @@ export class CreateTripComponent implements OnInit {
     private authService: AuthService,
     private aiService: AiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private analytics: AnalyticsService,
   ) {}
 
   ngOnInit() {
@@ -60,10 +62,13 @@ export class CreateTripComponent implements OnInit {
       destination: ['', Validators.required],
       startDate: [today, Validators.required],
       endDate: [nextWeek, Validators.required],
+      interCityTransport: ['car'],
+      arrivalTime: [''],
+      airportTransferMins: [45],
       tripType: ['solo', Validators.required],
       budget: ['medium', Validators.required],
       travelStyle: ['balanced', Validators.required],
-      transportPreference: ['mix'],
+      localTransportModes: [['mix']],
       title: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
       coverImage: [''],
@@ -116,6 +121,8 @@ export class CreateTripComponent implements OnInit {
         const startCtrl = this.tripForm.get('startDate');
         const endCtrl = this.tripForm.get('endDate');
         if (startCtrl?.invalid || endCtrl?.invalid) return false;
+      } else if (field.type === 'transport-section') {
+        // interCityTransport always has a default, always valid
       } else {
         const ctrl = this.tripForm.get(field.key);
         if (ctrl && ctrl.invalid) return false;
@@ -178,6 +185,49 @@ export class CreateTripComponent implements OnInit {
     this.tripForm.get(fieldKey)?.setValue(value);
   }
 
+  toggleLocalTransport(mode: string) {
+    const ctrl = this.f['localTransportModes'];
+    let modes: string[] = [...(ctrl.value || [])];
+    if (mode === 'mix') {
+      ctrl.setValue(['mix']);
+      return;
+    }
+    modes = modes.filter(m => m !== 'mix');
+    if (modes.includes(mode)) {
+      modes = modes.filter(m => m !== mode);
+      if (modes.length === 0) modes = ['mix'];
+    } else {
+      modes = [...modes, mode];
+    }
+    ctrl.setValue(modes);
+  }
+
+  isLocalModeSelected(mode: string): boolean {
+    return ((this.f['localTransportModes']?.value) || []).includes(mode);
+  }
+
+  get localTransportCount(): number {
+    const modes: string[] = this.f['localTransportModes']?.value || [];
+    return modes.filter(m => m !== 'mix').length;
+  }
+
+  get isFlightTrip(): boolean {
+    return this.f['interCityTransport']?.value === 'flight';
+  }
+
+  get isTrainTrip(): boolean {
+    return this.f['interCityTransport']?.value === 'train';
+  }
+
+  private mapLocalTransport(modes: string[]): string {
+    if (!modes || modes.length === 0 || modes.includes('mix')) return 'mix';
+    if (modes.every(m => ['walk', 'cycle'].includes(m))) return 'walking_cycling';
+    if (modes.some(m => ['own_car'].includes(m)) && !modes.some(m => ['bus', 'auto', 'metro'].includes(m))) return 'own_vehicle';
+    if (modes.some(m => ['rental', 'rental_car'].includes(m)) && !modes.some(m => ['bus', 'auto', 'metro'].includes(m))) return 'own_vehicle';
+    if (modes.every(m => ['bus', 'train', 'metro', 'auto'].includes(m))) return 'public_transport';
+    return 'mix';
+  }
+
   @HostListener('document:keydown.enter', ['$event'])
   onEnterKey(event: KeyboardEvent) {
     const target = event.target as HTMLElement;
@@ -201,7 +251,6 @@ export class CreateTripComponent implements OnInit {
     this.errorMessage = '';
 
     const formData = this.tripForm.value;
-    const currentUser = this.authService.getCurrentUser();
 
     const tripData = {
       title: formData.title,
@@ -212,7 +261,6 @@ export class CreateTripComponent implements OnInit {
       endDate: this.formatDate(formData.endDate),
       coverImage: formData.coverImage,
       isPublic: formData.isPublic,
-      userId: currentUser?.userId
     };
 
     if (this.isEditMode && this.tripId) {
@@ -238,6 +286,10 @@ export class CreateTripComponent implements OnInit {
   private createTrip(tripData: any, formData: any) {
     this.tripService.createTrip(tripData).subscribe({
       next: (response) => {
+        this.analytics.trackEvent('trip_created', {
+          with_ai: !!formData.useAI,
+          has_destination: !!tripData.destination,
+        });
         if (formData.useAI) {
           this.submitting = false;
           this.generatingAI = true;
@@ -257,26 +309,47 @@ export class CreateTripComponent implements OnInit {
   private generateWithAI(tripId: string, formData: any) {
     const durationDays = this.daysBetween(formData.startDate, formData.endDate);
 
-    this.aiService.generateTrip({
+    const startDateStr = formData.startDate instanceof Date
+      ? formData.startDate.toISOString().split('T')[0]
+      : formData.startDate;
+
+    const params = {
       destination: formData.destination,
       duration_days: durationDays,
       budget: this.mapBudgetLabel(formData.budget),
       interests: [formData.tripType],
       travel_style: this.mapStyleLabel(formData.travelStyle),
-      transport_preference: formData.transportPreference || 'mix'
-    }).subscribe({
-      next: (response) => {
-        const tripData = response.trip || response;
-        if (tripData?.itinerary?.length) {
-          this.saveItineraryPlaces(tripId, tripData.itinerary, formData.destination);
-        } else {
-          this.generatingAI = false;
-          this.router.navigate(['/trip-details', tripId]);
-        }
-      },
-      error: () => {
+      transport_preference: this.mapLocalTransport(formData.localTransportModes || ['mix']),
+      inter_city_transport: formData.interCityTransport || 'car',
+      local_transport_modes: formData.localTransportModes || ['mix'],
+      origin: formData.origin || undefined,
+      start_date: startDateStr || undefined,
+      arrival_time: this.isFlightTrip && formData.arrivalTime ? formData.arrivalTime : undefined,
+      airport_transfer_mins: this.isFlightTrip ? (formData.airportTransferMins || 45) : undefined,
+    };
+
+    const handleResponse = (response: any) => {
+      const tripData = response.trip || response;
+      if (tripData?.itinerary?.length) {
+        this.saveItineraryPlaces(tripId, tripData.itinerary, formData.destination);
+      } else {
         this.generatingAI = false;
         this.router.navigate(['/trip-details', tripId]);
+      }
+    };
+
+    // Try v2 (multi-agent pipeline) first; fall back to v1 on error
+    this.aiService.generateTripV2(params).subscribe({
+      next: handleResponse,
+      error: () => {
+        // v2 failed — fall back to v1
+        this.aiService.generateTrip(params).subscribe({
+          next: handleResponse,
+          error: () => {
+            this.generatingAI = false;
+            this.router.navigate(['/trip-details', tripId]);
+          }
+        });
       }
     });
   }
@@ -293,8 +366,18 @@ export class CreateTripComponent implements OnInit {
           let duration = activity.duration;
           if (!duration) {
             const name = (activity.place_name || '').toLowerCase();
-            if (name.includes('museum') || name.includes('art')) duration = 90;
-            else if (name.includes('restaurant') || name.includes('cafe') || name.includes('dinner') || name.includes('lunch')) duration = 60;
+            const cat = (activity.category || '').toLowerCase();
+            const text = name + ' ' + cat;
+            if (/national park|wildlife|forest reserve|nature reserve/.test(text)) duration = 240;
+            else if (/theme park|amusement|water park/.test(text)) duration = 300;
+            else if (/museum|gallery|art|exhibition|heritage/.test(text)) duration = 120;
+            else if (/beach|lake|waterfall/.test(text)) duration = 120;
+            else if (/palace|fort|castle|monument/.test(text)) duration = 90;
+            else if (/market|bazaar|shopping/.test(text)) duration = 90;
+            else if (/restaurant|cafe|dinner|lunch|breakfast|food court|bistro/.test(text)) duration = 75;
+            else if (/bar|pub|nightlife|club/.test(text)) duration = 90;
+            else if (/temple|shrine|mosque|church|cathedral|pagoda/.test(text)) duration = 45;
+            else if (/viewpoint|lookout|observation/.test(text)) duration = 30;
             else duration = 60;
           }
 

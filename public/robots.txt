@@ -1,8 +1,32 @@
+# Trekio robots.txt
+# When the custom domain is purchased, update the Sitemap URL below
+# AND the BRAND.url in src/app/core/brand.config.ts.
+
 User-agent: *
 Allow: /
+
+# Private / authenticated areas — never indexable
 Disallow: /api/
 Disallow: /studio/
 Disallow: /settings
 Disallow: /profile/edit
+Disallow: /auth/
 
-Sitemap: https://wanderwaypoints.com/sitemap.xml
+# Booking + marketplace are hidden for the public beta. Re-enable
+# (remove these Disallow lines) when the booking feature flag flips.
+Disallow: /booking
+Disallow: /marketplace
+
+# Anti-scraper hardening — block obvious AI training crawlers from
+# indexing user-generated trip content for now. Remove if you want
+# Trekio content to surface in AI search engines.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+Sitemap: https://wander-waypoints-u8ct.vercel.app/sitemap.xml

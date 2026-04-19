@@ -1,23 +1,12 @@
-// Design System Colors
-$primary: #48BB78;
-$primary-hover: #38A169;
-$secondary: #4299E1;
-$success: #48BB78;
-$warning: #ED8936;
-$bg-light: #F7F9FA;
-$surface-light: #FFFFFF;
-$text-primary: #1A202C;
-$text-secondary: #4A5568;
-$text-tertiary: #A0AEC0;
-$border-light: #E2E8F0;
+// Studio dashboard — uses global design tokens. No local hex constants.
 
 .dashboard-container {
-    padding: 32px;
+    padding: var(--space-8);
     max-width: 1200px;
     margin: 0 auto;
 
     @media (max-width: 768px) {
-        padding: 20px 16px;
+        padding: var(--space-5) var(--space-4);
     }
 }
 
@@ -31,67 +20,67 @@ $border-light: #E2E8F0;
     .onboarding-card {
         text-align: center;
         max-width: 560px;
-        padding: 48px 40px;
-        background: $surface-light;
-        border-radius: 16px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        padding: var(--space-12) var(--space-10);
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-card);
 
         .onboarding-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, $primary 0%, $primary-hover 100%);
-            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            border-radius: var(--radius-xl);
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0 auto 24px;
+            margin: 0 auto var(--space-6);
 
             mat-icon {
                 font-size: 40px;
                 width: 40px;
                 height: 40px;
-                color: white;
+                color: #FFFFFF;
             }
         }
 
         h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: $text-primary;
-            margin: 0 0 12px;
+            font-size: var(--text-h2);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
+            margin: 0 0 var(--space-3);
         }
 
         > p {
-            color: $text-secondary;
+            color: var(--color-text-secondary);
             line-height: 1.6;
-            margin: 0 0 32px;
+            margin: 0 0 var(--space-8);
         }
 
         .onboarding-features {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 32px;
+            gap: var(--space-3);
+            margin-bottom: var(--space-8);
             text-align: left;
 
             .onboarding-feature {
                 display: flex;
                 align-items: center;
-                gap: 12px;
-                padding: 12px 16px;
-                background: $bg-light;
-                border-radius: 8px;
+                gap: var(--space-3);
+                padding: var(--space-3) var(--space-4);
+                background: var(--color-background);
+                border-radius: var(--radius-sm);
 
                 mat-icon {
                     font-size: 20px;
                     width: 20px;
                     height: 20px;
-                    color: $primary;
+                    color: var(--primary);
                 }
 
                 span {
-                    font-size: 0.925rem;
-                    color: $text-primary;
+                    font-size: var(--text-body-sm);
+                    color: var(--color-text-primary);
                 }
             }
         }
@@ -99,13 +88,16 @@ $border-light: #E2E8F0;
         .onboarding-actions {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: var(--space-3);
 
+            // Match the global .btn-primary spec (48px height, radius-lg).
             button {
-                border-radius: 12px;
-                padding: 12px 24px;
-                font-weight: 600;
-                height: auto;
+                border-radius: var(--radius-lg);
+                padding: 0 var(--space-6);
+                font-weight: var(--font-weight-semibold);
+                height: 48px;
+                min-height: 48px;
+                line-height: 48px;
             }
         }
     }
@@ -113,22 +105,22 @@ $border-light: #E2E8F0;
 
 // Dashboard Header
 .dashboard-header {
-    margin-bottom: 32px;
+    margin-bottom: var(--space-8);
 
     .welcome-title {
-        font-size: 1.875rem;
-        font-weight: 700;
-        color: $text-primary;
-        margin: 0 0 8px;
+        font-size: var(--text-h1);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
+        margin: 0 0 var(--space-2);
 
         @media (max-width: 768px) {
-            font-size: 1.5rem;
+            font-size: var(--text-h2);
         }
     }
 
     .welcome-subtitle {
-        font-size: 1rem;
-        color: $text-secondary;
+        font-size: var(--text-body);
+        color: var(--color-text-secondary);
         margin: 0;
     }
 }
@@ -137,29 +129,29 @@ $border-light: #E2E8F0;
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-bottom: 32px;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
 
     @media (max-width: 768px) {
         grid-template-columns: 1fr;
-        gap: 16px;
+        gap: var(--space-4);
     }
 
     .stat-card {
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-card);
 
         mat-card-content {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 24px !important;
+            gap: var(--space-4);
+            padding: var(--space-6) !important;
         }
 
         .stat-icon {
             width: 56px;
             height: 56px;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -168,19 +160,23 @@ $border-light: #E2E8F0;
                 font-size: 28px;
                 width: 28px;
                 height: 28px;
-                color: white;
+                color: #FFFFFF;
             }
 
+            // Three icon variants share a similar gradient pattern. Using
+            // direct hex values here is intentional: gradients can't reference
+            // CSS variables in older browsers reliably, and these are the
+            // only places we hardcode color in this file.
             &.total {
-                background: linear-gradient(135deg, $primary 0%, $primary-hover 100%);
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
             }
 
             &.month {
-                background: linear-gradient(135deg, $success 0%, darken($success, 10%) 100%);
+                background: linear-gradient(135deg, var(--color-success) 0%, var(--primary-active) 100%);
             }
 
             &.drafts {
-                background: linear-gradient(135deg, $warning 0%, darken($warning, 10%) 100%);
+                background: linear-gradient(135deg, var(--color-warning) 0%, #C05621 100%);
             }
         }
 
@@ -189,16 +185,16 @@ $border-light: #E2E8F0;
             flex-direction: column;
 
             .stat-value {
-                font-size: 2rem;
-                font-weight: 700;
-                color: $text-primary;
+                font-size: var(--text-display-l);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text-primary);
                 line-height: 1;
             }
 
             .stat-label {
-                font-size: 0.875rem;
-                color: $text-secondary;
-                margin-top: 4px;
+                font-size: var(--text-body-sm);
+                color: var(--color-text-secondary);
+                margin-top: var(--space-1);
             }
         }
     }
@@ -206,17 +202,19 @@ $border-light: #E2E8F0;
 
 // Quick Actions
 .quick-actions {
-    margin-bottom: 32px;
+    margin-bottom: var(--space-8);
 
     .create-btn {
-        padding: 12px 24px;
-        font-size: 1rem;
-        font-weight: 600;
-        border-radius: 12px;
-        height: auto;
+        padding: 0 var(--space-6);
+        font-size: var(--text-body);
+        font-weight: var(--font-weight-semibold);
+        border-radius: var(--radius-lg);
+        height: 48px;
+        min-height: 48px;
+        line-height: 48px;
 
         mat-icon {
-            margin-right: 8px;
+            margin-right: var(--space-2);
         }
     }
 }
@@ -227,20 +225,20 @@ $border-light: #E2E8F0;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
+        margin-bottom: var(--space-5);
 
         .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: $text-primary;
+            font-size: var(--text-h3);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
             margin: 0;
         }
 
         button {
-            font-weight: 500;
+            font-weight: var(--font-weight-medium);
 
             mat-icon {
-                margin-left: 4px;
+                margin-left: var(--space-1);
                 font-size: 18px;
                 width: 18px;
                 height: 18px;
@@ -251,41 +249,41 @@ $border-light: #E2E8F0;
     .loading-container {
         display: flex;
         justify-content: center;
-        padding: 48px 0;
+        padding: var(--space-12) 0;
     }
 
     .empty-state {
         text-align: center;
-        padding: 64px 24px;
-        background: $surface-light;
-        border-radius: 12px;
-        border: 1px dashed $border-light;
+        padding: var(--space-16) var(--space-6);
+        background: var(--color-surface);
+        border-radius: var(--radius-md);
+        border: 1px dashed var(--color-border);
 
         .empty-icon {
             font-size: 64px;
             width: 64px;
             height: 64px;
-            color: $text-tertiary;
-            margin-bottom: 16px;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--space-4);
         }
 
         h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: $text-primary;
-            margin: 0 0 8px;
+            font-size: var(--text-h3);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            margin: 0 0 var(--space-2);
         }
 
         p {
-            color: $text-secondary;
-            margin: 0 0 24px;
+            color: var(--color-text-secondary);
+            margin: 0 0 var(--space-6);
         }
 
         button {
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
 
             mat-icon {
-                margin-right: 8px;
+                margin-right: var(--space-2);
             }
         }
     }
@@ -293,17 +291,17 @@ $border-light: #E2E8F0;
     .itineraries-list {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: var(--space-3);
     }
 
     .itinerary-card {
-        border-radius: 12px;
+        border-radius: var(--radius-md);
         cursor: pointer;
         transition: box-shadow 0.2s ease, transform 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        box-shadow: var(--shadow-card);
 
         &:hover {
-            box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.12);
+            box-shadow: var(--shadow-card-hover);
             transform: translateY(-2px);
         }
 
@@ -311,40 +309,40 @@ $border-light: #E2E8F0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 24px !important;
+            padding: var(--space-5) var(--space-6) !important;
 
             @media (max-width: 768px) {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 12px;
+                gap: var(--space-3);
             }
         }
 
         .itinerary-info {
             .itinerary-title {
-                font-size: 1rem;
-                font-weight: 600;
-                color: $text-primary;
-                margin: 0 0 8px;
+                font-size: var(--text-body);
+                font-weight: var(--font-weight-semibold);
+                color: var(--color-text-primary);
+                margin: 0 0 var(--space-2);
             }
 
             .itinerary-meta {
                 display: flex;
-                gap: 16px;
+                gap: var(--space-4);
                 margin: 0;
 
                 @media (max-width: 480px) {
                     flex-direction: column;
-                    gap: 4px;
+                    gap: var(--space-1);
                 }
 
                 .client-name,
                 .date {
                     display: flex;
                     align-items: center;
-                    gap: 4px;
-                    font-size: 0.875rem;
-                    color: $text-secondary;
+                    gap: var(--space-1);
+                    font-size: var(--text-body-sm);
+                    color: var(--color-text-secondary);
 
                     mat-icon {
                         font-size: 16px;
@@ -358,7 +356,7 @@ $border-light: #E2E8F0;
         .itinerary-status {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: var(--space-3);
 
             @media (max-width: 768px) {
                 width: 100%;
@@ -366,35 +364,35 @@ $border-light: #E2E8F0;
             }
 
             .status-badge {
-                padding: 4px 12px;
-                border-radius: 9999px;
-                font-size: 0.75rem;
-                font-weight: 600;
+                padding: var(--space-1) var(--space-3);
+                border-radius: var(--radius-full);
+                font-size: var(--text-caption);
+                font-weight: var(--font-weight-semibold);
                 text-transform: uppercase;
 
                 &.status-draft {
                     background: rgba(160, 174, 192, 0.15);
-                    color: $text-secondary;
+                    color: var(--color-text-secondary);
                 }
 
                 &.status-shared {
                     background: rgba(var(--primary-rgb), 0.1);
-                    color: $primary;
+                    color: var(--primary);
                 }
 
                 &.status-approved {
-                    background: rgba(72, 187, 120, 0.1);
-                    color: $success;
+                    background: rgba(var(--primary-rgb), 0.1);
+                    color: var(--color-success);
                 }
 
                 &.status-finalized {
-                    background: rgba(72, 187, 120, 0.15);
-                    color: darken($success, 10%);
+                    background: rgba(var(--primary-rgb), 0.15);
+                    color: var(--primary-active);
                 }
             }
 
             .arrow-icon {
-                color: $text-tertiary;
+                color: var(--color-text-tertiary);
             }
         }
     }

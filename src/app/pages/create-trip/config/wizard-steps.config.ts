@@ -88,20 +88,13 @@ export const WIZARD_STEPS: WizardStep[] = [
   },
   {
     id: 'transport',
-    title: 'How will you get around?',
-    subtitle: 'Choose your preferred way to travel between places',
-    icon: 'commute',
+    title: 'How are you traveling?',
+    subtitle: 'Plan your journey — getting there and getting around',
+    icon: 'route',
     fields: [{
-      key: 'transportPreference',
-      type: 'card-select',
-      label: 'Transport Preference',
-      options: [
-        { value: 'own_vehicle', label: 'Own Vehicle', icon: 'directions_car', description: 'Driving your own car or motorcycle' },
-        { value: 'rental', label: 'Rental Car', icon: 'car_rental', description: 'Renting a car at the destination' },
-        { value: 'public_transport', label: 'Public Transport', icon: 'directions_bus', description: 'Buses, trains, metro, local transit' },
-        { value: 'walking_cycling', label: 'Walk & Cycle', icon: 'directions_walk', description: 'On foot and by bicycle' },
-        { value: 'mix', label: 'Mix (AI Decides)', icon: 'auto_awesome', description: 'Let AI pick the best mode for each leg' }
-      ]
+      key: 'transport-section',
+      type: 'transport-section',
+      label: 'Transport'
     }]
   },
   {

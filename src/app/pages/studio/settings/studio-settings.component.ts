@@ -164,8 +164,15 @@ export class StudioSettingsComponent implements OnInit {
                     this.saveProfile(profileData);
                 },
                 error: (error) => {
-                    console.error('Logo upload error:', error);
-                    // Continue saving without logo
+                    // Logo upload failed — surface this to the user via a
+                    // snack bar (silent fall-through to "save without logo"
+                    // looked like a no-op to the user) and still attempt
+                    // to save the rest of the profile so their other edits
+                    // aren't lost.
+                    const msg =
+                        error?.error?.message ||
+                        'Logo upload failed — your other settings will still be saved.';
+                    this.snackBar.open(msg, 'Close', { duration: 5000 });
                     this.saveProfile(profileData);
                 }
             });
@@ -182,9 +189,9 @@ export class StudioSettingsComponent implements OnInit {
                 this.snackBar.open('Settings saved successfully!', 'Close', { duration: 3000 });
             },
             error: (error) => {
-                console.error('Save error:', error);
                 this.isSaving = false;
-                this.snackBar.open('Failed to save settings', 'Close', { duration: 5000 });
+                const msg = error?.error?.message || 'Failed to save settings. Please try again.';
+                this.snackBar.open(msg, 'Close', { duration: 5000 });
             }
         });
     }

@@ -3,6 +3,7 @@ import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationErr
 import { trigger, transition, style, animate, query, group } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { ThemeService } from './core/services/theme.service';
+import { AnalyticsService } from './core/services/analytics.service';
 
 @Component({
   selector: 'app-root',
@@ -37,10 +38,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private analytics: AnalyticsService,
   ) {}
 
   ngOnInit(): void {
+    // Per-route GA4 page_view events. The gtag config in index.html sets
+    // send_page_view: false so we get accurate SPA navigation tracking
+    // here instead of one initial page view.
+    this.analytics.initRouteTracking();
+
     // Loading bar on route navigation
     this.routerSub = this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {

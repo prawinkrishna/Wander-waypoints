@@ -3,6 +3,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/service/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-studio',
@@ -15,12 +16,18 @@ export class StudioComponent implements OnInit {
     isMobile = false;
     sidenavOpened = true;
 
+    // Marketplace + My Bids are hidden for the public beta. Re-included
+    // automatically when environment.featureBookingEnabled flips to true.
     menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/studio/dashboard' },
         { label: 'Create Itinerary', icon: 'add_circle', route: '/studio/create-itinerary' },
         { label: 'My Itineraries', icon: 'list_alt', route: '/studio/itineraries' },
-        { icon: 'storefront', label: 'Marketplace', route: '/studio/marketplace' },
-        { icon: 'gavel', label: 'My Bids', route: '/studio/marketplace/my-bids' },
+        ...(environment.featureBookingEnabled
+            ? [
+                { icon: 'storefront', label: 'Marketplace', route: '/studio/marketplace' },
+                { icon: 'gavel', label: 'My Bids', route: '/studio/marketplace/my-bids' },
+            ]
+            : []),
         { label: 'Agency Settings', icon: 'business', route: '/studio/settings' },
     ];
 

@@ -27,6 +27,18 @@ export class AuthService {
         return this.http.post(`${this.apiUrl}/register`, data);
     }
 
+    /**
+     * Sign in with Google. The frontend obtains a Google ID token from
+     * Google Identity Services (GIS) and posts it here. The backend
+     * verifies the token, creates the user on first sight, and returns
+     * a Trekio JWT in the same shape as `login()`.
+     */
+    googleLogin(idToken: string): Observable<any> {
+        return this.http.post(`${this.apiUrl}/google`, { idToken }).pipe(
+            tap((response: any) => this.handleAuthResponse(response))
+        );
+    }
+
     anonymousLogin(): Observable<any> {
         return this.http.post(`${this.apiUrl}/anonymous`, {}).pipe(
             tap((response: any) => this.handleAuthResponse(response))

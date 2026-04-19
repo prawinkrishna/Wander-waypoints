@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AgentService, AgentTripResponse, AgentTripPreferences } from '../../../core/service/agent.service';
+import { AnalyticsService } from '../../../core/services/analytics.service';
 
 @Component({
     selector: 'app-create-itinerary',
@@ -39,7 +40,8 @@ export class CreateItineraryComponent implements OnInit {
         private fb: FormBuilder,
         private agentService: AgentService,
         private router: Router,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private analytics: AnalyticsService,
     ) { }
 
     ngOnInit() {
@@ -107,17 +109,31 @@ export class CreateItineraryComponent implements OnInit {
             specialRequirements: formValue.specialRequirements
         };
 
+        this.analytics.trackEvent('ai_generation_started', {
+            destination: preferences.destination,
+            duration_days: preferences.duration,
+            budget_category: preferences.budgetCategory,
+        });
+
         this.agentService.generateItinerary(preferences).subscribe({
             next: (response) => {
                 this.generatedItinerary = response;
                 this.showPreview = true;
                 this.isGenerating = false;
                 this.snackBar.open('Itinerary generated successfully!', 'Close', { duration: 3000 });
+                this.analytics.trackEvent('ai_generation_completed', {
+                    destination: preferences.destination,
+                    duration_days: preferences.duration,
+                });
             },
             error: (error) => {
-                console.error('Generation error:', error);
                 this.isGenerating = false;
-                this.snackBar.open('Failed to generate itinerary. Please try again.', 'Close', { duration: 5000 });
+                const errorMsg = error?.error?.detail || error?.error?.message || 'Failed to generate itinerary. Please try again.';
+                this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
+                this.analytics.trackEvent('ai_generation_failed', {
+                    status: error?.status || 0,
+                    destination: preferences.destination,
+                });
             }
         });
     }

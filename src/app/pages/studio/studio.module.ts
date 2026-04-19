@@ -54,6 +54,9 @@ import { SubmitBidFormComponent } from './submit-bid-form/submit-bid-form.compon
 // Shared
 import { SharedModule } from '../../components/shared/shared.module';
 
+// Guards
+import { featureBookingGuard } from '../../core/guards/feature-booking.guard';
+
 const routes: Routes = [
     {
         path: '',
@@ -65,9 +68,9 @@ const routes: Routes = [
             { path: 'edit-itinerary/:id', component: EditItineraryComponent },
             { path: 'itineraries', component: ItineraryListComponent },
             { path: 'settings', component: StudioSettingsComponent },
-            { path: 'marketplace', component: StudioMarketplaceComponent },
-            { path: 'marketplace/request/:id', component: StudioRequestDetailComponent },
-            { path: 'marketplace/my-bids', component: MyBidsComponent },
+            { path: 'marketplace', component: StudioMarketplaceComponent, canActivate: [featureBookingGuard] },
+            { path: 'marketplace/request/:id', component: StudioRequestDetailComponent, canActivate: [featureBookingGuard] },
+            { path: 'marketplace/my-bids', component: MyBidsComponent, canActivate: [featureBookingGuard] },
         ]
     }
 ];

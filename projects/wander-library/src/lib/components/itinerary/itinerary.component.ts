@@ -114,36 +114,27 @@ export class ItineraryComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log('11111');
-    
     // Load additional data if necessary on component initialization
-    this.ApiService.getUsers().subscribe(users => {
-      console.log('Users loaded:', users);
-    }
-    );
+    this.ApiService.getUsers().subscribe();
   }
 
   bookService(service: string): void {
     // Function to book a service (massage, dinner, etc.)
-    console.log(`Booking service: ${service}`);
     // Implement booking functionality here
   }
 
   shareTrip(): void {
     // Function to share trip details
-    console.log('Trip shared!');
     // Implement share functionality here
   }
 
   saveTrip(): void {
     // Function to save trip to favorites
-    console.log('Trip saved!');
     // Implement save functionality here
   }
 
   followOrganizer(): void {
     // Function to follow the trip organizer
-    console.log('Following organizer');
     // Implement follow functionality here
   }
 }

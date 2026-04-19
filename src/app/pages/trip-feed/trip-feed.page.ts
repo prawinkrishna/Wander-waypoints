@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TripService } from '../../core/service/trip.service';
+import { SocialService } from '../../core/service/social.service';
 
 interface Trip {
   tripId: string;
@@ -28,6 +29,11 @@ export class TripFeedPage implements OnInit {
   isLoading = true;
   error: string | null = null;
 
+  // View mode
+  viewMode: 'list' | 'map' = 'list';
+  mapPlaces: any[] = [];
+  mapLoading = false;
+
   // Search and filters
   searchQuery = '';
   selectedSort = 'recent';
@@ -39,6 +45,7 @@ export class TripFeedPage implements OnInit {
 
   constructor(
     private tripService: TripService,
+    private socialService: SocialService,
     private router: Router
   ) { }
 
@@ -104,6 +111,26 @@ export class TripFeedPage implements OnInit {
 
   onSortChange() {
     this.applyFilters();
+  }
+
+  switchToMapView() {
+    this.viewMode = 'map';
+    if (!this.mapPlaces.length && !this.mapLoading) {
+      this.loadMapPlaces();
+    }
+  }
+
+  loadMapPlaces() {
+    this.mapLoading = true;
+    this.socialService.getTrendingTrips().subscribe({
+      next: (trips: any[]) => {
+        this.mapPlaces = trips.flatMap((t: any) => t.tripPlaces || []);
+        this.mapLoading = false;
+      },
+      error: () => {
+        this.mapLoading = false;
+      }
+    });
   }
 
   onTripClick(tripId: string) {

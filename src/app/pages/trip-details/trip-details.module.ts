@@ -15,6 +15,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTabsModule } from '@angular/material/tabs';
 import { TripDetailsRoutingModule } from './trip-details-routing.module';
 import { TripDetailsPage } from './trip-details.page';
 import { SharedModule } from '../../components/shared/shared.module';
@@ -41,6 +42,7 @@ import { BookTripDialogComponent } from '../../components/book-trip-dialog/book-
     MatDatepickerModule,
     MatNativeDateModule,
     MatSlideToggleModule,
+    MatTabsModule,
     TripDetailsRoutingModule,
     SharedModule,
     WanderLibraryModule
